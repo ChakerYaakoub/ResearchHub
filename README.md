@@ -71,10 +71,10 @@ User → DuckDNS → Nginx → Django/React → PostgreSQL
 
 ## Project status
 
-**Phase 1 complete** — local Docker Compose stack runs Django, React (Vite), and PostgreSQL.
+**Phase 2 complete** — domain models and migrations (users, projects, proposals, experiments, publications, invitations).
 
 ```text
-backend/          # Django (config project)
+backend/          # Django domain apps + config
 frontend/         # React + TypeScript + Vite
 nginx/            # Reverse proxy configs (Phase 16)
 k8s/              # Optional Kubernetes manifests (Phase 17)
@@ -83,7 +83,7 @@ deploy/           # Google Cloud / production helpers (Phase 16)
 docker-compose.yml# Local Docker Compose
 ```
 
-Next: **Phase 2** — database models.
+Next: **Phase 3** — REST API.
 
 ## Quick start (local)
 
