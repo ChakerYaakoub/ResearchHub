@@ -55,6 +55,8 @@ Publication
 
 Same palette and responsive rules in **both** frontends. Use CSS tokens (override Bootstrap primary/secondary). Do not put third-party facility names in product copy.
 
+**Bootstrap-first** in `client-ui` and `admin-ui`; add page CSS only when needed. **UI copy** lives in `src/strings/` and per-page `strings/` folders — not hard-coded in JSX.
+
 | Token | Hex | Role |
 |-------|-----|------|
 | Primary / CTAs | `#B82721` | Main buttons |
