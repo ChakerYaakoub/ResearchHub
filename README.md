@@ -48,7 +48,27 @@ Publication
 | Database | PostgreSQL |
 | Email | Django + SMTP |
 | Local | Docker Compose |
-| Production | Google Cloud, Nginx, DuckDNS, Let's Encrypt |
+| Production | Google Cloud, Nginx, DuckDNS, Let's Encrypt HTTPS |
+| Optional | Kubernetes |
+
+## UI brand (client-ui + admin-ui)
+
+Same palette and responsive rules in **both** frontends. Use CSS tokens (override Bootstrap primary/secondary). Do not put third-party facility names in product copy.
+
+| Token | Hex | Role |
+|-------|-----|------|
+| Primary / CTAs | `#B82721` | Main buttons |
+| Primary hover | `#9C1A1A` | Hover / pressed |
+| Accent | `#328BA0` | Links, secondary actions |
+| Highlight | `#FBD600` | Sparse badges/highlights |
+| Success | `#73A104` | Positive status |
+| Text | `#292929` | Body |
+| Muted text | `#585858` | Secondary text |
+| Border | `#D5D5D5` | Dividers |
+| Surface | `#FFFFFF` | Panels |
+| Page background | `#EDEDED` | Muted surface |
+
+**Responsive is mandatory** on every screen (phone → tablet → desktop; no horizontal page scroll). Full token list and usage rules live in local `docs/UI_DESIGN.md` / agent rules when developing with Cursor.
 
 ### Local
 
