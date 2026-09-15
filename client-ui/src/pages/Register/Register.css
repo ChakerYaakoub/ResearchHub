@@ -1,0 +1,13 @@
+.auth-page {
+  max-width: 28rem;
+}
+
+.auth-card {
+  background: var(--rh-surface);
+  border: 1px solid var(--rh-border);
+  border-radius: 0.35rem;
+}
+
+.auth-title {
+  color: var(--rh-primary);
+}

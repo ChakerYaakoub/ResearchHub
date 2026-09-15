@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link, NavLink, Outlet } from 'react-router-dom'
+import { useAuth } from '../../auth'
 import './AppLayout.css'
 
 export type NavItem = {
@@ -17,8 +18,14 @@ export const mainNavItems: NavItem[] = [
 /** Public shell: responsive navbar, page outlet, footer. */
 export function AppLayout() {
   const [open, setOpen] = useState(false)
+  const { user, isAuthenticated, logout } = useAuth()
 
   const close = () => setOpen(false)
+
+  async function onLogout() {
+    close()
+    await logout()
+  }
 
   return (
     <div className="rh-layout">
@@ -53,20 +60,37 @@ export function AppLayout() {
               ))}
             </ul>
             <div className="d-flex flex-column flex-lg-row gap-2 align-items-lg-center">
-              <Link
-                className="btn btn-outline-secondary btn-sm"
-                to="/login"
-                onClick={close}
-              >
-                Log in
-              </Link>
-              <Link
-                className="btn btn-primary btn-sm"
-                to="/register"
-                onClick={close}
-              >
-                Register
-              </Link>
+              {isAuthenticated && user ? (
+                <>
+                  <span className="small text-muted text-truncate" title={user.email}>
+                    {user.email}
+                  </span>
+                  <button
+                    type="button"
+                    className="btn btn-outline-secondary btn-sm"
+                    onClick={onLogout}
+                  >
+                    Log out
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link
+                    className="btn btn-outline-secondary btn-sm"
+                    to="/login"
+                    onClick={close}
+                  >
+                    Log in
+                  </Link>
+                  <Link
+                    className="btn btn-primary btn-sm"
+                    to="/register"
+                    onClick={close}
+                  >
+                    Register
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>
