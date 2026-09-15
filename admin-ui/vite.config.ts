@@ -1,0 +1,19 @@
+﻿import react from '@vitejs/plugin-react'
+import { defineConfig, loadEnv } from 'vite'
+
+// Dev server reachable from Docker host; port from ADMIN_UI_PORT (.env / Compose).
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), '')
+  const port = Number(env.ADMIN_UI_PORT || process.env.ADMIN_UI_PORT || 5175)
+
+  return {
+    plugins: [react()],
+    server: {
+      host: true,
+      port,
+      watch: {
+        usePolling: true,
+      },
+    },
+  }
+})

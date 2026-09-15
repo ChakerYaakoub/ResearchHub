@@ -23,7 +23,7 @@ Django-first: thin views, domain logic, small `services.py` / `selectors.py` onl
 ## Documentation style
 
 - Short module/class docstrings and clear section markers (e.g. `# Django` / `# Third-party` / `# ResearchHub` in `INSTALLED_APPS`).
-- Explain *why* / project-specific rules across **settings, models, admin, apps, Docker, Compose, frontend entry** — not only settings.
+- Explain *why* / project-specific rules across **settings, models, admin, apps, Docker, Compose, UI entry** — not only settings.
 - Do **not** comment every line or restate the obvious.
 
 See `AGENTS.md`, `.cursor/rules/backend.mdc`, `docs/ARCHITECTURE.md`.

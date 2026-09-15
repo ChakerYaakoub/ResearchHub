@@ -12,7 +12,13 @@ from publications.models import Publication
 from users.models import GlobalRole, User
 
 from .models import MembershipRole, ProjectMembership, ProjectStatus, ResearchProject
-from .permissions import IsPlatformAdmin, IsProjectEditor, IsProjectMember, IsProjectOwnerOrAdmin
+from .permissions import (
+    IsAdminUiOrigin,
+    IsPlatformAdmin,
+    IsProjectEditor,
+    IsProjectMember,
+    IsProjectOwnerOrAdmin,
+)
 from .selectors import get_visible_project, projects_visible_to
 from .serializers import ProjectMembershipSerializer, ResearchProjectSerializer
 
@@ -79,9 +85,9 @@ class ProjectCollaboratorDeleteView(APIView):
 
 
 class AdminStatsView(APIView):
-    """GET `/api/admin/stats/` — platform ADMIN only."""
+    """GET `/api/admin/stats/` — platform ADMIN from admin-ui origin only."""
 
-    permission_classes = [IsAuthenticated, IsPlatformAdmin]
+    permission_classes = [IsAuthenticated, IsAdminUiOrigin, IsPlatformAdmin]
 
     def get(self, request):
         data = {

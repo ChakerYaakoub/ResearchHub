@@ -4,7 +4,8 @@
 COMPOSE ?= docker compose
 
 .PHONY: help start up stop down build rebuild restart logs ps status \
-	shell-backend shell-frontend migrate createsuperuser test-backend clean
+	shell-backend shell-client-ui shell-admin-ui \
+	migrate createsuperuser test-backend clean
 
 help:
 	@echo ResearchHub make targets:
@@ -17,7 +18,8 @@ help:
 	@echo   make logs             Follow logs (all services)
 	@echo   make ps               Show container status
 	@echo   make shell-backend    Shell into backend container
-	@echo   make shell-frontend   Shell into frontend container
+	@echo   make shell-client-ui  Shell into client-ui container
+	@echo   make shell-admin-ui   Shell into admin-ui container
 	@echo   make migrate          Run Django migrations
 	@echo   make createsuperuser  Create Django superuser
 	@echo   make test-backend     Run Django tests
@@ -51,8 +53,11 @@ ps status:
 shell-backend:
 	$(COMPOSE) exec backend sh
 
-shell-frontend:
-	$(COMPOSE) exec frontend sh
+shell-client-ui:
+	$(COMPOSE) exec client-ui sh
+
+shell-admin-ui:
+	$(COMPOSE) exec admin-ui sh
 
 migrate:
 	$(COMPOSE) exec backend python manage.py migrate

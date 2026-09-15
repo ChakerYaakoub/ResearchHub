@@ -107,16 +107,29 @@ USE_TZ = True
 STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# Frontend origin(s) allowed to call the API (local Vite default).
+# Frontend origin(s) allowed to call the API (client-ui, admin-ui).
 CORS_ALLOWED_ORIGINS = [
     origin.strip()
-    for origin in os.environ.get("CORS_ALLOWED_ORIGINS", "http://localhost:5173").split(",")
+    for origin in os.environ.get(
+        "CORS_ALLOWED_ORIGINS",
+        "http://localhost:5173,http://localhost:5175",
+    ).split(",")
     if origin.strip()
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     origin.strip()
-    for origin in os.environ.get("CSRF_TRUSTED_ORIGINS", "http://localhost:5173").split(",")
+    for origin in os.environ.get(
+        "CSRF_TRUSTED_ORIGINS",
+        "http://localhost:5173,http://localhost:5175",
+    ).split(",")
+    if origin.strip()
+]
+
+# Admin-only API routes must present an Origin from this allowlist.
+ADMIN_UI_ORIGINS = [
+    origin.strip()
+    for origin in os.environ.get("ADMIN_UI_ORIGINS", "http://localhost:5175").split(",")
     if origin.strip()
 ]
 
