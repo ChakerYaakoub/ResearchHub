@@ -1,3 +1,4 @@
+# Dev image: install deps, then Vite on 0.0.0.0:5173.
 FROM node:22
 
 WORKDIR /app

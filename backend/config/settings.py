@@ -1,5 +1,9 @@
 """
-Django settings for ResearchHub.
+ResearchHub Django settings.
+
+Secrets and env-specific values come from environment variables
+(see repo root `.env.example`). Compose injects them in Docker; `load_dotenv`
+also reads a local `.env` for tooling outside Compose.
 """
 
 import os
@@ -12,30 +16,41 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.environ.get("SECRET_KEY", "unsafe-dev-only-change-me")
-
 DEBUG = os.environ.get("DEBUG", "True").lower() in ("1", "true", "yes")
-
 ALLOWED_HOSTS = [
     host.strip()
     for host in os.environ.get("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
     if host.strip()
 ]
 
+# Apps Django loads (models, admin, commands).
 INSTALLED_APPS = [
+    # Django
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "corsheaders",
-    "rest_framework",
+    # Third-party
+    "corsheaders",  # Vite (other origin) → API
+    "rest_framework",  # REST API (Phase 3+)
+    # ResearchHub
+    "users",
+    "projects",
+    "proposals",
+    "experiments",
+    "publications",
+    "invitations",
 ]
+
+# Must be set before migrations that FK to User (custom model).
+AUTH_USER_MODEL = "users.User"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
-    "corsheaders.middleware.CorsMiddleware",
+    "corsheaders.middleware.CorsMiddleware",  # before CommonMiddleware
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -62,6 +77,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
+# Postgres — in Docker, HOST is the Compose service name `postgres`.
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
@@ -88,6 +104,7 @@ USE_TZ = True
 STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# Frontend origin(s) allowed to call the API (local Vite default).
 CORS_ALLOWED_ORIGINS = [
     origin.strip()
     for origin in os.environ.get("CORS_ALLOWED_ORIGINS", "http://localhost:5173").split(",")
@@ -100,6 +117,7 @@ CSRF_TRUSTED_ORIGINS = [
     if origin.strip()
 ]
 
+# Console email locally; SMTP via env in production (Phase 12).
 EMAIL_BACKEND = os.environ.get(
     "EMAIL_BACKEND",
     "django.core.mail.backends.console.EmailBackend",
@@ -114,6 +132,7 @@ EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS", "True").lower() in ("1", "true",
 EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "")
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "")
 
+# Open until Phase 4/5 (auth + project permissions).
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.AllowAny",
