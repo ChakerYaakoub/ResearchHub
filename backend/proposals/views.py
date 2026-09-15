@@ -3,29 +3,36 @@
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from projects.models import ProjectStatus, ResearchProject
+from projects.models import ProjectStatus
+from projects.permissions import (
+    IsPlatformAdmin,
+    IsProjectEditor,
+    IsProjectMemberReadEditorWrite,
+)
+from projects.selectors import get_visible_project
 
 from .models import Proposal, ProposalStatus
 from .serializers import ProposalReviewSerializer, ProposalSerializer
 
 
-def _owned_project(user, project_pk: int) -> ResearchProject:
-    return get_object_or_404(ResearchProject, pk=project_pk, owner=user)
-
-
 class ProjectProposalView(APIView):
-    """GET/POST/PUT `/api/projects/{id}/proposal/`."""
+    """GET/POST/PUT `/api/projects/{id}/proposal/` — member read; editor write."""
+
+    permission_classes = [IsAuthenticated, IsProjectMemberReadEditorWrite]
 
     def get(self, request, project_pk: int):
-        project = _owned_project(request.user, project_pk)
+        project = get_visible_project(request.user, project_pk)
+        self.check_object_permissions(request, project)
         proposal = get_object_or_404(Proposal, project=project)
         return Response(ProposalSerializer(proposal).data)
 
     def post(self, request, project_pk: int):
-        project = _owned_project(request.user, project_pk)
+        project = get_visible_project(request.user, project_pk)
+        self.check_object_permissions(request, project)
         if hasattr(project, "proposal"):
             return Response(
                 {"detail": "Proposal already exists for this project."},
@@ -37,7 +44,8 @@ class ProjectProposalView(APIView):
         return Response(ProposalSerializer(proposal).data, status=status.HTTP_201_CREATED)
 
     def put(self, request, project_pk: int):
-        project = _owned_project(request.user, project_pk)
+        project = get_visible_project(request.user, project_pk)
+        self.check_object_permissions(request, project)
         proposal = get_object_or_404(Proposal, project=project)
         serializer = ProposalSerializer(proposal, data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -46,10 +54,13 @@ class ProjectProposalView(APIView):
 
 
 class ProjectProposalSubmitView(APIView):
-    """POST `/api/projects/{id}/proposal/submit/` — marks proposal submitted."""
+    """POST `/api/projects/{id}/proposal/submit/` — editor+."""
+
+    permission_classes = [IsAuthenticated, IsProjectEditor]
 
     def post(self, request, project_pk: int):
-        project = _owned_project(request.user, project_pk)
+        project = get_visible_project(request.user, project_pk)
+        self.check_object_permissions(request, project)
         proposal = get_object_or_404(Proposal, project=project)
         proposal.status = ProposalStatus.PENDING
         proposal.submitted_at = timezone.now()
@@ -60,13 +71,14 @@ class ProjectProposalSubmitView(APIView):
 
 
 class ProposalApproveView(APIView):
-    """POST `/api/proposals/{id}/approve/` — thin review action (Phase 5/6 harden)."""
+    """POST `/api/proposals/{id}/approve/` — platform ADMIN only."""
+
+    permission_classes = [IsAuthenticated, IsPlatformAdmin]
 
     def post(self, request, pk: int):
         proposal = get_object_or_404(
             Proposal.objects.select_related("project"),
             pk=pk,
-            project__owner=request.user,
         )
         body = ProposalReviewSerializer(data=request.data)
         body.is_valid(raise_exception=True)
@@ -81,13 +93,14 @@ class ProposalApproveView(APIView):
 
 
 class ProposalRejectView(APIView):
-    """POST `/api/proposals/{id}/reject/` — thin review action (Phase 5/6 harden)."""
+    """POST `/api/proposals/{id}/reject/` — platform ADMIN only."""
+
+    permission_classes = [IsAuthenticated, IsPlatformAdmin]
 
     def post(self, request, pk: int):
         proposal = get_object_or_404(
             Proposal.objects.select_related("project"),
             pk=pk,
-            project__owner=request.user,
         )
         body = ProposalReviewSerializer(data=request.data)
         body.is_valid(raise_exception=True)

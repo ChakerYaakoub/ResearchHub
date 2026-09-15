@@ -47,3 +47,39 @@ def user_project_role(user, project: ResearchProject) -> str | None:
         .first()
     )
     return membership.role if membership else None
+
+
+def get_visible_experiment(user, pk: int):
+    """Experiment under a project visible to the user (404 otherwise)."""
+    from experiments.models import Experiment
+
+    return get_object_or_404(
+        Experiment.objects.select_related("project").filter(
+            project__in=projects_visible_to(user)
+        ),
+        pk=pk,
+    )
+
+
+def get_visible_publication(user, pk: int):
+    """Publication under a project visible to the user (404 otherwise)."""
+    from publications.models import Publication
+
+    return get_object_or_404(
+        Publication.objects.select_related("project").filter(
+            project__in=projects_visible_to(user)
+        ),
+        pk=pk,
+    )
+
+
+def get_visible_proposal(user, pk: int):
+    """Proposal under a project visible to the user (404 otherwise)."""
+    from proposals.models import Proposal
+
+    return get_object_or_404(
+        Proposal.objects.select_related("project").filter(
+            project__in=projects_visible_to(user)
+        ),
+        pk=pk,
+    )
