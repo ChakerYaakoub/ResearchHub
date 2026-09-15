@@ -1,8 +1,8 @@
-"""Serializers for research projects."""
+"""Serializers for research projects and collaborators."""
 
 from rest_framework import serializers
 
-from .models import ResearchProject
+from .models import ProjectMembership, ResearchProject
 
 
 class ResearchProjectSerializer(serializers.ModelSerializer):
@@ -22,3 +22,12 @@ class ResearchProjectSerializer(serializers.ModelSerializer):
             "updated_at",
         )
         read_only_fields = ("id", "owner", "status", "created_at", "updated_at")
+
+
+class ProjectMembershipSerializer(serializers.ModelSerializer):
+    user_email = serializers.EmailField(source="user.email", read_only=True)
+
+    class Meta:
+        model = ProjectMembership
+        fields = ("id", "project", "user", "user_email", "role", "created_at")
+        read_only_fields = fields
