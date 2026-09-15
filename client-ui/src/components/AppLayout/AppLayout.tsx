@@ -1,8 +1,15 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
+import {
+  Link,
+  NavLink,
+  Outlet,
+  useLocation,
+  type Location,
+} from 'react-router-dom'
 import { useAuth } from '../../auth'
 import { setAppLanguage, type AppLanguage } from '../../i18n'
+import { ScrollToTop } from '../ScrollToTop'
 import './AppLayout.css'
 
 const NAV_LINKS = [
@@ -12,18 +19,41 @@ const NAV_LINKS = [
   { to: '/documentation', key: 'nav.documentation' },
 ] as const
 
-/** Public shell: responsive navbar, page outlet, footer, language switcher. */
+type LocationState = { background?: Location }
+
+function isAuthPath(pathname: string) {
+  return pathname === '/login' || pathname === '/register'
+}
+
+function navPathname(location: Location): string {
+  const background = (location.state as LocationState | null)?.background
+  if (background) return background.pathname
+  if (isAuthPath(location.pathname)) return '/'
+  return location.pathname
+}
+
+/** Public shell: navbar, page outlet, footer. */
 export function AppLayout() {
   const { t, i18n } = useTranslation()
   const location = useLocation()
-  const [open, setOpen] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
   const { user, isAuthenticated, logout } = useAuth()
   const current = (i18n.language?.startsWith('fr') ? 'fr' : 'en') as AppLanguage
+  const activePath = navPathname(location)
+  const authBackground =
+    (location.state as LocationState | null)?.background ??
+    (isAuthPath(location.pathname)
+      ? ({ ...location, pathname: activePath } as Location)
+      : location)
 
-  const close = () => setOpen(false)
+  const closeMenu = () => setMenuOpen(false)
+
+  useEffect(() => {
+    setMenuOpen(false)
+  }, [location.pathname])
 
   async function onLogout() {
-    close()
+    closeMenu()
     await logout()
   }
 
@@ -31,96 +61,149 @@ export function AppLayout() {
     await setAppLanguage(lng)
   }
 
-  return (
-    <div className="rh-layout">
-      <nav className="navbar navbar-expand-lg rh-navbar sticky-top">
-        <div className="container">
-          <Link className="navbar-brand rh-brand" to="/" onClick={close}>
-            {t('nav.brand')}
-          </Link>
+  function renderNavLinks() {
+    return (
+      <ul className="rh-nav-list">
+        {NAV_LINKS.map((item) => (
+          <li key={item.to}>
+            <NavLink
+              className={`rh-nav-link${activePath === item.to ? ' is-active' : ''}`}
+              to={item.to}
+              onClick={closeMenu}
+            >
+              {t(item.key)}
+            </NavLink>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+
+  function renderLang() {
+    return (
+      <div className="rh-lang" role="group" aria-label="Language">
+        <button
+          type="button"
+          className={`rh-lang-btn${current === 'en' ? ' is-active' : ''}`}
+          onClick={() => void onLang('en')}
+        >
+          {t('common.langEn')}
+        </button>
+        <button
+          type="button"
+          className={`rh-lang-btn${current === 'fr' ? ' is-active' : ''}`}
+          onClick={() => void onLang('fr')}
+        >
+          {t('common.langFr')}
+        </button>
+      </div>
+    )
+  }
+
+  function renderAuth() {
+    if (isAuthenticated && user) {
+      return (
+        <div className="rh-nav-auth">
+          <span className="rh-nav-user" title={user.email}>
+            {user.email}
+          </span>
           <button
             type="button"
-            className="rh-toggler d-lg-none"
-            aria-label={t('common.toggleNav')}
-            aria-expanded={open}
-            onClick={() => setOpen((v) => !v)}
+            className="btn btn-outline-secondary btn-sm"
+            onClick={onLogout}
           >
-            <span className="rh-toggler-icon" />
+            {t('common.logOut')}
           </button>
-          <div className={`collapse navbar-collapse${open ? ' show' : ''}`}>
-            <ul className="navbar-nav me-auto mb-2 mb-lg-0 gap-lg-1">
-              {NAV_LINKS.map((item) => (
-                <li className="nav-item" key={item.to}>
-                  <NavLink
-                    className={({ isActive }) =>
-                      `nav-link rh-nav-link${isActive ? ' active' : ''}`
-                    }
-                    to={item.to}
-                    onClick={close}
-                  >
-                    {t(item.key)}
-                  </NavLink>
-                </li>
-              ))}
-            </ul>
-            <div className="d-flex flex-column flex-lg-row gap-2 align-items-lg-center">
-              <div className="btn-group btn-group-sm" role="group" aria-label="Language">
-                <button
-                  type="button"
-                  className={`btn btn-sm ${current === 'en' ? 'btn-primary' : 'btn-outline-secondary'}`}
-                  onClick={() => void onLang('en')}
-                >
-                  {t('common.langEn')}
-                </button>
-                <button
-                  type="button"
-                  className={`btn btn-sm ${current === 'fr' ? 'btn-primary' : 'btn-outline-secondary'}`}
-                  onClick={() => void onLang('fr')}
-                >
-                  {t('common.langFr')}
-                </button>
-              </div>
-              {isAuthenticated && user ? (
-                <>
-                  <span className="small text-muted text-truncate" title={user.email}>
-                    {user.email}
-                  </span>
-                  <button
-                    type="button"
-                    className="btn btn-outline-secondary btn-sm"
-                    onClick={onLogout}
-                  >
-                    {t('common.logOut')}
-                  </button>
-                </>
-              ) : (
-                <>
-                  <Link
-                    className="btn btn-outline-secondary btn-sm"
-                    to="/login"
-                    state={{ background: location }}
-                    onClick={close}
-                  >
-                    {t('common.logIn')}
-                  </Link>
-                  <Link
-                    className="btn btn-primary btn-sm"
-                    to="/register"
-                    state={{ background: location }}
-                    onClick={close}
-                  >
-                    {t('common.register')}
-                  </Link>
-                </>
-              )}
-            </div>
+        </div>
+      )
+    }
+    return (
+      <div className="rh-nav-auth">
+        <Link
+          className="btn btn-outline-secondary btn-sm"
+          to="/login"
+          state={{ background: authBackground }}
+          onClick={closeMenu}
+        >
+          {t('common.logIn')}
+        </Link>
+        <Link
+          className="btn btn-primary btn-sm"
+          to="/register"
+          state={{ background: authBackground }}
+          onClick={closeMenu}
+        >
+          {t('common.register')}
+        </Link>
+      </div>
+    )
+  }
+
+  return (
+    <div className="rh-layout">
+      <header className={`rh-header${menuOpen ? ' is-open' : ''}`}>
+        <div className="container rh-header-inner">
+          <Link className="rh-brand" to="/" onClick={closeMenu}>
+            {t('nav.brand')}
+          </Link>
+
+          <nav className="rh-header-nav" aria-label="Main">
+            {renderNavLinks()}
+          </nav>
+
+          <div className="rh-header-end">
+            {renderLang()}
+            {renderAuth()}
+          </div>
+
+          <button
+            type="button"
+            className="rh-toggler"
+            aria-label={menuOpen ? t('common.close') : t('common.toggleNav')}
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen((v) => !v)}
+          >
+            {menuOpen ? (
+              <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+                <path
+                  fill="currentColor"
+                  d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
+                />
+              </svg>
+            ) : (
+              <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+                <path
+                  fill="currentColor"
+                  d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"
+                />
+              </svg>
+            )}
+          </button>
+        </div>
+
+        <div className="container rh-mobile-panel">
+          <nav aria-label="Mobile">{renderNavLinks()}</nav>
+          <div className="rh-mobile-actions">
+            {renderLang()}
+            {renderAuth()}
           </div>
         </div>
-      </nav>
+
+        {menuOpen ? (
+          <button
+            type="button"
+            className="rh-mobile-backdrop"
+            aria-label={t('common.close')}
+            onClick={closeMenu}
+          />
+        ) : null}
+      </header>
 
       <main className="rh-main">
         <Outlet />
       </main>
+
+      <ScrollToTop />
 
       <footer className="rh-footer py-4 mt-auto">
         <div className="container d-flex flex-column flex-md-row justify-content-between gap-2">

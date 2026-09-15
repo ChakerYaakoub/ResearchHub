@@ -8,7 +8,7 @@ type TextInputProps = {
   helperText?: string
 } & Omit<InputHTMLAttributes<HTMLInputElement>, 'name'>
 
-/** Formik-backed Bootstrap control with label, helper, and error text. */
+/** Formik-backed Bootstrap control with stable label / message slot height. */
 export function TextInput({
   name,
   label,
@@ -20,15 +20,11 @@ export function TextInput({
   const [field, meta] = useField(name)
   const inputId = id ?? name
   const showError = Boolean(meta.touched && meta.error)
-  const describedBy = [
-    helperText ? `${inputId}-help` : null,
-    showError ? `${inputId}-error` : null,
-  ]
-    .filter(Boolean)
-    .join(' ')
+  const message = showError ? meta.error : (helperText ?? '')
+  const describedBy = message ? `${inputId}-msg` : undefined
 
   return (
-    <div className="mb-3 rh-text-input">
+    <div className="rh-text-input">
       <label className="form-label" htmlFor={inputId}>
         {label}
       </label>
@@ -44,18 +40,15 @@ export function TextInput({
           .filter(Boolean)
           .join(' ')}
         aria-invalid={showError || undefined}
-        aria-describedby={describedBy || undefined}
+        aria-describedby={describedBy}
       />
-      {helperText && !showError ? (
-        <div id={`${inputId}-help`} className="form-text">
-          {helperText}
-        </div>
-      ) : null}
-      {showError ? (
-        <div id={`${inputId}-error`} className="invalid-feedback d-block">
-          {meta.error}
-        </div>
-      ) : null}
+      <div
+        id={`${inputId}-msg`}
+        className={`rh-text-input-slot${showError ? ' is-error' : ''}`}
+        role={showError ? 'alert' : undefined}
+      >
+        {message || '\u00a0'}
+      </div>
     </div>
   )
 }
