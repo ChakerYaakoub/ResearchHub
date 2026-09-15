@@ -1,0 +1,4 @@
+/* Bootstrap form-control + invalid-feedback cover layout; hook for future tweaks. */
+.rh-text-input .form-label {
+  font-weight: 500;
+}
