@@ -6,9 +6,16 @@
     "logOut": "Déconnexion",
     "email": "E-mail",
     "password": "Mot de passe",
+    "close": "Fermer",
     "toggleNav": "Ouvrir le menu",
     "langEn": "EN",
     "langFr": "FR"
+  },
+  "validation": {
+    "emailRequired": "L'e-mail est obligatoire.",
+    "emailInvalid": "Saisissez une adresse e-mail valide.",
+    "passwordRequired": "Le mot de passe est obligatoire.",
+    "passwordMin": "Le mot de passe doit contenir au moins 8 caractères."
   },
   "errors": {
     "requestFailed": "Échec de la requête",

@@ -6,9 +6,16 @@
     "logOut": "Log out",
     "email": "Email",
     "password": "Password",
+    "close": "Close",
     "toggleNav": "Toggle navigation",
     "langEn": "EN",
     "langFr": "FR"
+  },
+  "validation": {
+    "emailRequired": "Email is required.",
+    "emailInvalid": "Enter a valid email address.",
+    "passwordRequired": "Password is required.",
+    "passwordMin": "Password must be at least 8 characters."
   },
   "errors": {
     "requestFailed": "Request failed",
