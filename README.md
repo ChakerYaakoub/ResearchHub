@@ -71,7 +71,7 @@ User → DuckDNS → Nginx → client-ui | admin-ui | Django API → PostgreSQL
 
 ## Project status
 
-**Phase 5 complete** — project authorization (roles + IDOR-safe querysets).  
+**Phase 6 complete** — project workflow transitions (services + invalid → 400).  
 **UI split done** — `client-ui` + `admin-ui` (separate origins; admin API Origin gate).
 
 ```text
@@ -85,7 +85,7 @@ deploy/           # Google Cloud / production helpers (Phase 17)
 docker-compose.yml# Local Docker Compose
 ```
 
-Next: **Phase 6** — Project workflow (status transitions).
+Next: **Phase 7** — Invitations API.
 
 ## API authentication
 
