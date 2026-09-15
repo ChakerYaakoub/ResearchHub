@@ -71,19 +71,19 @@ User → DuckDNS → Nginx → Django/React → PostgreSQL
 
 ## Project status
 
-**Phase 2 complete** — domain models and migrations (users, projects, proposals, experiments, publications, invitations).
+**Phase 3 complete** — REST API under `/api/` (projects, proposals, experiments, publications, collaborators).
 
 ```text
-backend/          # Django domain apps + config
+backend/          # Django domain apps + /api/
 frontend/         # React + TypeScript + Vite
-nginx/            # Reverse proxy configs (Phase 16)
-k8s/              # Optional Kubernetes manifests (Phase 17)
-.github/workflows/# CI/CD (Phase 14)
-deploy/           # Google Cloud / production helpers (Phase 16)
+nginx/            # Reverse proxy configs (Phase 17)
+k8s/              # Optional Kubernetes manifests (Phase 18)
+.github/workflows/# CI/CD (Phase 15)
+deploy/           # Google Cloud / production helpers (Phase 17)
 docker-compose.yml# Local Docker Compose
 ```
 
-Next: **Phase 3** — REST API.
+Next: **Phase 4** — Authentication (backend).
 
 ## Quick start (local)
 
