@@ -31,14 +31,20 @@ def send_invitation_email(invitation: Invitation) -> None:
 
 
 def _ensure_pending_and_fresh(invitation: Invitation) -> Invitation:
-    """Reject non-pending or expired invites; mark EXPIRED when past expires_at."""
+    """Reject non-pending or expired invites; mark EXPIRED when past expires_at.
+
+    Expiry is persisted with a queryset update *before* raising so it is not
+    rolled back if the caller later raises inside ``transaction.atomic``.
+    """
     if invitation.status != InvitationStatus.PENDING:
         raise InvitationError(
             f"Invitation is not pending (status={invitation.status})."
         )
     if invitation.expires_at <= timezone.now():
+        Invitation.objects.filter(
+            pk=invitation.pk, status=InvitationStatus.PENDING
+        ).update(status=InvitationStatus.EXPIRED)
         invitation.status = InvitationStatus.EXPIRED
-        invitation.save(update_fields=["status"])
         raise InvitationError("Invitation has expired.")
     return invitation
 
@@ -82,7 +88,6 @@ def create_project_invitation(
     return invitation
 
 
-@transaction.atomic
 def accept_invitation(token: str, user) -> Invitation:
     """Accept pending invite: email match → membership + ACCEPTED."""
     try:
@@ -90,6 +95,7 @@ def accept_invitation(token: str, user) -> Invitation:
     except Invitation.DoesNotExist as exc:
         raise InvitationError("Invitation not found.") from exc
 
+    # Expiry must be marked outside the atomic block so EXPIRED is not rolled back.
     _ensure_pending_and_fresh(invitation)
     _assert_email_match(invitation, user)
 
@@ -98,22 +104,22 @@ def accept_invitation(token: str, user) -> Invitation:
         if invitation.role == InvitationRole.EDITOR
         else MembershipRole.VIEWER
     )
-    membership, created = ProjectMembership.objects.get_or_create(
-        project=invitation.project,
-        user=user,
-        defaults={"role": membership_role},
-    )
-    if not created and membership.role != membership_role:
-        membership.role = membership_role
-        membership.save(update_fields=["role"])
+    with transaction.atomic():
+        membership, created = ProjectMembership.objects.get_or_create(
+            project=invitation.project,
+            user=user,
+            defaults={"role": membership_role},
+        )
+        if not created and membership.role != membership_role:
+            membership.role = membership_role
+            membership.save(update_fields=["role"])
 
-    invitation.status = InvitationStatus.ACCEPTED
-    invitation.accepted_at = timezone.now()
-    invitation.save(update_fields=["status", "accepted_at"])
+        invitation.status = InvitationStatus.ACCEPTED
+        invitation.accepted_at = timezone.now()
+        invitation.save(update_fields=["status", "accepted_at"])
     return invitation
 
 
-@transaction.atomic
 def decline_invitation(token: str, user) -> Invitation:
     """Decline pending invite; no membership."""
     try:
@@ -129,7 +135,6 @@ def decline_invitation(token: str, user) -> Invitation:
     return invitation
 
 
-@transaction.atomic
 def cancel_invitation(invitation: Invitation) -> None:
     """Owner/admin cancels a pending invitation (delete)."""
     if invitation.status != InvitationStatus.PENDING:

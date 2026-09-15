@@ -71,7 +71,7 @@ User → DuckDNS → Nginx → client-ui | admin-ui | Django API → PostgreSQL
 
 ## Project status
 
-**Phase 6 complete** — project workflow transitions (services + invalid → 400).  
+**Phase 7 complete** — invitations API (create/list/cancel/accept/decline; email stub until Phase 14).  
 **UI split done** — `client-ui` + `admin-ui` (separate origins; admin API Origin gate).
 
 ```text
@@ -85,7 +85,7 @@ deploy/           # Google Cloud / production helpers (Phase 17)
 docker-compose.yml# Local Docker Compose
 ```
 
-Next: **Phase 7** — Invitations API.
+Next: **Phase 8** — Backend tests (gate before UI).
 
 ## API authentication
 
