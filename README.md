@@ -91,8 +91,7 @@ User → DuckDNS → Nginx → client-ui | admin-ui | Django API → PostgreSQL
 
 ## Project status
 
-**Phase 8 complete** — Django/DRF backend tests (auth, IDOR, workflow, invitations); gate before UI.  
-**UI split done** — `client-ui` + `admin-ui` (separate origins; admin API Origin gate).
+**Phase 9 complete** — public `client-ui` marketing pages + JWT login/register (brand tokens, responsive).  
 
 ```text
 backend/          # Django domain apps + /api/
@@ -105,7 +104,7 @@ deploy/           # Google Cloud / production helpers (Phase 17)
 docker-compose.yml# Local Docker Compose
 ```
 
-Next: **Phase 9** — Public React website (`client-ui`).
+Next: **Phase 10** — Researcher dashboard (`client-ui`).
 
 ## API authentication
 
