@@ -4,7 +4,11 @@
  */
 import { Route, Routes } from 'react-router-dom'
 import { AppLayout } from './components/AppLayout'
+import { DocumentationPage } from './pages/Documentation'
+import { FacilitiesPage } from './pages/Facilities'
 import { HomePage } from './pages/Home'
+import { HowItWorksPage } from './pages/HowItWorks'
+import { InstrumentsPage } from './pages/Instruments'
 import './App.css'
 
 function Placeholder({ title }: { title: string }) {
@@ -20,10 +24,10 @@ function App() {
     <Routes>
       <Route element={<AppLayout />}>
         <Route path="/" element={<HomePage />} />
-        <Route path="/facilities" element={<Placeholder title="Facilities" />} />
-        <Route path="/instruments" element={<Placeholder title="Instruments" />} />
-        <Route path="/how-it-works" element={<Placeholder title="How it works" />} />
-        <Route path="/documentation" element={<Placeholder title="Documentation" />} />
+        <Route path="/facilities" element={<FacilitiesPage />} />
+        <Route path="/instruments" element={<InstrumentsPage />} />
+        <Route path="/how-it-works" element={<HowItWorksPage />} />
+        <Route path="/documentation" element={<DocumentationPage />} />
         <Route path="/login" element={<Placeholder title="Log in" />} />
         <Route path="/register" element={<Placeholder title="Register" />} />
       </Route>

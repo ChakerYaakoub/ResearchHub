@@ -1,0 +1,2 @@
+export { FacilitiesPage } from './Facilities'
+
