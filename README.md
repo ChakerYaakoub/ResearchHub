@@ -71,7 +71,7 @@ User → DuckDNS → Nginx → Django/React → PostgreSQL
 
 ## Project status
 
-**Phase 4 complete** — backend Token auth (`/api/auth/register|login|logout|me`).
+**Phase 4 complete** — backend JWT auth (SimpleJWT: access + refresh).
 
 ```text
 backend/          # Django domain apps + /api/
@@ -87,12 +87,15 @@ Next: **Phase 5** — Authorization (project IDOR / roles).
 
 ## API authentication
 
-Private endpoints use **DRF Token** auth.
+Private endpoints use **JWT** (`djangorestframework-simplejwt`).
 
 1. `POST /api/auth/register/` or `POST /api/auth/login/` with `{ "email", "password" }`
-2. Response includes `{ "token", "user" }`
-3. Send header: `Authorization: Token <token>`
-4. `POST /api/auth/logout/` deletes the token; `GET /api/auth/me/` returns the current user
+2. Response: `{ "access", "refresh", "user" }`
+3. Send header: `Authorization: Bearer <access>`
+4. Refresh: `POST /api/auth/refresh/` with `{ "refresh" }`
+5. Logout: `POST /api/auth/logout/` with `{ "refresh" }` (blacklists refresh); `GET /api/auth/me/` returns the current user
+
+JWT = authentication only. Project roles / IDOR stay in DRF permissions + querysets (Phase 5).
 
 Frontend auth client lands with login/register pages (Phase 9).
 
