@@ -22,5 +22,18 @@ services:
       retries: 10
       start_period: 10s
 
+  backend:
+    build:
+      context: ./backend
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+    depends_on:
+      postgres:
+        condition: service_healthy
+
 volumes:
   postgres_data:
