@@ -71,7 +71,7 @@ User → DuckDNS → Nginx → Django/React → PostgreSQL
 
 ## Project status
 
-**Phase 3 complete** — REST API under `/api/` (projects, proposals, experiments, publications, collaborators).
+**Phase 4 complete** — backend Token auth (`/api/auth/register|login|logout|me`).
 
 ```text
 backend/          # Django domain apps + /api/
@@ -83,7 +83,18 @@ deploy/           # Google Cloud / production helpers (Phase 17)
 docker-compose.yml# Local Docker Compose
 ```
 
-Next: **Phase 4** — Authentication (backend).
+Next: **Phase 5** — Authorization (project IDOR / roles).
+
+## API authentication
+
+Private endpoints use **DRF Token** auth.
+
+1. `POST /api/auth/register/` or `POST /api/auth/login/` with `{ "email", "password" }`
+2. Response includes `{ "token", "user" }`
+3. Send header: `Authorization: Token <token>`
+4. `POST /api/auth/logout/` deletes the token; `GET /api/auth/me/` returns the current user
+
+Frontend auth client lands with login/register pages (Phase 9).
 
 ## Quick start (local)
 
