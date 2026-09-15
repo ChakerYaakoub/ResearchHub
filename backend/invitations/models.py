@@ -1,3 +1,5 @@
+"""Project invitations by email; membership is created only on accept (Phase 7)."""
+
 import secrets
 from datetime import timedelta
 
@@ -21,14 +23,21 @@ class InvitationStatus(models.TextChoices):
 
 
 def default_invitation_token() -> str:
+    """Cryptographically secure token for accept/decline links."""
     return secrets.token_urlsafe(32)
 
 
 def default_invitation_expiry():
+    """Default lifetime: 7 days from creation."""
     return timezone.now() + timedelta(days=7)
 
 
 class Invitation(models.Model):
+    """
+    Invite does not grant access by itself.
+    Email delivery is Phase 12; token must not appear in normal project APIs.
+    """
+
     project = models.ForeignKey(
         ResearchProject,
         on_delete=models.CASCADE,
@@ -40,10 +49,7 @@ class Invitation(models.Model):
         on_delete=models.PROTECT,
         related_name="sent_invitations",
     )
-    role = models.CharField(
-        max_length=20,
-        choices=InvitationRole.choices,
-    )
+    role = models.CharField(max_length=20, choices=InvitationRole.choices)
     token = models.CharField(
         max_length=64,
         unique=True,

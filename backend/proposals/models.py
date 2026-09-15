@@ -1,3 +1,5 @@
+"""Scientific proposal — one per project (MVP)."""
+
 from django.db import models
 
 from projects.models import ResearchProject
@@ -10,6 +12,8 @@ class ProposalStatus(models.TextChoices):
 
 
 class Proposal(models.Model):
+    """Methodology / expected results; review fields filled when admins act."""
+
     project = models.OneToOneField(
         ResearchProject,
         on_delete=models.CASCADE,

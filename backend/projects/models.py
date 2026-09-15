@@ -1,8 +1,12 @@
+"""Research projects and collaborator memberships."""
+
 from django.conf import settings
 from django.db import models
 
 
 class ProjectStatus(models.TextChoices):
+    """Project lifecycle (invalid transitions rejected in Phase 6)."""
+
     DRAFT = "DRAFT", "Draft"
     SUBMITTED = "SUBMITTED", "Submitted"
     UNDER_REVIEW = "UNDER_REVIEW", "Under review"
@@ -13,12 +17,16 @@ class ProjectStatus(models.TextChoices):
 
 
 class MembershipRole(models.TextChoices):
+    """Role inside one project (OWNER recommended for uniform authz checks)."""
+
     OWNER = "OWNER", "Owner"
     EDITOR = "EDITOR", "Editor"
     VIEWER = "VIEWER", "Viewer"
 
 
 class ResearchProject(models.Model):
+    """Scientific project owned by a user; collaborators via ProjectMembership."""
+
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     scientific_objective = models.TextField(blank=True)
@@ -43,6 +51,11 @@ class ResearchProject(models.Model):
 
 
 class ProjectMembership(models.Model):
+    """
+    User↔project link with a project role.
+    Created on invitation accept (Phase 7); unique per (project, user).
+    """
+
     project = models.ForeignKey(
         ResearchProject,
         on_delete=models.CASCADE,
@@ -53,10 +66,7 @@ class ProjectMembership(models.Model):
         on_delete=models.CASCADE,
         related_name="project_memberships",
     )
-    role = models.CharField(
-        max_length=20,
-        choices=MembershipRole.choices,
-    )
+    role = models.CharField(max_length=20, choices=MembershipRole.choices)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

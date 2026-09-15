@@ -1,3 +1,7 @@
+/**
+ * Top-level routes. Domain pages land in later phases.
+ * VITE_API_BASE_URL is public API origin from Compose/env.
+ */
 import { Route, Routes } from 'react-router-dom'
 import './App.css'
 

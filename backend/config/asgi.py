@@ -1,3 +1,5 @@
+"""ASGI entry (available for async servers; local dev uses WSGI)."""
+
 import os
 
 from django.core.asgi import get_asgi_application

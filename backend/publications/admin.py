@@ -1,3 +1,5 @@
+"""Django admin for publications."""
+
 from django.contrib import admin
 
 from .models import Publication

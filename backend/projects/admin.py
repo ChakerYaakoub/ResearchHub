@@ -1,3 +1,5 @@
+"""Django admin for projects and memberships."""
+
 from django.contrib import admin
 
 from .models import ProjectMembership, ResearchProject

@@ -1,3 +1,5 @@
+"""Django admin for invitations (token is read-only)."""
+
 from django.contrib import admin
 
 from .models import Invitation

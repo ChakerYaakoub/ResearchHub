@@ -1,3 +1,5 @@
+"""Experiments scheduled against a project (instrument is free text for MVP)."""
+
 from django.db import models
 
 from projects.models import ResearchProject

@@ -1,8 +1,8 @@
-# Local development Compose — Docker-first.
-# Services: frontend, backend, postgres
-# Production adds Nginx later (Phase 16); keep this file focused on local dev.
+# Local development stack (Docker-first).
+# Production Nginx is Phase 16 — keep this file for local only.
 
 services:
+  # PostgreSQL — DATABASE_* from .env; healthcheck gates backend start.
   postgres:
     image: postgres:16-alpine
     env_file:
@@ -22,6 +22,7 @@ services:
       retries: 10
       start_period: 10s
 
+  # Django API — bind-mount for live code reload.
   backend:
     build:
       context: ./backend
@@ -35,6 +36,7 @@ services:
       postgres:
         condition: service_healthy
 
+  # Vite React app — anonymous volume keeps Linux node_modules in the container.
   frontend:
     build:
       context: ./frontend

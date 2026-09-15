@@ -1,3 +1,4 @@
+# Dev image: Python deps + migrate on start, then runserver.
 FROM python:3.12-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1
