@@ -1,5 +1,26 @@
-# Local development Compose — filled in Phase 1 (Docker-first).
-# Intended services: frontend, backend, postgres
+# Local development Compose — Docker-first.
+# Services: frontend, backend, postgres
 # Production adds Nginx later (Phase 16); keep this file focused on local dev.
 
-services: {}
+services:
+  postgres:
+    image: postgres:16-alpine
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: ${DATABASE_NAME}
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USER} -d ${DATABASE_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+volumes:
+  postgres_data:
