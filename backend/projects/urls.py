@@ -7,6 +7,7 @@ from .views import (
     AdminStatsView,
     ProjectCollaboratorDeleteView,
     ProjectCollaboratorListView,
+    ProjectCompleteView,
     ResearchProjectViewSet,
 )
 
@@ -23,6 +24,11 @@ urlpatterns = [
         "projects/<int:project_pk>/collaborators/<int:user_id>/",
         ProjectCollaboratorDeleteView.as_view(),
         name="project-collaborator-delete",
+    ),
+    path(
+        "projects/<int:project_pk>/complete/",
+        ProjectCompleteView.as_view(),
+        name="project-complete",
     ),
     path("admin/stats/", AdminStatsView.as_view(), name="admin-stats"),
     *router.urls,
