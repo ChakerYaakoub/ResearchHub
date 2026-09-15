@@ -71,7 +71,7 @@ User → DuckDNS → Nginx → Django/React → PostgreSQL
 
 ## Project status
 
-**Phase 4 complete** — backend JWT auth (SimpleJWT: access + refresh).
+**Phase 5 complete** — project authorization (roles + IDOR-safe querysets).
 
 ```text
 backend/          # Django domain apps + /api/
@@ -83,7 +83,7 @@ deploy/           # Google Cloud / production helpers (Phase 17)
 docker-compose.yml# Local Docker Compose
 ```
 
-Next: **Phase 5** — Authorization (project IDOR / roles).
+Next: **Phase 6** — Project workflow (status transitions).
 
 ## API authentication
 
@@ -95,7 +95,12 @@ Private endpoints use **JWT** (`djangorestframework-simplejwt`).
 4. Refresh: `POST /api/auth/refresh/` with `{ "refresh" }`
 5. Logout: `POST /api/auth/logout/` with `{ "refresh" }` (blacklists refresh); `GET /api/auth/me/` returns the current user
 
-JWT = authentication only. Project roles / IDOR stay in DRF permissions + querysets (Phase 5).
+JWT = authentication only. Authorization uses DRF permissions + IDOR-safe querysets:
+
+- **VIEWER+** — read project and nested resources
+- **OWNER / EDITOR / ADMIN** — write proposal, experiments, publications
+- **OWNER / ADMIN** — delete project; remove collaborators (not the owner)
+- **ADMIN** — approve/reject proposals; `/api/admin/stats/`
 
 Frontend auth client lands with login/register pages (Phase 9).
 
