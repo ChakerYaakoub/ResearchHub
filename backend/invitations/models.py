@@ -35,7 +35,7 @@ def default_invitation_expiry():
 class Invitation(models.Model):
     """
     Invite does not grant access by itself.
-    Email delivery is Phase 12; token must not appear in normal project APIs.
+    Email delivery is Phase 14; token must not appear in normal project list APIs.
     """
 
     project = models.ForeignKey(
