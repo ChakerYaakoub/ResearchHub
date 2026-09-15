@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import './Home.css'
 
 type HomeStep = { title: string; body: string }
@@ -7,6 +7,7 @@ type HomeStep = { title: string; body: string }
 /** Marketing home — brand-first hero and workflow overview. */
 export function HomePage() {
   const { t } = useTranslation()
+  const location = useLocation()
   const steps = t('home.steps', { returnObjects: true }) as HomeStep[]
 
   return (
@@ -23,7 +24,11 @@ export function HomePage() {
             {t('home.hero.support')}
           </p>
           <div className="d-flex flex-wrap gap-2">
-            <Link className="btn btn-primary" to="/register">
+            <Link
+              className="btn btn-primary"
+              to="/register"
+              state={{ background: location }}
+            >
               {t('home.hero.ctaRegister')}
             </Link>
             <Link className="btn btn-outline-secondary" to="/how-it-works">

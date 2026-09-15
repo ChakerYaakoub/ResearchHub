@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link, NavLink, Outlet } from 'react-router-dom'
+import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
 import { useAuth } from '../../auth'
 import { setAppLanguage, type AppLanguage } from '../../i18n'
 import './AppLayout.css'
@@ -15,6 +15,7 @@ const NAV_LINKS = [
 /** Public shell: responsive navbar, page outlet, footer, language switcher. */
 export function AppLayout() {
   const { t, i18n } = useTranslation()
+  const location = useLocation()
   const [open, setOpen] = useState(false)
   const { user, isAuthenticated, logout } = useAuth()
   const current = (i18n.language?.startsWith('fr') ? 'fr' : 'en') as AppLanguage
@@ -97,6 +98,7 @@ export function AppLayout() {
                   <Link
                     className="btn btn-outline-secondary btn-sm"
                     to="/login"
+                    state={{ background: location }}
                     onClick={close}
                   >
                     {t('common.logIn')}
@@ -104,6 +106,7 @@ export function AppLayout() {
                   <Link
                     className="btn btn-primary btn-sm"
                     to="/register"
+                    state={{ background: location }}
                     onClick={close}
                   >
                     {t('common.register')}
