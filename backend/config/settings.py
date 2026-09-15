@@ -32,6 +32,9 @@ INSTALLED_APPS = [
     "rest_framework",
     "users",
     "projects",
+    "proposals",
+    "experiments",
+    "publications",
 ]
 
 AUTH_USER_MODEL = "users.User"
