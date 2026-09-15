@@ -141,7 +141,12 @@ make createsuperuser    # Django superuser
 make clean              # down -v (destroys DB volume)
 ```
 
-Environment variables are documented in `.env.example`. Do not commit real credentials.
+Environment variables:
+
+- **Docker / full stack:** copy root [`.env.example`](.env.example) → `.env` (Compose uses this)
+- **Per project:** [`backend/.env.example`](backend/.env.example), [`client-ui/.env.example`](client-ui/.env.example), [`admin-ui/.env.example`](admin-ui/.env.example)
+
+Do not commit real credentials. If you change a UI port, also update `CORS_ALLOWED_ORIGINS`, `CSRF_TRUSTED_ORIGINS`, and `ADMIN_UI_ORIGINS`.
 
 ## Security highlights
 
