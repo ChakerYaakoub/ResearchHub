@@ -91,8 +91,10 @@ Docker is the only required host dependency. Do not install Python, Node, or Pos
 
 ```bash
 cp .env.example .env
-docker compose up --build
+make start
 ```
+
+Or without Make: `docker compose up --build -d`.
 
 | Service  | URL                    |
 |----------|------------------------|
@@ -100,13 +102,17 @@ docker compose up --build
 | Backend  | http://localhost:8000  |
 | Admin    | http://localhost:8000/admin/ |
 
-Useful commands:
+Useful Make targets (`make help` for the full list):
 
 ```bash
-docker compose exec backend python manage.py migrate
-docker compose exec backend python manage.py createsuperuser
-docker compose logs -f
-docker compose down
+make start              # up --build -d
+make stop               # stop containers
+make down               # stop + remove containers
+make logs               # follow logs
+make shell-backend      # shell into backend
+make migrate            # Django migrate
+make createsuperuser    # Django superuser
+make clean              # down -v (destroys DB volume)
 ```
 
 Environment variables are documented in `.env.example`. Do not commit real credentials.
