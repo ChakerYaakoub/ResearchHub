@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     # Third-party
     "corsheaders",  # Vite (other origin) → API
     "rest_framework",  # REST API (Phase 3+)
+    "rest_framework.authtoken",  # Token auth for SPA clients (Phase 4)
     # ResearchHub
     "users",
     "projects",
@@ -132,13 +133,13 @@ EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS", "True").lower() in ("1", "true",
 EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "")
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "")
 
-# Private APIs require login; Phase 4 adds register/login, Phase 5 hardens project IDOR.
+# Token auth for API clients; Session keeps browsable API usable.
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
     ],
     "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
         "rest_framework.authentication.SessionAuthentication",
-        "rest_framework.authentication.BasicAuthentication",
     ],
 }
