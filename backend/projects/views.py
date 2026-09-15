@@ -21,6 +21,7 @@ from .permissions import (
 )
 from .selectors import get_visible_project, projects_visible_to
 from .serializers import ProjectMembershipSerializer, ResearchProjectSerializer
+from .services import WorkflowError, complete_project
 
 
 class ResearchProjectViewSet(viewsets.ModelViewSet):
@@ -82,6 +83,24 @@ class ProjectCollaboratorDeleteView(APIView):
             )
         membership.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class ProjectCompleteView(APIView):
+    """POST `/api/projects/{id}/complete/` — editor+; IN_PROGRESS → COMPLETED."""
+
+    permission_classes = [IsAuthenticated, IsProjectEditor]
+
+    def post(self, request, project_pk: int):
+        project = get_visible_project(request.user, project_pk)
+        self.check_object_permissions(request, project)
+        try:
+            project = complete_project(project)
+        except WorkflowError as exc:
+            return Response(
+                {"detail": exc.detail},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        return Response(ResearchProjectSerializer(project).data)
 
 
 class AdminStatsView(APIView):

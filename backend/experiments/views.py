@@ -5,8 +5,10 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from projects.models import ProjectStatus
 from projects.permissions import IsProjectMemberReadEditorWrite
 from projects.selectors import get_visible_experiment, get_visible_project
+from projects.services import WorkflowError, start_project
 
 from .serializers import ExperimentSerializer
 
@@ -28,6 +30,15 @@ class ProjectExperimentListCreateView(APIView):
         serializer = ExperimentSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         experiment = serializer.save(project=project)
+        # First experiment after approval starts the project.
+        if project.status == ProjectStatus.APPROVED:
+            try:
+                start_project(project)
+            except WorkflowError as exc:
+                return Response(
+                    {"detail": exc.detail},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
         return Response(ExperimentSerializer(experiment).data, status=status.HTTP_201_CREATED)
 
 

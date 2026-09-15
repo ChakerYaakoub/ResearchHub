@@ -1,7 +1,6 @@
-"""Proposal REST endpoints (thin status updates; Phase 6 hardens transitions)."""
+"""Proposal REST endpoints — thin views; workflow in services (Phase 6)."""
 
 from django.shortcuts import get_object_or_404
-from django.utils import timezone
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -15,9 +14,15 @@ from projects.permissions import (
     IsProjectMemberReadEditorWrite,
 )
 from projects.selectors import get_visible_project
+from projects.services import WorkflowError
 
-from .models import Proposal, ProposalStatus
+from .models import Proposal
 from .serializers import ProposalReviewSerializer, ProposalSerializer
+from .services import approve_proposal, reject_proposal, submit_proposal
+
+
+def _workflow_error_response(exc: WorkflowError) -> Response:
+    return Response({"detail": exc.detail}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ProjectProposalView(APIView):
@@ -34,6 +39,11 @@ class ProjectProposalView(APIView):
     def post(self, request, project_pk: int):
         project = get_visible_project(request.user, project_pk)
         self.check_object_permissions(request, project)
+        if project.status != ProjectStatus.DRAFT:
+            return Response(
+                {"detail": "Proposal can only be created when project is DRAFT."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         if hasattr(project, "proposal"):
             return Response(
                 {"detail": "Proposal already exists for this project."},
@@ -47,6 +57,11 @@ class ProjectProposalView(APIView):
     def put(self, request, project_pk: int):
         project = get_visible_project(request.user, project_pk)
         self.check_object_permissions(request, project)
+        if project.status != ProjectStatus.DRAFT:
+            return Response(
+                {"detail": "Proposal can only be edited when project is DRAFT."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         proposal = get_object_or_404(Proposal, project=project)
         serializer = ProposalSerializer(proposal, data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -62,12 +77,10 @@ class ProjectProposalSubmitView(APIView):
     def post(self, request, project_pk: int):
         project = get_visible_project(request.user, project_pk)
         self.check_object_permissions(request, project)
-        proposal = get_object_or_404(Proposal, project=project)
-        proposal.status = ProposalStatus.PENDING
-        proposal.submitted_at = timezone.now()
-        proposal.save(update_fields=["status", "submitted_at"])
-        project.status = ProjectStatus.SUBMITTED
-        project.save(update_fields=["status", "updated_at"])
+        try:
+            proposal = submit_proposal(project)
+        except WorkflowError as exc:
+            return _workflow_error_response(exc)
         return Response(ProposalSerializer(proposal).data)
 
 
@@ -83,13 +96,13 @@ class ProposalApproveView(APIView):
         )
         body = ProposalReviewSerializer(data=request.data)
         body.is_valid(raise_exception=True)
-        proposal.status = ProposalStatus.APPROVED
-        proposal.reviewed_at = timezone.now()
-        proposal.review_comment = body.validated_data.get("review_comment", "")
-        proposal.save(update_fields=["status", "reviewed_at", "review_comment"])
-        project = proposal.project
-        project.status = ProjectStatus.APPROVED
-        project.save(update_fields=["status", "updated_at"])
+        try:
+            proposal = approve_proposal(
+                proposal,
+                review_comment=body.validated_data.get("review_comment", ""),
+            )
+        except WorkflowError as exc:
+            return _workflow_error_response(exc)
         return Response(ProposalSerializer(proposal).data)
 
 
@@ -105,11 +118,11 @@ class ProposalRejectView(APIView):
         )
         body = ProposalReviewSerializer(data=request.data)
         body.is_valid(raise_exception=True)
-        proposal.status = ProposalStatus.REJECTED
-        proposal.reviewed_at = timezone.now()
-        proposal.review_comment = body.validated_data.get("review_comment", "")
-        proposal.save(update_fields=["status", "reviewed_at", "review_comment"])
-        project = proposal.project
-        project.status = ProjectStatus.REJECTED
-        project.save(update_fields=["status", "updated_at"])
+        try:
+            proposal = reject_proposal(
+                proposal,
+                review_comment=body.validated_data.get("review_comment", ""),
+            )
+        except WorkflowError as exc:
+            return _workflow_error_response(exc)
         return Response(ProposalSerializer(proposal).data)
