@@ -1,0 +1,57 @@
+# Environment
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+.venv/
+env/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+*.log
+
+# Django
+backend/staticfiles/
+backend/media/
+*.sqlite3
+
+# Node / frontend
+node_modules/
+frontend/dist/
+frontend/build/
+*.tsbuildinfo
+.npm
+.vite/
+
+# Docker
+*.pid
+
+# IDE / OS
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Local AI / agent scaffolding (not part of the public repo)
+.cursor/
+docs/
+AGENTS.md
+
+# Local phase task plans (never commit)
+PLAN.md
+**/PLAN.md
+
+# Secrets / keys
+*.pem
+secrets/

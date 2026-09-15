@@ -1,0 +1,5 @@
+# Local development Compose — filled in Phase 1 (Docker-first).
+# Intended services: frontend, backend, postgres
+# Production adds Nginx later (Phase 16); keep this file focused on local dev.
+
+services: {}
