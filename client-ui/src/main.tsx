@@ -1,10 +1,11 @@
 /**
- * App bootstrap: React root, BrowserRouter, Bootstrap CSS.
+ * App bootstrap: React root, BrowserRouter, Bootstrap CSS, i18n.
  */
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import 'bootstrap/dist/css/bootstrap.min.css'
+import './i18n'
 import './index.css'
 import App from './App.tsx'
 

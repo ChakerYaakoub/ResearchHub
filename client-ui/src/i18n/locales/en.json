@@ -1,0 +1,165 @@
+{
+  "common": {
+    "brand": "ResearchHub",
+    "logIn": "Log in",
+    "register": "Register",
+    "logOut": "Log out",
+    "email": "Email",
+    "password": "Password",
+    "toggleNav": "Toggle navigation",
+    "langEn": "EN",
+    "langFr": "FR"
+  },
+  "errors": {
+    "requestFailed": "Request failed",
+    "loginFailed": "Login failed.",
+    "registerFailed": "Registration failed."
+  },
+  "nav": {
+    "brand": "ResearchHub",
+    "facilities": "Facilities",
+    "instruments": "Instruments",
+    "howItWorks": "How it works",
+    "documentation": "Documentation",
+    "footerTagline": "ResearchHub — scientific project & experiment management",
+    "copyrightPrefix": "©"
+  },
+  "home": {
+    "hero": {
+      "brand": "ResearchHub",
+      "headline": "Manage proposals, experiments, and publications in one place",
+      "support": "Create a scientific project, submit it for review, schedule experiments, and invite collaborators.",
+      "ctaRegister": "Get started",
+      "ctaHowItWorks": "How it works"
+    },
+    "stepsHeading": "From proposal to publication",
+    "stepLabel": "Step {{n}}",
+    "steps": [
+      {
+        "title": "Propose",
+        "body": "Draft your project and proposal with clear scientific objectives."
+      },
+      {
+        "title": "Review",
+        "body": "Submit for scientific review and track approval status."
+      },
+      {
+        "title": "Experiment",
+        "body": "Schedule instrument time and record experiment notes."
+      },
+      {
+        "title": "Publish",
+        "body": "Link publications and mark the project complete."
+      }
+    ]
+  },
+  "facilities": {
+    "title": "Facilities",
+    "intro": "ResearchHub lists fictional research facilities so teams can practice proposal workflows without a live beamline booking system.",
+    "items": [
+      {
+        "name": "North Ridge Light Laboratory",
+        "focus": "Soft X-ray spectroscopy and materials science"
+      },
+      {
+        "name": "Coastal Imaging Centre",
+        "focus": "Imaging and structural biology support labs"
+      },
+      {
+        "name": "Alpine Neutron Hub",
+        "focus": "Sample environment and complementary techniques"
+      }
+    ]
+  },
+  "instruments": {
+    "title": "Instruments",
+    "intro": "Instruments below are fictional stand-ins for beamlines and end-stations used when drafting experiment plans.",
+    "items": [
+      {
+        "name": "XR-Alpha",
+        "energy": "Soft X-ray",
+        "use": "Absorption spectroscopy and dichroism"
+      },
+      {
+        "name": "IMG-Beta",
+        "energy": "Hard X-ray",
+        "use": "Microscopy and tomography"
+      },
+      {
+        "name": "IR-Gamma",
+        "energy": "Infrared",
+        "use": "Vibrational spectroscopy of materials"
+      },
+      {
+        "name": "UV-Delta",
+        "energy": "VUV",
+        "use": "Gas-phase and surface photochemistry"
+      }
+    ]
+  },
+  "howItWorks": {
+    "title": "How it works",
+    "intro": "ResearchHub follows a simple project lifecycle. Invalid status jumps are blocked on the server.",
+    "steps": [
+      {
+        "status": "DRAFT",
+        "title": "Create a project",
+        "body": "Describe the science case and prepare a proposal while the project is still a draft."
+      },
+      {
+        "status": "UNDER_REVIEW",
+        "title": "Submit for review",
+        "body": "Editors submit the proposal. Platform admins approve or reject from the admin app."
+      },
+      {
+        "status": "APPROVED",
+        "title": "Plan experiments",
+        "body": "After approval, schedule instruments and start experimental work."
+      },
+      {
+        "status": "COMPLETED",
+        "title": "Publish and close",
+        "body": "Attach publications and mark the project complete when the campaign is done."
+      }
+    ]
+  },
+  "documentation": {
+    "title": "Documentation",
+    "intro": "Public overview of ResearchHub concepts. Detailed API docs live with the backend team; this page is for researchers discovering the platform.",
+    "sections": [
+      {
+        "title": "Accounts",
+        "body": "Register with email and password. Sessions use JWT access and refresh tokens stored in this browser origin only."
+      },
+      {
+        "title": "Projects & roles",
+        "body": "Owners manage invitations and collaborators. Editors can edit content; viewers have read-only access."
+      },
+      {
+        "title": "Invitations",
+        "body": "Owners invite by email. Access is granted only after the invitee accepts with a matching account email."
+      },
+      {
+        "title": "Admin review",
+        "body": "Platform admins approve or reject proposals from a separate admin application."
+      }
+    ]
+  },
+  "login": {
+    "title": "Log in",
+    "subtitle": "Use your ResearchHub email and password.",
+    "submit": "Log in",
+    "submitting": "Signing in…",
+    "noAccount": "No account?",
+    "registerLink": "Register"
+  },
+  "register": {
+    "title": "Register",
+    "subtitle": "Create a researcher account to manage projects.",
+    "passwordHint": "Use a strong password (8+ characters).",
+    "submit": "Create account",
+    "submitting": "Creating account…",
+    "haveAccount": "Already registered?",
+    "loginLink": "Log in"
+  }
+}
