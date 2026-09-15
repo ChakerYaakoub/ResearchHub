@@ -7,6 +7,7 @@ also reads a local `.env` for tooling outside Compose.
 """
 
 import os
+from datetime import timedelta
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -35,6 +36,8 @@ INSTALLED_APPS = [
     # Third-party
     "corsheaders",  # Vite (other origin) → API
     "rest_framework",  # REST API (Phase 3+)
+    "rest_framework_simplejwt",  # JWT access/refresh for SPA (Phase 4)
+    "rest_framework_simplejwt.token_blacklist",  # logout invalidates refresh tokens
     # ResearchHub
     "users",
     "projects",
@@ -128,17 +131,27 @@ DEFAULT_FROM_EMAIL = os.environ.get(
 )
 EMAIL_HOST = os.environ.get("EMAIL_HOST", "")
 EMAIL_PORT = int(os.environ.get("EMAIL_PORT", "587"))
-EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS", "True").lower() in ("1", "true", "yes")
+EMAIL_USE_TLS = os.environ.get(
+    "EMAIL_USE_TLS", "True").lower() in ("1", "true", "yes")
 EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "")
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "")
 
-# Private APIs require login; Phase 4 adds register/login, Phase 5 hardens project IDOR.
+# JWT for SPA clients; Session keeps browsable API usable.
+# AuthN = JWT; AuthZ = DRF permissions + filtered querysets (Phase 5).
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
     ],
     "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
         "rest_framework.authentication.SessionAuthentication",
-        "rest_framework.authentication.BasicAuthentication",
     ],
+}
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
+    "AUTH_HEADER_TYPES": ("Bearer",),
 }
