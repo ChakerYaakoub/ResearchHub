@@ -1,0 +1,74 @@
+.rh-navbar {
+  background: var(--rh-surface);
+  border-bottom: 1px solid var(--rh-border);
+}
+
+.rh-brand {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--rh-primary) !important;
+  text-decoration: none;
+}
+
+.rh-brand:hover {
+  color: var(--rh-primary-hover) !important;
+}
+
+.rh-nav-link {
+  color: var(--rh-text) !important;
+}
+
+.rh-nav-link.active {
+  color: var(--rh-accent) !important;
+  font-weight: 600;
+}
+
+.rh-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.rh-main {
+  flex: 1;
+}
+
+.rh-footer {
+  background: var(--rh-surface);
+  border-top: 1px solid var(--rh-border);
+  color: var(--rh-text-muted);
+  font-size: 0.9rem;
+}
+
+.rh-toggler {
+  border: 1px solid var(--rh-border);
+  background: transparent;
+  padding: 0.35rem 0.6rem;
+  border-radius: 0.25rem;
+}
+
+.rh-toggler-icon {
+  display: block;
+  width: 1.25rem;
+  height: 2px;
+  background: var(--rh-text);
+  position: relative;
+}
+
+.rh-toggler-icon::before,
+.rh-toggler-icon::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--rh-text);
+}
+
+.rh-toggler-icon::before {
+  top: -6px;
+}
+
+.rh-toggler-icon::after {
+  top: 6px;
+}

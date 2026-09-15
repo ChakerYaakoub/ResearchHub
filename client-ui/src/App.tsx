@@ -1,30 +1,32 @@
 /**
- * Client app scaffold: marketing + login (Phase 9) and researcher dashboard (10–11).
- * Tokens stay on this origin only. Admin uses admin-ui separately.
+ * Client app: marketing + login (Phase 9). Dashboard is Phase 10.
+ * Tokens stay on this origin only.
  */
 import { Route, Routes } from 'react-router-dom'
+import { AppLayout } from './components/AppLayout'
+import { HomePage } from './pages/Home'
 import './App.css'
 
-const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? ''
-
-function HomePage() {
+function Placeholder({ title }: { title: string }) {
   return (
-    <main className="container py-5">
-      <h1 className="display-5">ResearchHub</h1>
-      <p className="lead text-secondary">
-        Client app — public pages, login, and researcher dashboard
-      </p>
-      <p className="text-muted small mb-0">
-        Client UI · API base: {apiBaseUrl || '(not set)'}
-      </p>
-    </main>
+    <div className="container py-5">
+      <h1 className="h2">{title}</h1>
+    </div>
   )
 }
 
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<HomePage />} />
+      <Route element={<AppLayout />}>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/facilities" element={<Placeholder title="Facilities" />} />
+        <Route path="/instruments" element={<Placeholder title="Instruments" />} />
+        <Route path="/how-it-works" element={<Placeholder title="How it works" />} />
+        <Route path="/documentation" element={<Placeholder title="Documentation" />} />
+        <Route path="/login" element={<Placeholder title="Log in" />} />
+        <Route path="/register" element={<Placeholder title="Register" />} />
+      </Route>
     </Routes>
   )
 }
