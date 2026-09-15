@@ -1,6 +1,6 @@
 /**
- * Top-level routes. Domain pages land in later phases.
- * VITE_API_BASE_URL is public API origin from Compose/env.
+ * Client app scaffold: marketing + login (Phase 9) and researcher dashboard (10–11).
+ * Tokens stay on this origin only. Admin uses admin-ui separately.
  */
 import { Route, Routes } from 'react-router-dom'
 import './App.css'
@@ -12,10 +12,10 @@ function HomePage() {
     <main className="container py-5">
       <h1 className="display-5">ResearchHub</h1>
       <p className="lead text-secondary">
-        Simplified Scientific Proposal &amp; Experiment Management
+        Client app — public pages, login, and researcher dashboard
       </p>
       <p className="text-muted small mb-0">
-        API base: {apiBaseUrl || '(not set)'}
+        Client UI · API base: {apiBaseUrl || '(not set)'}
       </p>
     </main>
   )

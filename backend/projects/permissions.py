@@ -1,5 +1,8 @@
 """DRF permission classes for project-scoped AuthZ."""
 
+from urllib.parse import urlparse
+
+from django.conf import settings
 from rest_framework.permissions import BasePermission, SAFE_METHODS
 
 from .models import MembershipRole, ResearchProject
@@ -13,6 +16,38 @@ def _project_from_obj(obj) -> ResearchProject | None:
     if isinstance(obj, ResearchProject):
         return obj
     return getattr(obj, "project", None)
+
+
+def _request_origin(request) -> str | None:
+    """Browser Origin, or scheme+netloc from Referer as fallback."""
+    origin = request.headers.get("Origin")
+    if origin:
+        return origin.rstrip("/")
+    referer = request.headers.get("Referer")
+    if not referer:
+        return None
+    parsed = urlparse(referer)
+    if not parsed.scheme or not parsed.netloc:
+        return None
+    return f"{parsed.scheme}://{parsed.netloc}"
+
+
+class IsAdminUiOrigin(BasePermission):
+    """
+    Require Origin (or Referer) to match ADMIN_UI_ORIGINS when that list is set.
+    Does not replace IsPlatformAdmin — stack both on admin routes.
+    """
+
+    message = "Admin API calls must come from the admin UI origin."
+
+    def has_permission(self, request, view) -> bool:
+        allowed = [o.rstrip("/") for o in getattr(settings, "ADMIN_UI_ORIGINS", [])]
+        if not allowed:
+            return True
+        origin = _request_origin(request)
+        if origin is None:
+            return False
+        return origin in allowed
 
 
 class IsPlatformAdmin(BasePermission):

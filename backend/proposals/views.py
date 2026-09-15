@@ -9,6 +9,7 @@ from rest_framework.views import APIView
 
 from projects.models import ProjectStatus
 from projects.permissions import (
+    IsAdminUiOrigin,
     IsPlatformAdmin,
     IsProjectEditor,
     IsProjectMemberReadEditorWrite,
@@ -71,9 +72,9 @@ class ProjectProposalSubmitView(APIView):
 
 
 class ProposalApproveView(APIView):
-    """POST `/api/proposals/{id}/approve/` — platform ADMIN only."""
+    """POST `/api/proposals/{id}/approve/` — platform ADMIN from admin-ui origin."""
 
-    permission_classes = [IsAuthenticated, IsPlatformAdmin]
+    permission_classes = [IsAuthenticated, IsAdminUiOrigin, IsPlatformAdmin]
 
     def post(self, request, pk: int):
         proposal = get_object_or_404(
@@ -93,9 +94,9 @@ class ProposalApproveView(APIView):
 
 
 class ProposalRejectView(APIView):
-    """POST `/api/proposals/{id}/reject/` — platform ADMIN only."""
+    """POST `/api/proposals/{id}/reject/` — platform ADMIN from admin-ui origin."""
 
-    permission_classes = [IsAuthenticated, IsPlatformAdmin]
+    permission_classes = [IsAuthenticated, IsAdminUiOrigin, IsPlatformAdmin]
 
     def post(self, request, pk: int):
         proposal = get_object_or_404(
