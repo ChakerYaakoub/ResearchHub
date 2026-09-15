@@ -1,13 +1,13 @@
 import { useState, type FormEvent } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { ApiError } from '../../api/client'
 import { useAuth } from '../../auth'
-import { common, errors } from '../../strings'
-import { loginPage } from './strings'
 import './Login.css'
 
 /** Email/password login against `/api/auth/login/`. */
 export function LoginPage() {
+  const { t } = useTranslation()
   const { login, isAuthenticated } = useAuth()
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
@@ -27,7 +27,7 @@ export function LoginPage() {
       await login(email.trim(), password)
       navigate('/', { replace: true })
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : errors.loginFailed)
+      setError(err instanceof ApiError ? err.message : t('errors.loginFailed'))
     } finally {
       setPending(false)
     }
@@ -37,8 +37,8 @@ export function LoginPage() {
     <div className="container py-5">
       <div className="auth-page mx-auto">
         <div className="auth-card p-4">
-          <h1 className="auth-title h3 mb-3">{loginPage.title}</h1>
-          <p className="text-muted small mb-4">{loginPage.subtitle}</p>
+          <h1 className="auth-title h3 mb-3">{t('login.title')}</h1>
+          <p className="text-muted small mb-4">{t('login.subtitle')}</p>
           {error ? (
             <div className="alert alert-danger py-2" role="alert">
               {error}
@@ -47,7 +47,7 @@ export function LoginPage() {
           <form onSubmit={onSubmit} noValidate>
             <div className="mb-3">
               <label className="form-label" htmlFor="login-email">
-                {common.email}
+                {t('common.email')}
               </label>
               <input
                 id="login-email"
@@ -61,7 +61,7 @@ export function LoginPage() {
             </div>
             <div className="mb-4">
               <label className="form-label" htmlFor="login-password">
-                {common.password}
+                {t('common.password')}
               </label>
               <input
                 id="login-password"
@@ -78,12 +78,12 @@ export function LoginPage() {
               type="submit"
               disabled={pending}
             >
-              {pending ? loginPage.submitting : loginPage.submit}
+              {pending ? t('login.submitting') : t('login.submit')}
             </button>
           </form>
           <p className="mt-3 mb-0 small text-muted">
-            {loginPage.noAccount}{' '}
-            <Link to="/register">{loginPage.registerLink}</Link>
+            {t('login.noAccount')}{' '}
+            <Link to="/register">{t('login.registerLink')}</Link>
           </p>
         </div>
       </div>

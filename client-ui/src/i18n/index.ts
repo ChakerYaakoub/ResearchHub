@@ -32,4 +32,7 @@ export async function setAppLanguage(lng: AppLanguage): Promise<void> {
   localStorage.setItem(I18N_STORAGE_KEY, lng)
 }
 
+export type { AppLanguage }
+export { supportedLngs, fallbackLng, I18N_STORAGE_KEY, detectInitialLanguage }
+
 export default i18n

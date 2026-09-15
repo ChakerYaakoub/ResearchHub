@@ -1,4 +1,4 @@
-import { errors } from '../strings'
+import i18n from '../i18n'
 
 /** Thin fetch wrapper for ResearchHub REST API. */
 
@@ -16,11 +16,9 @@ export class ApiError extends Error {
 }
 
 /** Pull a human-readable message from DRF error payloads. */
-export function formatApiError(
-  body: unknown,
-  fallback: string = errors.requestFailed,
-): string {
-  if (!body || typeof body !== 'object') return fallback
+export function formatApiError(body: unknown, fallback?: string): string {
+  const fb = fallback ?? i18n.t('errors.requestFailed')
+  if (!body || typeof body !== 'object') return fb
   const data = body as Record<string, unknown>
   if (typeof data.detail === 'string') return data.detail
   if (Array.isArray(data.detail)) return data.detail.map(String).join(' ')
@@ -29,7 +27,7 @@ export function formatApiError(
     if (Array.isArray(value)) parts.push(`${key}: ${value.map(String).join(' ')}`)
     else if (typeof value === 'string') parts.push(`${key}: ${value}`)
   }
-  return parts.length ? parts.join(' ') : fallback
+  return parts.length ? parts.join(' ') : fb
 }
 
 export async function apiFetch<T>(
