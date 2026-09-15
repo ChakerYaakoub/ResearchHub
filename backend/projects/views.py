@@ -1,7 +1,7 @@
 """Project REST viewsets and nested collaborator/admin helpers."""
 
-from django.shortcuts import get_object_or_404
 from rest_framework import status, viewsets
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -12,19 +12,29 @@ from publications.models import Publication
 from users.models import GlobalRole, User
 
 from .models import MembershipRole, ProjectMembership, ProjectStatus, ResearchProject
+from .permissions import IsPlatformAdmin, IsProjectEditor, IsProjectMember, IsProjectOwnerOrAdmin
+from .selectors import get_visible_project, projects_visible_to
 from .serializers import ProjectMembershipSerializer, ResearchProjectSerializer
 
 
 class ResearchProjectViewSet(viewsets.ModelViewSet):
-    """CRUD for projects owned by the current user (Phase 3 soft scope)."""
+    """CRUD for projects visible to the user (membership / owner / admin)."""
 
     serializer_class = ResearchProjectSerializer
     http_method_names = ["get", "post", "put", "patch", "delete", "head", "options"]
 
     def get_queryset(self):
-        return ResearchProject.objects.filter(owner=self.request.user).select_related(
-            "owner"
-        )
+        return projects_visible_to(self.request.user)
+
+    def get_permissions(self):
+        if self.action == "create":
+            return [IsAuthenticated()]
+        if self.action in ("update", "partial_update"):
+            return [IsAuthenticated(), IsProjectEditor()]
+        if self.action == "destroy":
+            return [IsAuthenticated(), IsProjectOwnerOrAdmin()]
+        # list / retrieve
+        return [IsAuthenticated(), IsProjectMember()]
 
     def perform_create(self, serializer):
         project = serializer.save(owner=self.request.user)
@@ -36,24 +46,29 @@ class ResearchProjectViewSet(viewsets.ModelViewSet):
 
 
 class ProjectCollaboratorListView(APIView):
-    """GET `/api/projects/{id}/collaborators/`."""
+    """GET `/api/projects/{id}/collaborators/` — member+."""
+
+    permission_classes = [IsAuthenticated, IsProjectMember]
 
     def get(self, request, project_pk: int):
-        project = get_object_or_404(ResearchProject, pk=project_pk, owner=request.user)
+        project = get_visible_project(request.user, project_pk)
+        self.check_object_permissions(request, project)
         qs = project.memberships.select_related("user").all()
         return Response(ProjectMembershipSerializer(qs, many=True).data)
 
 
 class ProjectCollaboratorDeleteView(APIView):
-    """DELETE `/api/projects/{id}/collaborators/{user_id}/` — cannot remove owner."""
+    """DELETE `/api/projects/{id}/collaborators/{user_id}/` — owner/admin; cannot remove owner."""
+
+    permission_classes = [IsAuthenticated, IsProjectOwnerOrAdmin]
 
     def delete(self, request, project_pk: int, user_id: int):
-        project = get_object_or_404(ResearchProject, pk=project_pk, owner=request.user)
-        membership = get_object_or_404(
-            ProjectMembership,
-            project=project,
-            user_id=user_id,
-        )
+        project = get_visible_project(request.user, project_pk)
+        self.check_object_permissions(request, project)
+        try:
+            membership = ProjectMembership.objects.get(project=project, user_id=user_id)
+        except ProjectMembership.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
         if membership.role == MembershipRole.OWNER or membership.user_id == project.owner_id:
             return Response(
                 {"detail": "Project owner cannot be removed."},
@@ -64,14 +79,11 @@ class ProjectCollaboratorDeleteView(APIView):
 
 
 class AdminStatsView(APIView):
-    """GET `/api/admin/stats/` — platform ADMIN role only (soft gate)."""
+    """GET `/api/admin/stats/` — platform ADMIN only."""
+
+    permission_classes = [IsAuthenticated, IsPlatformAdmin]
 
     def get(self, request):
-        if getattr(request.user, "role", None) != GlobalRole.ADMIN and not request.user.is_staff:
-            return Response(
-                {"detail": "Admin role required."},
-                status=status.HTTP_403_FORBIDDEN,
-            )
         data = {
             "total_projects": ResearchProject.objects.count(),
             "pending_proposals": Proposal.objects.filter(
