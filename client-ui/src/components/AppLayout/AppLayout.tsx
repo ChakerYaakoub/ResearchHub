@@ -1,19 +1,8 @@
 import { useState } from 'react'
 import { Link, NavLink, Outlet } from 'react-router-dom'
 import { useAuth } from '../../auth'
+import { common, nav } from '../../strings'
 import './AppLayout.css'
-
-export type NavItem = {
-  to: string
-  label: string
-}
-
-export const mainNavItems: NavItem[] = [
-  { to: '/facilities', label: 'Facilities' },
-  { to: '/instruments', label: 'Instruments' },
-  { to: '/how-it-works', label: 'How it works' },
-  { to: '/documentation', label: 'Documentation' },
-]
 
 /** Public shell: responsive navbar, page outlet, footer. */
 export function AppLayout() {
@@ -32,12 +21,12 @@ export function AppLayout() {
       <nav className="navbar navbar-expand-lg rh-navbar sticky-top">
         <div className="container">
           <Link className="navbar-brand rh-brand" to="/" onClick={close}>
-            ResearchHub
+            {nav.brand}
           </Link>
           <button
             type="button"
             className="rh-toggler d-lg-none"
-            aria-label="Toggle navigation"
+            aria-label={common.toggleNav}
             aria-expanded={open}
             onClick={() => setOpen((v) => !v)}
           >
@@ -45,7 +34,7 @@ export function AppLayout() {
           </button>
           <div className={`collapse navbar-collapse${open ? ' show' : ''}`}>
             <ul className="navbar-nav me-auto mb-2 mb-lg-0 gap-lg-1">
-              {mainNavItems.map((item) => (
+              {nav.items.map((item) => (
                 <li className="nav-item" key={item.to}>
                   <NavLink
                     className={({ isActive }) =>
@@ -70,7 +59,7 @@ export function AppLayout() {
                     className="btn btn-outline-secondary btn-sm"
                     onClick={onLogout}
                   >
-                    Log out
+                    {common.logOut}
                   </button>
                 </>
               ) : (
@@ -80,14 +69,14 @@ export function AppLayout() {
                     to="/login"
                     onClick={close}
                   >
-                    Log in
+                    {common.logIn}
                   </Link>
                   <Link
                     className="btn btn-primary btn-sm"
                     to="/register"
                     onClick={close}
                   >
-                    Register
+                    {common.register}
                   </Link>
                 </>
               )}
@@ -102,8 +91,10 @@ export function AppLayout() {
 
       <footer className="rh-footer py-4 mt-auto">
         <div className="container d-flex flex-column flex-md-row justify-content-between gap-2">
-          <span>ResearchHub — scientific project &amp; experiment management</span>
-          <span className="text-muted">© {new Date().getFullYear()}</span>
+          <span>{nav.footerTagline}</span>
+          <span className="text-muted">
+            {nav.copyrightPrefix} {new Date().getFullYear()}
+          </span>
         </div>
       </footer>
     </div>

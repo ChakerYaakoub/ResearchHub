@@ -1,3 +1,5 @@
+import { errors } from '../strings'
+
 /** Thin fetch wrapper for ResearchHub REST API. */
 
 const baseUrl = (import.meta.env.VITE_API_BASE_URL ?? '').replace(/\/$/, '')
@@ -14,7 +16,10 @@ export class ApiError extends Error {
 }
 
 /** Pull a human-readable message from DRF error payloads. */
-export function formatApiError(body: unknown, fallback = 'Request failed'): string {
+export function formatApiError(
+  body: unknown,
+  fallback: string = errors.requestFailed,
+): string {
   if (!body || typeof body !== 'object') return fallback
   const data = body as Record<string, unknown>
   if (typeof data.detail === 'string') return data.detail

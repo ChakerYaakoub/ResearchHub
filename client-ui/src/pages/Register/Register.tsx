@@ -2,6 +2,8 @@ import { useState, type FormEvent } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { ApiError } from '../../api/client'
 import { useAuth } from '../../auth'
+import { common, errors } from '../../strings'
+import { registerPage } from './strings'
 import './Register.css'
 
 /** Registration against `/api/auth/register/`. */
@@ -25,7 +27,7 @@ export function RegisterPage() {
       await register(email.trim(), password)
       navigate('/', { replace: true })
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Registration failed.')
+      setError(err instanceof ApiError ? err.message : errors.registerFailed)
     } finally {
       setPending(false)
     }
@@ -35,10 +37,8 @@ export function RegisterPage() {
     <div className="container py-5">
       <div className="auth-page mx-auto">
         <div className="auth-card p-4">
-          <h1 className="auth-title h3 mb-3">Register</h1>
-          <p className="text-muted small mb-4">
-            Create a researcher account to manage projects.
-          </p>
+          <h1 className="auth-title h3 mb-3">{registerPage.title}</h1>
+          <p className="text-muted small mb-4">{registerPage.subtitle}</p>
           {error ? (
             <div className="alert alert-danger py-2" role="alert">
               {error}
@@ -47,7 +47,7 @@ export function RegisterPage() {
           <form onSubmit={onSubmit} noValidate>
             <div className="mb-3">
               <label className="form-label" htmlFor="register-email">
-                Email
+                {common.email}
               </label>
               <input
                 id="register-email"
@@ -61,7 +61,7 @@ export function RegisterPage() {
             </div>
             <div className="mb-4">
               <label className="form-label" htmlFor="register-password">
-                Password
+                {common.password}
               </label>
               <input
                 id="register-password"
@@ -73,18 +73,19 @@ export function RegisterPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
-              <div className="form-text">Use a strong password (8+ characters).</div>
+              <div className="form-text">{registerPage.passwordHint}</div>
             </div>
             <button
               className="btn btn-primary w-100"
               type="submit"
               disabled={pending}
             >
-              {pending ? 'Creating account…' : 'Create account'}
+              {pending ? registerPage.submitting : registerPage.submit}
             </button>
           </form>
           <p className="mt-3 mb-0 small text-muted">
-            Already registered? <Link to="/login">Log in</Link>
+            {registerPage.haveAccount}{' '}
+            <Link to="/login">{registerPage.loginLink}</Link>
           </p>
         </div>
       </div>

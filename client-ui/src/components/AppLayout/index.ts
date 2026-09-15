@@ -1,1 +1,1 @@
-export { AppLayout, mainNavItems } from './AppLayout'
+export { AppLayout } from './AppLayout'
