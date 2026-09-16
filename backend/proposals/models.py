@@ -32,6 +32,10 @@ class Proposal(models.Model):
 
     class Meta:
         ordering = ["project_id"]
+        indexes = [
+            models.Index(fields=["status"], name="proposals_status_idx"),
+            models.Index(fields=["submitted_at"], name="proposals_submitted_at_idx"),
+        ]
 
     def __str__(self) -> str:
         return f"Proposal for {self.project}"

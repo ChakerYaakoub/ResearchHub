@@ -42,6 +42,9 @@ class User(AbstractUser):
 
     class Meta:
         ordering = ["email"]
+        indexes = [
+            models.Index(fields=["role"], name="users_user_role_idx"),
+        ]
 
     def __str__(self) -> str:
         return self.email

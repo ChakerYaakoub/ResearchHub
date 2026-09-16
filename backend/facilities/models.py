@@ -29,6 +29,9 @@ class Installation(models.Model):
 
     class Meta:
         ordering = ["name"]
+        indexes = [
+            models.Index(fields=["status"], name="facilities_instl_status_idx"),
+        ]
 
     def __str__(self) -> str:
         return self.name
@@ -60,6 +63,12 @@ class Instrument(models.Model):
             models.UniqueConstraint(
                 fields=["installation", "code"],
                 name="uniq_instrument_installation_code",
+            ),
+        ]
+        indexes = [
+            models.Index(
+                fields=["installation", "status"],
+                name="facilities_instr_inst_st_idx",
             ),
         ]
 

@@ -32,6 +32,12 @@ class Publication(models.Model):
 
     class Meta:
         ordering = ["-publication_date", "title"]
+        indexes = [
+            models.Index(
+                fields=["-publication_date"],
+                name="publications_pub_date_idx",
+            ),
+        ]
 
     def __str__(self) -> str:
         return self.title
