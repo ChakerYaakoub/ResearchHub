@@ -1,4 +1,4 @@
-import { Navigate, Outlet, useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import { useAuth } from '../../auth'
 
 type AuthRedirectState = {
