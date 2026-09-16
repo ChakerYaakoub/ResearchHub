@@ -129,20 +129,3 @@ class AdminStatsView(APIView):
         return Response(data)
 
 
-class AdminPendingProposalsView(APIView):
-    """GET `/api/admin/proposals/` — pending proposals for review (admin-ui)."""
-
-    permission_classes = [IsAuthenticated, IsAdminUiOrigin, IsPlatformAdmin]
-
-    def get(self, request):
-        from proposals.serializers import AdminPendingProposalSerializer
-
-        qs = (
-            Proposal.objects.filter(
-                status=ProposalStatus.PENDING,
-                project__status=ProjectStatus.UNDER_REVIEW,
-            )
-            .select_related("project")
-            .order_by("submitted_at", "id")
-        )
-        return Response(AdminPendingProposalSerializer(qs, many=True).data)
