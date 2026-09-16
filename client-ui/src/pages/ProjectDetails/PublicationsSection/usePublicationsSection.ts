@@ -40,6 +40,8 @@ export function usePublicationsSection({
   const [actionError, setActionError] = useState<string | null>(null)
   const [editingId, setEditingId] = useState<number | null>(null)
   const [showForm, setShowForm] = useState(false)
+  const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null)
+  const [deleting, setDeleting] = useState(false)
 
   const reload = useCallback(async () => {
     if (!access) return
@@ -139,18 +141,31 @@ export function usePublicationsSection({
     }
   }
 
-  async function onDelete(id: number) {
-    if (!access || !canEdit) return
-    if (!window.confirm(t('publications.confirmDelete'))) return
+  function requestDelete(id: number) {
+    setActionError(null)
+    setPendingDeleteId(id)
+  }
+
+  function closeDeleteConfirm() {
+    if (deleting) return
+    setPendingDeleteId(null)
+  }
+
+  async function confirmDelete() {
+    if (!access || !canEdit || pendingDeleteId == null) return
+    setDeleting(true)
     setActionError(null)
     try {
-      await deletePublication(access, id)
-      if (editingId === id) closeForm()
+      await deletePublication(access, pendingDeleteId)
+      if (editingId === pendingDeleteId) closeForm()
+      setPendingDeleteId(null)
       await reload()
     } catch (err) {
       setActionError(
         err instanceof ApiError ? err.message : t('errors.requestFailed'),
       )
+    } finally {
+      setDeleting(false)
     }
   }
 
@@ -169,6 +184,10 @@ export function usePublicationsSection({
     openEdit,
     closeForm,
     onSave,
-    onDelete,
+    requestDelete,
+    pendingDeleteId,
+    deleting,
+    confirmDelete,
+    closeDeleteConfirm,
   }
 }

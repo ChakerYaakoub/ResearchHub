@@ -38,6 +38,7 @@ export function useProposalSection({
   const [error, setError] = useState<string | null>(null)
   const [actionError, setActionError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
+  const [showForm, setShowForm] = useState(false)
 
   const isDraft = project.status === 'DRAFT'
   const canMutate = canEdit && isDraft
@@ -69,6 +70,15 @@ export function useProposalSection({
     expected_results: Yup.string(),
   })
 
+  function openForm() {
+    setActionError(null)
+    setShowForm(true)
+  }
+
+  function closeForm() {
+    setShowForm(false)
+  }
+
   async function onSave(
     values: ProposalFormValues,
     helpers: FormikHelpers<ProposalFormValues>,
@@ -84,6 +94,7 @@ export function useProposalSection({
         ? await updateProposal(access, projectId, body)
         : await createProposal(access, projectId, body)
       setProposal(saved)
+      setShowForm(false)
     } catch (err) {
       setActionError(
         err instanceof ApiError ? err.message : t('errors.createFailed'),
@@ -123,5 +134,8 @@ export function useProposalSection({
     onSubmitProposal,
     submitting,
     hasProposal: Boolean(proposal),
+    showForm,
+    openForm,
+    closeForm,
   }
 }

@@ -18,7 +18,8 @@
     "actions": "Actions",
     "back": "Retour",
     "edit": "Modifier",
-    "delete": "Supprimer"
+    "delete": "Supprimer",
+    "deleting": "Suppression…"
   },
   "validation": {
     "emailRequired": "L'e-mail est obligatoire.",
@@ -234,6 +235,8 @@
     "lifecycle": "Cycle de vie",
     "collaborators": "Collaborateurs",
     "collaboratorsEmpty": "Aucun collaborateur listé.",
+    "overview": "Aperçu",
+    "team": "Équipe",
     "inviteTitle": "Inviter un collaborateur",
     "inviteHint": "L'invité doit utiliser cet e-mail pour accepter sous Invitations.",
     "inviteEmail": "E-mail de l'invité",
@@ -255,7 +258,13 @@
     "creating": "Création…",
     "complete": "Marquer comme terminé",
     "completing": "Finalisation…",
-    "confirmComplete": "Marquer ce projet comme terminé ?"
+    "completeTitle": "Terminer le projet",
+    "confirmComplete": "Marquer ce projet comme terminé ?",
+    "delete": "Supprimer le projet",
+    "deleting": "Suppression…",
+    "deleteTitle": "Supprimer le projet",
+    "confirmDelete": "Supprimer définitivement ce projet ? Cette action est irréversible.",
+    "cancelInviteTitle": "Annuler l'invitation"
   },
   "proposal": {
     "title": "Proposition",
@@ -281,7 +290,8 @@
     "notes": "Notes",
     "instrumentRequired": "L'instrument est obligatoire.",
     "dateRequired": "La date prévue est obligatoire.",
-    "confirmDelete": "Supprimer cette expérience ?"
+    "confirmDelete": "Supprimer cette expérience ?",
+    "deleteTitle": "Supprimer l'expérience"
   },
   "publications": {
     "title": "Publications",
@@ -296,7 +306,8 @@
     "url": "URL",
     "titleRequired": "Le titre est obligatoire.",
     "authorsRequired": "Les auteurs sont obligatoires.",
-    "confirmDelete": "Supprimer cette publication ?"
+    "confirmDelete": "Supprimer cette publication ?",
+    "deleteTitle": "Supprimer la publication"
   },
   "invitations": {
     "title": "Invitations",

@@ -36,3 +36,10 @@ export function completeProject(token: string, projectId: number | string) {
     token,
   })
 }
+
+export function deleteProject(token: string, projectId: number | string) {
+  return apiFetch<void>(`/projects/${projectId}/`, {
+    method: 'DELETE',
+    token,
+  })
+}

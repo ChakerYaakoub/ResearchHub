@@ -18,7 +18,8 @@
     "actions": "Actions",
     "back": "Back",
     "edit": "Edit",
-    "delete": "Delete"
+    "delete": "Delete",
+    "deleting": "Deleting…"
   },
   "validation": {
     "emailRequired": "Email is required.",
@@ -234,6 +235,8 @@
     "lifecycle": "Lifecycle",
     "collaborators": "Collaborators",
     "collaboratorsEmpty": "No collaborators listed.",
+    "overview": "Overview",
+    "team": "Team",
     "inviteTitle": "Invite collaborator",
     "inviteHint": "The invitee must use this email to accept under Invitations.",
     "inviteEmail": "Invitee email",
@@ -255,7 +258,13 @@
     "creating": "Creating…",
     "complete": "Mark complete",
     "completing": "Completing…",
-    "confirmComplete": "Mark this project as completed?"
+    "completeTitle": "Complete project",
+    "confirmComplete": "Mark this project as completed?",
+    "delete": "Delete project",
+    "deleting": "Deleting…",
+    "deleteTitle": "Delete project",
+    "confirmDelete": "Delete this project permanently? This cannot be undone.",
+    "cancelInviteTitle": "Cancel invitation"
   },
   "proposal": {
     "title": "Proposal",
@@ -281,7 +290,8 @@
     "notes": "Notes",
     "instrumentRequired": "Instrument is required.",
     "dateRequired": "Scheduled date is required.",
-    "confirmDelete": "Delete this experiment?"
+    "confirmDelete": "Delete this experiment?",
+    "deleteTitle": "Delete experiment"
   },
   "publications": {
     "title": "Publications",
@@ -296,7 +306,8 @@
     "url": "URL",
     "titleRequired": "Title is required.",
     "authorsRequired": "Authors are required.",
-    "confirmDelete": "Delete this publication?"
+    "confirmDelete": "Delete this publication?",
+    "deleteTitle": "Delete publication"
   },
   "invitations": {
     "title": "Invitations",

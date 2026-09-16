@@ -59,6 +59,9 @@ export function useExperimentsSection({
   const [editingId, setEditingId] = useState<number | null>(null)
   const [showForm, setShowForm] = useState(false)
 
+  const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null)
+  const [deleting, setDeleting] = useState(false)
+
   const reload = useCallback(async () => {
     if (!access) return
     setLoading(true)
@@ -148,18 +151,31 @@ export function useExperimentsSection({
     }
   }
 
-  async function onDelete(id: number) {
-    if (!access || !canEdit) return
-    if (!window.confirm(t('experiments.confirmDelete'))) return
+  function requestDelete(id: number) {
+    setActionError(null)
+    setPendingDeleteId(id)
+  }
+
+  function closeDeleteConfirm() {
+    if (deleting) return
+    setPendingDeleteId(null)
+  }
+
+  async function confirmDelete() {
+    if (!access || !canEdit || pendingDeleteId == null) return
+    setDeleting(true)
     setActionError(null)
     try {
-      await deleteExperiment(access, id)
-      if (editingId === id) closeForm()
+      await deleteExperiment(access, pendingDeleteId)
+      if (editingId === pendingDeleteId) closeForm()
+      setPendingDeleteId(null)
       await reload()
     } catch (err) {
       setActionError(
         err instanceof ApiError ? err.message : t('errors.requestFailed'),
       )
+    } finally {
+      setDeleting(false)
     }
   }
 
@@ -179,6 +195,10 @@ export function useExperimentsSection({
     openEdit,
     closeForm,
     onSave,
-    onDelete,
+    requestDelete,
+    pendingDeleteId,
+    deleting,
+    confirmDelete,
+    closeDeleteConfirm,
   }
 }

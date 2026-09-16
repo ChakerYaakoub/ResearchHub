@@ -1,0 +1,154 @@
+/* Project details — team panel */
+
+.rh-team {
+  border: 1px solid var(--rh-border);
+  border-radius: 0.75rem;
+  background: var(--rh-surface);
+  padding: 1.25rem 1.35rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 1px 2px rgba(41, 41, 41, 0.04);
+}
+
+.rh-team-title {
+  margin: 0 0 1.15rem;
+  font-size: 1.1rem;
+  font-weight: 650;
+  color: var(--rh-text);
+}
+
+.rh-team-block + .rh-team-block {
+  margin-top: 1.35rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--rh-border);
+}
+
+.rh-team-block-title {
+  margin: 0 0 0.65rem;
+  font-size: 0.8rem;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--rh-text-muted);
+}
+
+.rh-team-hint {
+  margin: 0 0 0.85rem;
+  font-size: 0.85rem;
+  color: var(--rh-text-muted);
+  max-width: 36rem;
+}
+
+.rh-team-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.rh-team-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--rh-border);
+  border-radius: 0.55rem;
+  background: color-mix(in srgb, var(--rh-surface-muted) 35%, var(--rh-surface));
+}
+
+@media (min-width: 576px) {
+  .rh-team-row {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.rh-team-row-main {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.rh-team-avatar {
+  flex-shrink: 0;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--rh-accent);
+  background: color-mix(in srgb, var(--rh-accent) 14%, var(--rh-surface));
+}
+
+.rh-team-email {
+  min-width: 0;
+  font-weight: 600;
+  color: var(--rh-text);
+  word-break: break-word;
+}
+
+.rh-team-meta {
+  margin-top: 0.15rem;
+  font-size: 0.8rem;
+  color: var(--rh-text-muted);
+}
+
+.rh-team-role {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 650;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  border: 1px solid transparent;
+  align-self: flex-start;
+}
+
+.rh-team-role--owner {
+  color: var(--rh-primary);
+  background: color-mix(in srgb, var(--rh-primary) 12%, var(--rh-surface));
+  border-color: color-mix(in srgb, var(--rh-primary) 28%, var(--rh-border));
+}
+
+.rh-team-role--editor {
+  color: var(--rh-accent);
+  background: color-mix(in srgb, var(--rh-accent) 12%, var(--rh-surface));
+  border-color: color-mix(in srgb, var(--rh-accent) 28%, var(--rh-border));
+}
+
+.rh-team-role--viewer {
+  color: var(--rh-text-muted);
+  background: var(--rh-surface-muted);
+  border-color: var(--rh-border);
+}
+
+.rh-team-invite {
+  padding: 1rem 1.1rem;
+  border: 1px dashed var(--rh-border);
+  border-radius: 0.55rem;
+  background: color-mix(in srgb, var(--rh-surface-muted) 45%, var(--rh-surface));
+}
+
+.rh-team-invite-form {
+  max-width: 28rem;
+}
+
+.rh-team-invite-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: flex-end;
+}
+
+.rh-team-invite-actions .form-select {
+  min-width: 8.5rem;
+}
