@@ -92,7 +92,15 @@ export function getAdminStats(token: string) {
 }
 
 export function listUsers(token: string) {
-  return apiFetch<AdminUser[]>('/admin/users/', { token })
+  return listResearchers(token)
+}
+
+export function listResearchers(token: string) {
+  return apiFetch<AdminUser[]>('/admin/users/?role=RESEARCHER', { token })
+}
+
+export function listAdmins(token: string) {
+  return apiFetch<AdminUser[]>('/admin/admins/', { token })
 }
 
 export function createAdmin(
