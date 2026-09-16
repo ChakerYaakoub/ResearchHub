@@ -1,49 +1,63 @@
 import { Link } from 'react-router-dom'
 import { LoadingState } from '../../components/LoadingState'
-import { PageHeader } from '../../components/PageHeader'
 import { useDashboard } from './useDashboard'
+import './Dashboard.css'
 
 export function DashboardPage() {
   const vm = useDashboard()
 
   return (
-    <div className="container py-4">
-      <PageHeader
-        title={vm.t('dashboard.title')}
-        subtitle={vm.t('dashboard.subtitle')}
-        actions={
-          <>
-            <Link className="btn btn-outline-secondary btn-sm" to="/projects">
-              {vm.t('dashboard.viewProjects')}
-            </Link>
-            <Link className="btn btn-outline-secondary btn-sm" to="/invitations">
-              {vm.t('dashboard.viewInvitations')}
-            </Link>
-            <Link className="btn btn-primary btn-sm" to="/projects/new">
-              {vm.t('dashboard.newProject')}
-            </Link>
-          </>
-        }
-      />
+    <div className="rh-dash-page container-fluid px-3 px-md-4 py-4">
+      <div className="rh-dash-page-toolbar d-flex flex-column flex-sm-row align-items-sm-center justify-content-sm-between gap-2 mb-4">
+        <p className="rh-dash-page-lead text-muted mb-0">{vm.t('dashboard.subtitle')}</p>
+        <div className="d-flex flex-wrap gap-2">
+          <Link className="btn btn-outline-secondary btn-sm" to="/projects">
+            {vm.t('dashboard.viewProjects')}
+          </Link>
+          <Link className="btn btn-outline-secondary btn-sm" to="/invitations">
+            {vm.t('dashboard.viewInvitations')}
+          </Link>
+          <Link className="btn btn-primary btn-sm" to="/projects/new">
+            {vm.t('dashboard.newProject')}
+          </Link>
+        </div>
+      </div>
 
-      {vm.loading ? <LoadingState label={vm.t('common.loading')} /> : null}
       {vm.error ? (
         <div className="alert alert-danger" role="alert">
           {vm.error}
         </div>
       ) : null}
 
+      {vm.loading ? (
+        <>
+          <LoadingState label={vm.t('common.loading')} />
+          <div className="row g-3 rh-dash-cards" aria-hidden="true">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="col-12 col-md-6 col-lg-4">
+                <div className="rh-dash-card rh-dash-card--skeleton">
+                  <div className="rh-skel rh-skel-line rh-skel-line--sm" />
+                  <div className="rh-skel rh-skel-line rh-skel-line--lg mt-3" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
+      ) : null}
+
       {!vm.loading && !vm.error ? (
-        <div className="row g-3">
+        <div className="row g-3 rh-dash-cards">
           {vm.cards.map((card) => {
             const body = (
               <>
-                <div className="text-muted small mb-1">{vm.t(card.titleKey)}</div>
-                <div className={`display-6 mb-0${card.muted ? ' text-muted' : ''}`}>
+                <div className="rh-dash-card-label">{vm.t(card.titleKey)}</div>
+                <div
+                  className={`rh-dash-card-value${card.muted ? ' is-muted' : ''}`}
+                >
                   {card.value}
                 </div>
                 {card.hintKey ? (
-                  <div className="small text-muted mt-2">{vm.t(card.hintKey)}</div>
+                  <div className="rh-dash-card-hint">{vm.t(card.hintKey)}</div>
                 ) : null}
               </>
             )
@@ -52,12 +66,16 @@ export function DashboardPage() {
                 {card.to ? (
                   <Link
                     to={card.to}
-                    className="text-decoration-none text-body d-block border rounded p-3 h-100"
+                    className={`rh-dash-card${card.muted ? ' is-muted' : ''}`}
                   >
                     {body}
                   </Link>
                 ) : (
-                  <div className="border rounded p-3 h-100">{body}</div>
+                  <div
+                    className={`rh-dash-card${card.muted ? ' is-muted' : ''}`}
+                  >
+                    {body}
+                  </div>
                 )}
               </div>
             )
