@@ -11,6 +11,7 @@ export function useStatusBadge(props: StatusBadgeProps) {
         ? 'danger'
         : props.status === 'UNDER_REVIEW' ||
             props.status === 'SUBMITTED' ||
+            props.status === 'RESUBMITTED' ||
             props.status === 'PENDING' ||
             props.status === 'SCHEDULED'
           ? 'warning'

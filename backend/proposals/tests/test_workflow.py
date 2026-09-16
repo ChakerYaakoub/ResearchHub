@@ -140,3 +140,73 @@ class WorkflowApiTests(TestCase):
         self.admin_api.post(f"/api/proposals/{pid}/approve/", {}, format="json")
         again = self.admin_api.post(f"/api/proposals/{pid}/approve/", {}, format="json")
         self.assertEqual(again.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_reject_then_revise_and_resubmit(self):
+        self._create_proposal()
+        self.owner_client.post(f"/api/projects/{self.project.id}/proposal/submit/")
+        proposal_id = self.project.proposal.id
+        rejected = self.admin_api.post(
+            f"/api/proposals/{proposal_id}/reject/",
+            {"review_comment": "needs more detail"},
+            format="json",
+        )
+        self.assertEqual(rejected.status_code, status.HTTP_200_OK)
+        self.project.refresh_from_db()
+        self.assertEqual(self.project.status, ProjectStatus.REJECTED)
+
+        edited = self.owner_client.put(
+            f"/api/projects/{self.project.id}/proposal/",
+            {"methodology": "Revised XAS", "expected_results": "better spectra"},
+            format="json",
+        )
+        self.assertEqual(edited.status_code, status.HTTP_200_OK)
+        self.assertEqual(edited.data["methodology"], "Revised XAS")
+        self.assertEqual(edited.data["review_comment"], "needs more detail")
+
+        instrument = make_instrument(code="beamline-r", name="Resubmit Beamline")
+        planned = self.owner_client.post(
+            f"/api/projects/{self.project.id}/experiments/",
+            {
+                "kind": "PLANNED",
+                "instrument": instrument.id,
+                "scheduled_date": "2030-02-01T10:00:00Z",
+                "notes": "plan after reject",
+            },
+            format="json",
+        )
+        self.assertEqual(planned.status_code, status.HTTP_201_CREATED)
+
+        resubmit = self.owner_client.post(
+            f"/api/projects/{self.project.id}/proposal/submit/"
+        )
+        self.assertEqual(resubmit.status_code, status.HTTP_200_OK)
+        self.assertEqual(resubmit.data["status"], ProposalStatus.PENDING)
+        self.assertEqual(resubmit.data["review_comment"], "needs more detail")
+        self.project.refresh_from_db()
+        self.assertEqual(self.project.status, ProjectStatus.UNDER_REVIEW)
+
+        approved = self.admin_api.post(
+            f"/api/proposals/{proposal_id}/approve/",
+            {"review_comment": "ok now"},
+            format="json",
+        )
+        self.assertEqual(approved.status_code, status.HTTP_200_OK)
+        self.project.refresh_from_db()
+        self.assertEqual(self.project.status, ProjectStatus.APPROVED)
+
+    def test_planned_experiment_blocked_while_under_review(self):
+        self._create_proposal()
+        self.owner_client.post(f"/api/projects/{self.project.id}/proposal/submit/")
+        self.project.refresh_from_db()
+        self.assertEqual(self.project.status, ProjectStatus.UNDER_REVIEW)
+        instrument = make_instrument(code="beamline-u", name="Under Review Line")
+        blocked = self.owner_client.post(
+            f"/api/projects/{self.project.id}/experiments/",
+            {
+                "kind": "PLANNED",
+                "instrument": instrument.id,
+                "scheduled_date": "2030-03-01T10:00:00Z",
+            },
+            format="json",
+        )
+        self.assertEqual(blocked.status_code, status.HTTP_400_BAD_REQUEST)

@@ -46,7 +46,8 @@ export const copy = {
   approveTitle: 'Approve proposal',
   rejectTitle: 'Reject proposal',
   approveMessage: 'Approve this proposal and move the project to APPROVED?',
-  rejectMessage: 'Reject this proposal and return the project to DRAFT?',
+  rejectMessage:
+    'Reject this proposal? The researcher can revise and resubmit.',
   reviewComment: 'Review comment (optional)',
   project: 'Project',
   methodology: 'Methodology',

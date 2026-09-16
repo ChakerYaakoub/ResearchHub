@@ -8,6 +8,7 @@ const TONE: Record<string, string> = {
   UNDER_REVIEW: 'warning',
   APPROVED: 'success',
   REJECTED: 'danger',
+  RESUBMITTED: 'info',
   IN_PROGRESS: 'primary',
   COMPLETED: 'success',
   PENDING: 'warning',

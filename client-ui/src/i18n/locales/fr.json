@@ -297,6 +297,7 @@
     "UNDER_REVIEW": "En revue",
     "APPROVED": "Approuvé",
     "REJECTED": "Rejeté",
+    "RESUBMITTED": "Resoumis",
     "IN_PROGRESS": "En cours",
     "COMPLETED": "Terminé",
     "PENDING": "En attente",
@@ -371,6 +372,8 @@
     "draftPrep": {
       "title": "Préparez votre projet",
       "intro": "Complétez ces étapes avant de soumettre pour revue scientifique. Après la soumission, vous ne pourrez plus ajouter d'expériences planifiées ni de publications associées en attendant la décision.",
+      "rejectedIntro": "Ce projet a été rejeté. Révisez votre proposition et le contenu de brouillon à l'aide du commentaire de revue, puis soumettez à nouveau.",
+      "rejectedNote": "Révisez à l'aide du commentaire de revue ci-dessous, puis poursuivez les étapes et soumettez à nouveau.",
       "stepProposal": "Proposition",
       "stepExperiments": "Expériences",
       "stepPublications": "Publications",

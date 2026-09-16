@@ -57,7 +57,7 @@ function canMutateKind(
   status: Project['status'],
   kind: ExperimentKind,
 ): boolean {
-  if (kind === 'PLANNED') return status === 'DRAFT'
+  if (kind === 'PLANNED') return status === 'DRAFT' || status === 'REJECTED'
   return status === 'APPROVED' || status === 'IN_PROGRESS'
 }
 
@@ -259,7 +259,8 @@ export function useExperimentsSection({
     ? t('experiments.emptyExecutedEditable')
     : t('experiments.emptyExecuted')
 
-  const showExecutedGroup = project.status !== 'DRAFT'
+  const showExecutedGroup =
+    project.status !== 'DRAFT' && project.status !== 'REJECTED'
 
   return {
     t,

@@ -32,8 +32,9 @@ export function useSubmitSection({
   const [submitting, setSubmitting] = useState(false)
   const [confirmOpen, setConfirmOpen] = useState(false)
 
-  const isDraft = project.status === 'DRAFT'
-  const canSubmit = Boolean(canEdit && isDraft && proposal)
+  const isPreparing =
+    project.status === 'DRAFT' || project.status === 'REJECTED'
+  const canSubmit = Boolean(canEdit && isPreparing && proposal)
 
   const reload = useCallback(async () => {
     if (!access) return
@@ -96,7 +97,7 @@ export function useSubmitSection({
     plannedCount,
     existingCount,
     canSubmit,
-    isDraft,
+    isPreparing,
     submitting,
     confirmOpen,
     openConfirm,

@@ -35,7 +35,7 @@ function canMutateKind(
   status: Project['status'],
   kind: PublicationKind,
 ): boolean {
-  if (kind === 'EXISTING') return status === 'DRAFT'
+  if (kind === 'EXISTING') return status === 'DRAFT' || status === 'REJECTED'
   return status === 'IN_PROGRESS' || status === 'COMPLETED'
 }
 
@@ -221,7 +221,8 @@ export function usePublicationsSection({
     ? t('publications.emptyResultingEditable')
     : t('publications.emptyResulting')
 
-  const showResultingGroup = project.status !== 'DRAFT'
+  const showResultingGroup =
+    project.status !== 'DRAFT' && project.status !== 'REJECTED'
 
   return {
     t,

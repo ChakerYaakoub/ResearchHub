@@ -41,7 +41,9 @@ export function useProposalSection({
   const [showForm, setShowForm] = useState(false)
 
   const isDraft = project.status === 'DRAFT'
-  const canMutate = canEdit && isDraft
+  const isPreparing =
+    project.status === 'DRAFT' || project.status === 'REJECTED'
+  const canMutate = canEdit && isPreparing
 
   const reload = useCallback(async () => {
     if (!access) return
@@ -112,6 +114,8 @@ export function useProposalSection({
     actionError,
     canMutate,
     isDraft,
+    isPreparing,
+    isRejected: project.status === 'REJECTED',
     initialValues,
     validationSchema,
     onSave,

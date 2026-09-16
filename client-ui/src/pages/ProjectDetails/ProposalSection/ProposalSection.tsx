@@ -36,6 +36,12 @@ export function ProposalSection(props: ProposalSectionProps) {
         </div>
       </div>
 
+      {vm.canMutate && vm.isRejected ? (
+        <div className="alert alert-warning py-2 mb-3" role="status">
+          {vm.t('projects.draftPrep.rejectedNote')}
+        </div>
+      ) : null}
+
       {vm.loading ? (
         <div className="position-relative py-2">
           <LoadingState overlay compact label={vm.t('common.loading')} />

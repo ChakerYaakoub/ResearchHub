@@ -158,7 +158,8 @@ export function useProjectDetails() {
   )
 
   const status = project?.status
-  const showDraftPrep = Boolean(project && status === 'DRAFT' && canEdit)
+  const preparing = Boolean(status && (status === 'DRAFT' || status === 'REJECTED'))
+  const showDraftPrep = Boolean(project && preparing && canEdit)
 
   useEffect(() => {
     if (!project || loading) return
@@ -166,20 +167,23 @@ export function useProjectDetails() {
       setActiveSection('proposal')
       setDraftLanded(true)
     }
+    if (!showDraftPrep && draftLanded) {
+      setDraftLanded(false)
+    }
   }, [project, loading, showDraftPrep, draftLanded])
 
   useEffect(() => {
     if (!project) return
-    if (project.status !== 'DRAFT' && activeSection === 'submit') {
+    if (!preparing && activeSection === 'submit') {
       setActiveSection('proposal')
     }
-  }, [project, activeSection])
+  }, [project, preparing, activeSection])
 
-  const canAddPlannedExperiment = Boolean(canEdit && status === 'DRAFT')
+  const canAddPlannedExperiment = Boolean(canEdit && preparing)
   const canAddExecutedExperiment = Boolean(
     canEdit && (status === 'APPROVED' || status === 'IN_PROGRESS'),
   )
-  const canAddExistingPublication = Boolean(canEdit && status === 'DRAFT')
+  const canAddExistingPublication = Boolean(canEdit && preparing)
   const canAddResultingPublication = Boolean(
     canEdit && (status === 'IN_PROGRESS' || status === 'COMPLETED'),
   )

@@ -6,7 +6,6 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from projects.models import ProjectStatus
 from projects.permissions import (
     IsAdminUiOrigin,
     IsPlatformAdmin,
@@ -14,7 +13,7 @@ from projects.permissions import (
     IsProjectMemberReadEditorWrite,
 )
 from projects.selectors import get_visible_project
-from projects.services import WorkflowError
+from projects.services import WorkflowError, is_preparing
 
 from .models import Proposal
 from .serializers import ProposalReviewSerializer, ProposalSerializer
@@ -39,9 +38,14 @@ class ProjectProposalView(APIView):
     def post(self, request, project_pk: int):
         project = get_visible_project(request.user, project_pk)
         self.check_object_permissions(request, project)
-        if project.status != ProjectStatus.DRAFT:
+        if not is_preparing(project):
             return Response(
-                {"detail": "Proposal can only be created when project is DRAFT."},
+                {
+                    "detail": (
+                        "Proposal can only be created when project is "
+                        "DRAFT or REJECTED."
+                    )
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
         if hasattr(project, "proposal"):
@@ -57,9 +61,14 @@ class ProjectProposalView(APIView):
     def put(self, request, project_pk: int):
         project = get_visible_project(request.user, project_pk)
         self.check_object_permissions(request, project)
-        if project.status != ProjectStatus.DRAFT:
+        if not is_preparing(project):
             return Response(
-                {"detail": "Proposal can only be edited when project is DRAFT."},
+                {
+                    "detail": (
+                        "Proposal can only be edited when project is "
+                        "DRAFT or REJECTED."
+                    )
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
         proposal = get_object_or_404(Proposal, project=project)
