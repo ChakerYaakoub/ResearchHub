@@ -31,7 +31,7 @@ class AdminUserPatchSerializer(serializers.Serializer):
 
 
 class AdminCreateAdminSerializer(serializers.Serializer):
-    """Platform ADMIN creates another ADMIN account (not promote researchers)."""
+    """SUPER_ADMIN creates an ADMIN account (not promote researchers)."""
 
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True, style={"input_type": "password"})

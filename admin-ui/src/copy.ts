@@ -71,7 +71,7 @@ export const copy = {
   createAdminSuccess: 'Admin account created.',
   usersEmpty: 'No users found.',
   usersSubtitle:
-    'Researchers register themselves. Create new admins here — do not promote researchers.',
+    'Researchers register themselves. Only a super admin can create admin accounts.',
   projectsEmpty: 'No projects found.',
   proposalsEmpty: 'No proposals match.',
   experimentsEmpty: 'No experiments found.',

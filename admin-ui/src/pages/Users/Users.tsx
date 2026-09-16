@@ -15,13 +15,15 @@ export function UsersPage() {
         <p className="text-muted small mb-0" style={{ maxWidth: '36rem' }}>
           {vm.copy.usersSubtitle}
         </p>
-        <button
-          type="button"
-          className="btn btn-primary btn-sm"
-          onClick={vm.openCreate}
-        >
-          {vm.copy.createAdmin}
-        </button>
+        {vm.isSuperAdmin ? (
+          <button
+            type="button"
+            className="btn btn-primary btn-sm"
+            onClick={vm.openCreate}
+          >
+            {vm.copy.createAdmin}
+          </button>
+        ) : null}
       </div>
 
       {vm.error ? (

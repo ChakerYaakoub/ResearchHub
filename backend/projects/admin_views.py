@@ -26,15 +26,19 @@ from .admin_serializers import (
     AdminUserSerializer,
 )
 from .models import ResearchProject
-from .permissions import IsAdminUiOrigin, IsPlatformAdmin
+from .permissions import IsAdminUiOrigin, IsPlatformAdmin, IsSuperAdmin
 
 _ADMIN_PERMS = [IsAuthenticated, IsAdminUiOrigin, IsPlatformAdmin]
+_SUPER_ADMIN_PERMS = [IsAuthenticated, IsAdminUiOrigin, IsSuperAdmin]
 
 
 class AdminUserListView(APIView):
-    """GET `/api/admin/users/` — list; POST create platform ADMIN."""
+    """GET list (admins); POST create ADMIN (super admin only)."""
 
-    permission_classes = _ADMIN_PERMS
+    def get_permissions(self):
+        if self.request.method == "POST":
+            return [perm() for perm in _SUPER_ADMIN_PERMS]
+        return [perm() for perm in _ADMIN_PERMS]
 
     def get(self, request):
         qs = User.objects.order_by("email")

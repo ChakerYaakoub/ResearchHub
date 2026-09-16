@@ -11,6 +11,7 @@ import { loginRequest, logoutRequest } from '../api/auth'
 import { copy } from '../copy'
 import {
   clearAuth,
+  isPlatformAdminRole,
   loadStoredAuth,
   saveAuth,
   type AuthUser,
@@ -20,6 +21,7 @@ type AuthContextValue = {
   user: AuthUser | null
   access: string | null
   isAuthenticated: boolean
+  isSuperAdmin: boolean
   login: (email: string, password: string) => Promise<void>
   logout: () => Promise<void>
 }
@@ -29,7 +31,7 @@ const AuthContext = createContext<AuthContextValue | null>(null)
 function readInitialAuth() {
   const initial = loadStoredAuth()
   if (!initial) return { user: null, access: null, refresh: null }
-  if (initial.user.role !== 'ADMIN') {
+  if (!isPlatformAdminRole(initial.user.role)) {
     clearAuth()
     return { user: null, access: null, refresh: null }
   }
@@ -48,7 +50,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = useCallback(async (email: string, password: string) => {
     const tokens = await loginRequest(email, password)
-    if (tokens.user.role !== 'ADMIN') {
+    if (!isPlatformAdminRole(tokens.user.role)) {
       clearAuth()
       throw new ApiError(403, null, copy.adminOnly)
     }
@@ -76,7 +78,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     () => ({
       user,
       access,
-      isAuthenticated: Boolean(user && access && user.role === 'ADMIN'),
+      isAuthenticated: Boolean(
+        user && access && isPlatformAdminRole(user.role),
+      ),
+      isSuperAdmin: user?.role === 'SUPER_ADMIN',
       login,
       logout,
     }),

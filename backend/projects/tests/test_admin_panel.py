@@ -12,6 +12,7 @@ from test_helpers import (
     auth_client,
     make_admin,
     make_project,
+    make_super_admin,
     make_user,
 )
 from users.models import GlobalRole, User
@@ -22,9 +23,11 @@ class AdminPanelApiTests(TestCase):
     def setUp(self):
         self.owner = make_user("owner@example.com")
         self.admin = make_admin()
+        self.super_admin = make_super_admin()
         self.other = make_user("other@example.com")
         self.project = make_project(self.owner, title="Beam study")
         self.admin_api = admin_client(self.admin)
+        self.super_api = admin_client(self.super_admin)
         self.owner_client = auth_client(self.owner)
 
     def test_list_users_admin_ok_researcher_denied(self):
@@ -73,8 +76,8 @@ class AdminPanelApiTests(TestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def test_create_admin(self):
-        created = self.admin_api.post(
+    def test_create_admin_super_only(self):
+        created = self.super_api.post(
             "/api/admin/users/",
             {
                 "email": "newadmin@example.com",
@@ -90,9 +93,16 @@ class AdminPanelApiTests(TestCase):
         self.assertEqual(user.role, GlobalRole.ADMIN)
         self.assertTrue(user.check_password(DEFAULT_PASSWORD))
 
-        denied = admin_client(self.owner).post(
+        by_admin = self.admin_api.post(
             "/api/admin/users/",
             {"email": "x@example.com", "password": DEFAULT_PASSWORD},
+            format="json",
+        )
+        self.assertEqual(by_admin.status_code, status.HTTP_403_FORBIDDEN)
+
+        denied = admin_client(self.owner).post(
+            "/api/admin/users/",
+            {"email": "y@example.com", "password": DEFAULT_PASSWORD},
             format="json",
         )
         self.assertEqual(denied.status_code, status.HTTP_403_FORBIDDEN)
@@ -169,11 +179,11 @@ class AdminPanelApiTests(TestCase):
         self.assertEqual(cancelled.status_code, status.HTTP_204_NO_CONTENT)
         self.assertFalse(Invitation.objects.filter(pk=invite_id).exists())
 
-    def test_createsuperuser_sets_admin_role(self):
+    def test_createsuperuser_sets_super_admin_role(self):
         user = User.objects.create_superuser(
             username="su",
             email="su@example.com",
             password=DEFAULT_PASSWORD,
         )
-        self.assertEqual(user.role, GlobalRole.ADMIN)
+        self.assertEqual(user.role, GlobalRole.SUPER_ADMIN)
         self.assertTrue(user.is_superuser)

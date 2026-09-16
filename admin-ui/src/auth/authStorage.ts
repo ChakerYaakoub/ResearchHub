@@ -15,6 +15,11 @@ export type AuthTokens = {
   user: AuthUser
 }
 
+/** Roles allowed into admin-ui. */
+export function isPlatformAdminRole(role: string): boolean {
+  return role === 'SUPER_ADMIN' || role === 'ADMIN'
+}
+
 const ACCESS_KEY = 'rh_admin_access'
 const REFRESH_KEY = 'rh_admin_refresh'
 const USER_KEY = 'rh_admin_user'

@@ -18,6 +18,7 @@ const TONE: Record<string, string> = {
   DECLINED: 'secondary',
   EXPIRED: 'dark',
   ADMIN: 'danger',
+  SUPER_ADMIN: 'dark',
   RESEARCHER: 'primary',
 }
 

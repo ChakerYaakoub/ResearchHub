@@ -51,10 +51,21 @@ class IsAdminUiOrigin(BasePermission):
 
 
 class IsPlatformAdmin(BasePermission):
-    """GlobalRole.ADMIN or is_staff."""
+    """GlobalRole.SUPER_ADMIN, ADMIN, or is_staff."""
 
     def has_permission(self, request, view) -> bool:
         return is_platform_admin(request.user)
+
+
+class IsSuperAdmin(BasePermission):
+    """GlobalRole.SUPER_ADMIN only (e.g. create admin accounts)."""
+
+    message = "Only a super admin can perform this action."
+
+    def has_permission(self, request, view) -> bool:
+        from .selectors import is_super_admin
+
+        return is_super_admin(request.user)
 
 
 class IsProjectMember(BasePermission):

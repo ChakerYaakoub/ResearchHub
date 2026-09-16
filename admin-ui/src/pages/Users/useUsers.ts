@@ -25,7 +25,7 @@ const createSchema = Yup.object({
 })
 
 export function useUsers() {
-  const { access, user: me } = useAuth()
+  const { access, user: me, isSuperAdmin } = useAuth()
   const [users, setUsers] = useState<AdminUser[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -122,6 +122,7 @@ export function useUsers() {
     success,
     busyId,
     meId: me?.id ?? null,
+    isSuperAdmin,
     setActive,
     createOpen,
     openCreate,

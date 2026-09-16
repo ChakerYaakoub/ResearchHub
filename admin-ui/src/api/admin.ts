@@ -14,7 +14,7 @@ export type AdminUser = {
   id: number
   email: string
   username: string
-  role: 'ADMIN' | 'RESEARCHER'
+  role: 'SUPER_ADMIN' | 'ADMIN' | 'RESEARCHER'
   is_active: boolean
   date_joined: string
 }
