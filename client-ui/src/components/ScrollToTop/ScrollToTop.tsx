@@ -1,31 +1,18 @@
-import { useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useScrollToTop } from './useScrollToTop'
 import './ScrollToTop.css'
-
-const SHOW_AFTER_PX = 120
 
 /** Fixed bottom-right control: appears after scroll, jumps to top. */
 export function ScrollToTop() {
-  const { t } = useTranslation()
-  const [visible, setVisible] = useState(false)
+  const vm = useScrollToTop()
 
-  useEffect(() => {
-    function onScroll() {
-      setVisible(window.scrollY > SHOW_AFTER_PX)
-    }
-    onScroll()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
-
-  if (!visible) return null
+  if (!vm.visible) return null
 
   return (
     <button
       type="button"
       className="rh-scroll-top"
-      aria-label={t('common.scrollToTop')}
-      onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+      aria-label={vm.t('common.scrollToTop')}
+      onClick={vm.scrollToTop}
     >
       <svg
         viewBox="0 0 24 24"

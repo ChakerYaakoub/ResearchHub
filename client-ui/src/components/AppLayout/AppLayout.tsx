@@ -1,77 +1,23 @@
-import { useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import {
-  Link,
-  NavLink,
-  Outlet,
-  useLocation,
-  type Location,
-} from 'react-router-dom'
-import { useAuth } from '../../auth'
-import { setAppLanguage, type AppLanguage } from '../../i18n'
+import { Link, NavLink, Outlet } from 'react-router-dom'
 import { ScrollToTop } from '../ScrollToTop'
+import { useAppLayout } from './useAppLayout'
 import './AppLayout.css'
-
-const NAV_LINKS = [
-  { to: '/facilities', key: 'nav.facilities' },
-  { to: '/instruments', key: 'nav.instruments' },
-  { to: '/how-it-works', key: 'nav.howItWorks' },
-  { to: '/documentation', key: 'nav.documentation' },
-] as const
-
-type LocationState = { background?: Location }
-
-function isAuthPath(pathname: string) {
-  return pathname === '/login' || pathname === '/register'
-}
-
-function navPathname(location: Location): string {
-  const background = (location.state as LocationState | null)?.background
-  if (background) return background.pathname
-  if (isAuthPath(location.pathname)) return '/'
-  return location.pathname
-}
 
 /** Public shell: navbar, page outlet, footer. */
 export function AppLayout() {
-  const { t, i18n } = useTranslation()
-  const location = useLocation()
-  const [menuOpen, setMenuOpen] = useState(false)
-  const { user, isAuthenticated, logout } = useAuth()
-  const current = (i18n.language?.startsWith('fr') ? 'fr' : 'en') as AppLanguage
-  const activePath = navPathname(location)
-  const authBackground =
-    (location.state as LocationState | null)?.background ??
-    (isAuthPath(location.pathname)
-      ? ({ ...location, pathname: activePath } as Location)
-      : location)
-
-  const closeMenu = () => setMenuOpen(false)
-
-  useEffect(() => {
-    setMenuOpen(false)
-  }, [location.pathname])
-
-  async function onLogout() {
-    closeMenu()
-    await logout()
-  }
-
-  async function onLang(lng: AppLanguage) {
-    await setAppLanguage(lng)
-  }
+  const vm = useAppLayout()
 
   function renderNavLinks() {
     return (
       <ul className="rh-nav-list">
-        {NAV_LINKS.map((item) => (
+        {vm.navLinks.map((item) => (
           <li key={item.to}>
             <NavLink
-              className={`rh-nav-link${activePath === item.to ? ' is-active' : ''}`}
+              className={`rh-nav-link${vm.activePath === item.to ? ' is-active' : ''}`}
               to={item.to}
-              onClick={closeMenu}
+              onClick={vm.closeMenu}
             >
-              {t(item.key)}
+              {vm.t(item.key)}
             </NavLink>
           </li>
         ))}
@@ -84,35 +30,35 @@ export function AppLayout() {
       <div className="rh-lang" role="group" aria-label="Language">
         <button
           type="button"
-          className={`rh-lang-btn${current === 'en' ? ' is-active' : ''}`}
-          onClick={() => void onLang('en')}
+          className={`rh-lang-btn${vm.current === 'en' ? ' is-active' : ''}`}
+          onClick={() => void vm.onLang('en')}
         >
-          {t('common.langEn')}
+          {vm.t('common.langEn')}
         </button>
         <button
           type="button"
-          className={`rh-lang-btn${current === 'fr' ? ' is-active' : ''}`}
-          onClick={() => void onLang('fr')}
+          className={`rh-lang-btn${vm.current === 'fr' ? ' is-active' : ''}`}
+          onClick={() => void vm.onLang('fr')}
         >
-          {t('common.langFr')}
+          {vm.t('common.langFr')}
         </button>
       </div>
     )
   }
 
   function renderAuth() {
-    if (isAuthenticated && user) {
+    if (vm.isAuthenticated && vm.user) {
       return (
         <div className="rh-nav-auth">
-          <span className="rh-nav-user" title={user.email}>
-            {user.email}
+          <span className="rh-nav-user" title={vm.user.email}>
+            {vm.user.email}
           </span>
           <button
             type="button"
             className="btn btn-outline-secondary btn-sm"
-            onClick={onLogout}
+            onClick={vm.onLogout}
           >
-            {t('common.logOut')}
+            {vm.t('common.logOut')}
           </button>
         </div>
       )
@@ -122,18 +68,18 @@ export function AppLayout() {
         <Link
           className="btn btn-outline-secondary btn-sm"
           to="/login"
-          state={{ background: authBackground }}
-          onClick={closeMenu}
+          state={{ background: vm.authBackground }}
+          onClick={vm.closeMenu}
         >
-          {t('common.logIn')}
+          {vm.t('common.logIn')}
         </Link>
         <Link
           className="btn btn-primary btn-sm"
           to="/register"
-          state={{ background: authBackground }}
-          onClick={closeMenu}
+          state={{ background: vm.authBackground }}
+          onClick={vm.closeMenu}
         >
-          {t('common.register')}
+          {vm.t('common.register')}
         </Link>
       </div>
     )
@@ -141,18 +87,18 @@ export function AppLayout() {
 
   return (
     <div className="rh-layout">
-      <header className={`rh-header${menuOpen ? ' is-open' : ''}`}>
+      <header className={`rh-header${vm.menuOpen ? ' is-open' : ''}`}>
         <button
           type="button"
           className="rh-mobile-backdrop"
-          aria-label={t('common.close')}
-          tabIndex={menuOpen ? 0 : -1}
-          onClick={closeMenu}
+          aria-label={vm.t('common.close')}
+          tabIndex={vm.menuOpen ? 0 : -1}
+          onClick={vm.closeMenu}
         />
 
         <div className="container rh-header-inner">
-          <Link className="rh-brand" to="/" onClick={closeMenu}>
-            {t('nav.brand')}
+          <Link className="rh-brand" to="/" onClick={vm.closeMenu}>
+            {vm.t('nav.brand')}
           </Link>
 
           <nav className="rh-header-nav" aria-label="Main">
@@ -167,11 +113,11 @@ export function AppLayout() {
           <button
             type="button"
             className="rh-toggler"
-            aria-label={menuOpen ? t('common.close') : t('common.toggleNav')}
-            aria-expanded={menuOpen}
-            onClick={() => setMenuOpen((v) => !v)}
+            aria-label={vm.menuOpen ? vm.t('common.close') : vm.t('common.toggleNav')}
+            aria-expanded={vm.menuOpen}
+            onClick={vm.toggleMenu}
           >
-            {menuOpen ? (
+            {vm.menuOpen ? (
               <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
                 <path
                   fill="currentColor"
@@ -206,9 +152,9 @@ export function AppLayout() {
 
       <footer className="rh-footer py-4">
         <div className="container d-flex flex-column flex-md-row justify-content-between gap-2">
-          <span>{t('nav.footerTagline')}</span>
+          <span>{vm.t('nav.footerTagline')}</span>
           <span className="text-muted">
-            {t('nav.copyrightPrefix')} {new Date().getFullYear()}
+            {vm.t('nav.copyrightPrefix')} {vm.copyrightYear}
           </span>
         </div>
       </footer>
