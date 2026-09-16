@@ -225,6 +225,7 @@
     "status": "Status",
     "lifecycle": "Lifecycle",
     "collaborators": "Collaborators",
+    "collaboratorsEmpty": "No collaborators listed.",
     "inviteTitle": "Invite collaborator",
     "inviteEmail": "Invitee email",
     "inviteRole": "Role",
