@@ -41,6 +41,13 @@ export function useDashboardLayout() {
     await setAppLanguage(lng)
   }
 
+  const activePath = location.pathname
+  const pageTitleKey = activePath.startsWith('/projects')
+    ? 'nav.projects'
+    : activePath.startsWith('/invitations')
+      ? 'nav.invitations'
+      : 'nav.dashboard'
+
   return {
     t,
     user,
@@ -50,7 +57,8 @@ export function useDashboardLayout() {
     onLogout,
     onLang,
     current,
-    activePath: location.pathname,
+    activePath,
     links: SIDEBAR_LINKS,
+    pageTitleKey,
   }
 }
