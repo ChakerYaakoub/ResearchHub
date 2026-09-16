@@ -29,3 +29,10 @@ export function listCollaborators(token: string, projectId: number | string) {
     { token },
   )
 }
+
+export function completeProject(token: string, projectId: number | string) {
+  return apiFetch<Project>(`/projects/${projectId}/complete/`, {
+    method: 'POST',
+    token,
+  })
+}

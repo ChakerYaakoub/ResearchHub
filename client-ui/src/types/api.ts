@@ -62,3 +62,63 @@ export type InvitationCreateInput = {
   email: string
   role: InvitationRole
 }
+
+export type ProposalStatus = 'PENDING' | 'APPROVED' | 'REJECTED'
+
+export type Proposal = {
+  id: number
+  project: number
+  methodology: string
+  expected_results: string
+  submitted_at: string | null
+  reviewed_at: string | null
+  review_comment: string
+  status: ProposalStatus
+}
+
+export type ProposalInput = {
+  methodology?: string
+  expected_results?: string
+}
+
+export type ExperimentStatus =
+  | 'PLANNED'
+  | 'SCHEDULED'
+  | 'COMPLETED'
+  | 'CANCELLED'
+
+export type Experiment = {
+  id: number
+  project: number
+  instrument: string
+  scheduled_date: string
+  status: ExperimentStatus
+  notes: string
+}
+
+export type ExperimentInput = {
+  instrument: string
+  scheduled_date: string
+  status?: ExperimentStatus
+  notes?: string
+}
+
+export type Publication = {
+  id: number
+  project: number
+  title: string
+  authors: string
+  journal: string
+  doi: string
+  publication_date: string | null
+  url: string
+}
+
+export type PublicationInput = {
+  title: string
+  authors: string
+  journal?: string
+  doi?: string
+  publication_date?: string | null
+  url?: string
+}
