@@ -12,15 +12,20 @@ export type AuthModalProps = {
   mode: AuthModalMode
 }
 
-type LocationState = { background?: Location }
+type LocationState = {
+  background?: Location
+  from?: string
+}
 
-/** Auth modal close/redirect logic over background location. */
+/** Auth modal close/redirect — success goes to app dashboard. */
 export function useAuthModal({ mode }: AuthModalProps) {
   const { t } = useTranslation()
   const { isAuthenticated } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
-  const background = (location.state as LocationState | null)?.background
+  const state = location.state as LocationState | null
+  const background = state?.background
+  const from = state?.from
 
   function close() {
     if (background) {
@@ -30,8 +35,15 @@ export function useAuthModal({ mode }: AuthModalProps) {
     navigate('/', { replace: true })
   }
 
+  function onAuthSuccess() {
+    navigate(from && from !== '/login' && from !== '/register' ? from : '/dashboard', {
+      replace: true,
+    })
+  }
+
   const title = mode === 'login' ? t('login.title') : t('register.title')
-  const redirectTo = background ?? '/'
+  const successPath =
+    from && from !== '/login' && from !== '/register' ? from : '/dashboard'
 
   return {
     mode,
@@ -39,7 +51,8 @@ export function useAuthModal({ mode }: AuthModalProps) {
     isAuthenticated,
     background,
     close,
+    onAuthSuccess,
     title,
-    redirectTo,
+    successPath,
   }
 }

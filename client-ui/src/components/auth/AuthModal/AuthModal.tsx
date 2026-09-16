@@ -11,15 +11,15 @@ export function AuthModal(props: AuthModalProps) {
   const vm = useAuthModal(props)
 
   if (vm.isAuthenticated) {
-    return <Navigate to={vm.redirectTo} replace />
+    return <Navigate to={vm.successPath} replace />
   }
 
   return (
     <Popup open onClose={vm.close} title={vm.title} size="md">
       {vm.mode === 'login' ? (
-        <LoginForm onSuccess={vm.close} />
+        <LoginForm onSuccess={vm.onAuthSuccess} />
       ) : (
-        <RegisterForm onSuccess={vm.close} />
+        <RegisterForm onSuccess={vm.onAuthSuccess} />
       )}
     </Popup>
   )
