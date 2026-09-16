@@ -103,24 +103,29 @@ class AdminProposalListView(APIView):
 
     def get(self, request):
         status_filter = (request.query_params.get("status") or "").strip().upper()
+        queue = (request.query_params.get("queue") or "").strip().lower()
         qs = Proposal.objects.select_related("project").order_by(
             "submitted_at", "id"
         )
-        if status_filter:
-            if status_filter not in ProposalStatus.values:
-                return Response(
-                    {"detail": f"Invalid status. Use one of: {', '.join(ProposalStatus.values)}."},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-            qs = qs.filter(status=status_filter)
-        else:
-            # Review queue default (same as Phase 12).
+        if queue == "review":
             from projects.models import ProjectStatus
 
             qs = qs.filter(
                 status=ProposalStatus.PENDING,
                 project__status=ProjectStatus.UNDER_REVIEW,
             )
+        elif status_filter:
+            if status_filter not in ProposalStatus.values:
+                return Response(
+                    {
+                        "detail": (
+                            f"Invalid status. Use one of: "
+                            f"{', '.join(ProposalStatus.values)}."
+                        )
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            qs = qs.filter(status=status_filter)
         return Response(AdminProposalSerializer(qs, many=True).data)
 
 

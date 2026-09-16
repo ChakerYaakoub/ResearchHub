@@ -84,13 +84,17 @@ class AdminPanelApiTests(TestCase):
         )
         self.assertEqual(submitted.status_code, status.HTTP_200_OK)
 
-        pending = self.admin_api.get("/api/admin/proposals/")
+        pending = self.admin_api.get("/api/admin/proposals/?queue=review")
         self.assertEqual(pending.status_code, status.HTTP_200_OK)
         self.assertTrue(any(p["id"] == submitted.data["id"] for p in pending.data))
 
         all_pending = self.admin_api.get("/api/admin/proposals/?status=PENDING")
         self.assertEqual(all_pending.status_code, status.HTTP_200_OK)
         self.assertTrue(any(p["id"] == submitted.data["id"] for p in all_pending.data))
+
+        all_rows = self.admin_api.get("/api/admin/proposals/")
+        self.assertEqual(all_rows.status_code, status.HTTP_200_OK)
+        self.assertTrue(any(p["id"] == submitted.data["id"] for p in all_rows.data))
 
     def test_experiments_publications_invitations(self):
         Experiment.objects.create(

@@ -30,7 +30,7 @@ class AdminPendingProposalsTests(TestCase):
 
     def test_admin_with_origin_lists_pending(self):
         proposal = self._submit_proposal()
-        response = self.admin_api.get("/api/admin/proposals/")
+        response = self.admin_api.get("/api/admin/proposals/?queue=review")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         ids = {row["id"] for row in response.data}
         self.assertIn(proposal["id"], ids)

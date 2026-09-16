@@ -1,9 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import {
-  approveProposal,
   getAdminStats,
   listPendingProposals,
-  rejectProposal,
   type AdminProposal,
   type AdminStats,
 } from '../../api/admin'
@@ -11,17 +9,29 @@ import { ApiError } from '../../api/client'
 import { useAuth } from '../../auth'
 import { copy } from '../../copy'
 
-export type ReviewKind = 'approve' | 'reject'
-
-const STAT_CARDS: { key: keyof AdminStats; label: string }[] = [
-  { key: 'total_projects', label: copy.totalProjects },
-  { key: 'pending_proposals', label: copy.pendingProposals },
-  { key: 'scheduled_experiments', label: copy.scheduledExperiments },
-  { key: 'completed_projects', label: copy.completedProjects },
-  { key: 'researchers', label: copy.researchers },
-  { key: 'pending_invitations', label: copy.pendingInvitations },
-  { key: 'publications', label: copy.publications },
+const STAT_CARDS: {
+  key: keyof AdminStats
+  label: string
+  to: string
+}[] = [
+  { key: 'total_projects', label: copy.totalProjects, to: '/projects' },
+  { key: 'pending_proposals', label: copy.pendingProposals, to: '/proposals' },
+  {
+    key: 'scheduled_experiments',
+    label: copy.scheduledExperiments,
+    to: '/experiments',
+  },
+  { key: 'completed_projects', label: copy.completedProjects, to: '/projects' },
+  { key: 'researchers', label: copy.researchers, to: '/users' },
+  {
+    key: 'pending_invitations',
+    label: copy.pendingInvitations,
+    to: '/invitations',
+  },
+  { key: 'publications', label: copy.publications, to: '/publications' },
 ]
+
+const TEASER_LIMIT = 3
 
 export function useDashboard() {
   const { access } = useAuth()
@@ -29,11 +39,6 @@ export function useDashboard() {
   const [proposals, setProposals] = useState<AdminProposal[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [actionError, setActionError] = useState<string | null>(null)
-  const [reviewKind, setReviewKind] = useState<ReviewKind | null>(null)
-  const [pending, setPending] = useState<AdminProposal | null>(null)
-  const [reviewComment, setReviewComment] = useState('')
-  const [busy, setBusy] = useState(false)
 
   const reload = useCallback(async () => {
     if (!access) return
@@ -59,61 +64,19 @@ export function useDashboard() {
     void reload()
   }, [reload])
 
-  function openReview(kind: ReviewKind, proposal: AdminProposal) {
-    setActionError(null)
-    setReviewComment('')
-    setReviewKind(kind)
-    setPending(proposal)
-  }
-
-  function closeReview() {
-    if (busy) return
-    setReviewKind(null)
-    setPending(null)
-    setReviewComment('')
-  }
-
-  async function confirmReview() {
-    if (!access || !pending || !reviewKind) return
-    setBusy(true)
-    setActionError(null)
-    try {
-      if (reviewKind === 'approve') {
-        await approveProposal(access, pending.id, reviewComment.trim())
-      } else {
-        await rejectProposal(access, pending.id, reviewComment.trim())
-      }
-      setReviewKind(null)
-      setPending(null)
-      setReviewComment('')
-      await reload()
-    } catch (err) {
-      setActionError(err instanceof ApiError ? err.message : copy.requestFailed)
-    } finally {
-      setBusy(false)
-    }
-  }
-
   const cards = STAT_CARDS.map((c) => ({
     key: c.key,
     label: c.label,
+    to: c.to,
     value: stats ? stats[c.key] : '—',
   }))
 
   return {
     copy,
     cards,
-    proposals,
+    proposals: proposals.slice(0, TEASER_LIMIT),
+    pendingTotal: proposals.length,
     loading,
     error,
-    actionError,
-    reviewKind,
-    pending,
-    reviewComment,
-    setReviewComment,
-    busy,
-    openReview,
-    closeReview,
-    confirmReview,
   }
 }
