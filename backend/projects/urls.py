@@ -4,6 +4,7 @@ from django.urls import path
 from rest_framework.routers import DefaultRouter
 
 from .views import (
+    AdminPendingProposalsView,
     AdminStatsView,
     ProjectCollaboratorDeleteView,
     ProjectCollaboratorListView,
@@ -31,5 +32,10 @@ urlpatterns = [
         name="project-complete",
     ),
     path("admin/stats/", AdminStatsView.as_view(), name="admin-stats"),
+    path(
+        "admin/proposals/",
+        AdminPendingProposalsView.as_view(),
+        name="admin-proposals",
+    ),
     *router.urls,
 ]
