@@ -126,28 +126,11 @@ export function ProjectDetailsPage() {
           {vm.showDraftPrep ? (
             <section className="rh-draft-prep mb-3">
               <h2 className="h6 mb-1">{vm.t('projects.draftPrep.title')}</h2>
-              <p className="small text-muted mb-3">
+              <p className="small text-muted mb-0">
                 {vm.project.status === 'REJECTED'
                   ? vm.t('projects.draftPrep.rejectedIntro')
                   : vm.t('projects.draftPrep.intro')}
               </p>
-              <ol className="rh-draft-prep-steps list-unstyled d-flex flex-wrap gap-2 mb-0">
-                {vm.draftPrepSteps.map((step, i) => {
-                  const active = vm.activeSection === step.id
-                  return (
-                    <li key={step.id}>
-                      <button
-                        type="button"
-                        className={`btn btn-sm rh-draft-prep-step${active ? ' active' : ''}`}
-                        onClick={() => vm.setActiveSection(step.id)}
-                      >
-                        <span className="rh-draft-prep-num">{i + 1}</span>
-                        {vm.t(step.labelKey)}
-                      </button>
-                    </li>
-                  )
-                })}
-              </ol>
             </section>
           ) : null}
 

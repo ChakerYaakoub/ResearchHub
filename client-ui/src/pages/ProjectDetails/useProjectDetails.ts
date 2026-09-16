@@ -363,7 +363,6 @@ export function useProjectDetails() {
     isOwner,
     canEdit,
     showDraftPrep,
-    draftPrepSteps: DRAFT_PREP_STEPS,
     navSections,
     canAddPlannedExperiment,
     canAddExecutedExperiment,

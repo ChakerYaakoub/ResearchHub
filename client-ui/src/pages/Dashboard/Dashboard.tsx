@@ -41,16 +41,9 @@ export function DashboardPage() {
         <div className="row g-3 rh-dash-cards">
           {vm.cards.map((card) => (
             <div key={card.key} className="col-12 col-md-6 col-lg-4">
-              <div className={`rh-dash-card${card.muted ? ' is-muted' : ''}`}>
+              <div className="rh-dash-card">
                 <div className="rh-dash-card-label">{vm.t(card.titleKey)}</div>
-                <div
-                  className={`rh-dash-card-value${card.muted ? ' is-muted' : ''}`}
-                >
-                  {card.value}
-                </div>
-                {card.hintKey ? (
-                  <div className="rh-dash-card-hint">{vm.t(card.hintKey)}</div>
-                ) : null}
+                <div className="rh-dash-card-value">{card.value}</div>
               </div>
             </div>
           ))}

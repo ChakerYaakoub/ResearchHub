@@ -200,50 +200,11 @@
 }
 
 
-/* Draft prep stepper */
+/* Draft prep notice */
 .rh-draft-prep {
   border: 1px solid var(--rh-border);
   border-radius: 0.75rem;
   background: var(--rh-surface);
   padding: 1rem 1.15rem;
-}
-
-.rh-draft-prep-step {
-  border: 1px solid var(--rh-border);
-  background: #fff;
-  color: var(--rh-text);
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-}
-
-.rh-draft-prep-step:hover {
-  border-color: var(--rh-accent);
-  color: var(--rh-accent);
-}
-
-.rh-draft-prep-step.active {
-  border-color: var(--rh-primary);
-  color: var(--rh-primary);
-  font-weight: 650;
-  background: color-mix(in srgb, var(--rh-primary) 8%, #fff);
-}
-
-.rh-draft-prep-num {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 1.35rem;
-  height: 1.35rem;
-  border-radius: 999px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  background: color-mix(in srgb, var(--rh-accent) 18%, #fff);
-  color: var(--rh-accent);
-}
-
-.rh-draft-prep-step.active .rh-draft-prep-num {
-  background: var(--rh-primary);
-  color: #fff;
 }
 
