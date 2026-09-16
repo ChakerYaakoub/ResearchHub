@@ -11,6 +11,12 @@ export const NAV_LINKS = [
   { to: '/documentation', key: 'nav.documentation' },
 ] as const
 
+export const APP_NAV_LINKS = [
+  { to: '/dashboard', key: 'nav.dashboard' },
+  { to: '/projects', key: 'nav.projects' },
+  { to: '/invitations', key: 'nav.invitations' },
+] as const
+
 type LocationState = { background?: Location }
 
 function isAuthPath(pathname: string) {
@@ -70,6 +76,7 @@ export function useAppLayout() {
     onLogout,
     onLang,
     navLinks: NAV_LINKS,
+    appNavLinks: isAuthenticated ? APP_NAV_LINKS : [],
     copyrightYear: new Date().getFullYear(),
   }
 }

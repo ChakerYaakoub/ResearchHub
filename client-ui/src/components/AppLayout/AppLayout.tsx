@@ -8,9 +8,10 @@ export function AppLayout() {
   const vm = useAppLayout()
 
   function renderNavLinks() {
+    const links = [...vm.appNavLinks, ...vm.navLinks]
     return (
       <ul className="rh-nav-list">
-        {vm.navLinks.map((item) => (
+        {links.map((item) => (
           <li key={item.to}>
             <NavLink
               className={`rh-nav-link${vm.activePath === item.to ? ' is-active' : ''}`}
@@ -97,7 +98,11 @@ export function AppLayout() {
         />
 
         <div className="container rh-header-inner">
-          <Link className="rh-brand" to="/" onClick={vm.closeMenu}>
+          <Link
+            className="rh-brand"
+            to={vm.isAuthenticated ? '/dashboard' : '/'}
+            onClick={vm.closeMenu}
+          >
             {vm.t('nav.brand')}
           </Link>
 
