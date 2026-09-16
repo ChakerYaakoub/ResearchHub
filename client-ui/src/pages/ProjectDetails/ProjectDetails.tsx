@@ -1,41 +1,35 @@
-import { Form, Formik } from 'formik'
 import { Link } from 'react-router-dom'
 import { ConfirmDialog } from '../../components/ConfirmDialog'
-import { EmptyState } from '../../components/EmptyState'
 import { LoadingState } from '../../components/LoadingState'
 import { PageHeader } from '../../components/PageHeader'
-import { Popup } from '../../components/Popup'
 import { StatusBadge } from '../../components/StatusBadge'
-import { TextInput } from '../../components/form/TextInput'
 import { ExperimentsSection } from './ExperimentsSection'
 import { ProjectDetailsSkeleton } from './ProjectDetailsSkeleton'
 import { ProposalSection } from './ProposalSection'
 import { PublicationsSection } from './PublicationsSection'
 import { SubmitSection } from './SubmitSection'
-import {
-  useProjectDetails,
-  type InviteFormValues,
-} from './useProjectDetails'
+import { TeamSection } from './TeamSection'
+import { useProjectDetails } from './useProjectDetails'
 import './ProjectDetails.css'
-
-function roleClass(role: string) {
-  const r = role.toLowerCase()
-  if (r === 'owner') return 'rh-team-role rh-team-role--owner'
-  if (r === 'editor') return 'rh-team-role rh-team-role--editor'
-  return 'rh-team-role rh-team-role--viewer'
-}
-
-function initialsFromEmail(email: string) {
-  const local = email.split('@')[0] ?? '?'
-  const parts = local.split(/[._-]+/).filter(Boolean)
-  if (parts.length >= 2) {
-    return `${parts[0]![0] ?? ''}${parts[1]![0] ?? ''}`.toUpperCase()
-  }
-  return local.slice(0, 2).toUpperCase() || '?'
-}
 
 export function ProjectDetailsPage() {
   const vm = useProjectDetails()
+
+  const teamProps = {
+    t: vm.t,
+    collaborators: vm.collaborators,
+    projectInvitations: vm.projectInvitations,
+    isOwner: vm.isOwner,
+    inviteInitial: vm.inviteInitial,
+    inviteSchema: vm.inviteSchema,
+    onInvite: vm.onInvite,
+    inviteOpen: vm.inviteOpen,
+    openInvite: vm.openInvite,
+    closeInvite: vm.closeInvite,
+    requestCancelInvite: vm.requestCancelInvite,
+    inviteMessage: vm.inviteMessage,
+    inviteError: vm.inviteError,
+  }
 
   return (
     <div className="container-fluid px-3 px-md-4 py-4">
@@ -127,6 +121,8 @@ export function ProjectDetailsPage() {
             </dl>
           </section>
 
+          <TeamSection {...teamProps} showTitle />
+
           {vm.showDraftPrep ? (
             <section className="rh-draft-prep mb-3">
               <h2 className="h6 mb-1">{vm.t('projects.draftPrep.title')}</h2>
@@ -156,7 +152,7 @@ export function ProjectDetailsPage() {
           ) : null}
 
           <ul
-            className="nav nav-tabs rh-project-tabs flex-nowrap overflow-auto mb-3"
+            className="nav nav-tabs rh-project-tabs flex-nowrap mb-3"
             role="tablist"
             aria-label={vm.t('projects.sectionNav')}
           >
@@ -182,203 +178,6 @@ export function ProjectDetailsPage() {
           </ul>
 
           <div className="rh-project-tab-panels">
-            {vm.activeSection === 'team' ? (
-              <div
-                className="tab-pane"
-                role="tabpanel"
-                id="project-panel-team"
-                aria-labelledby="project-tab-team"
-              >
-                <section className="rh-team">
-                  <div className="rh-team-block">
-                    <h3 className="rh-team-block-title">
-                      {vm.t('projects.collaborators')}
-                    </h3>
-                    {vm.collaborators.length === 0 ? (
-                      <EmptyState
-                        compact
-                        message={vm.t('projects.collaboratorsEmpty')}
-                      />
-                    ) : (
-                      <ul className="rh-team-list">
-                        {vm.collaborators.map((m) => (
-                          <li key={m.id} className="rh-team-row">
-                            <div className="rh-team-row-main">
-                              <span
-                                className="rh-team-avatar"
-                                aria-hidden="true"
-                              >
-                                {initialsFromEmail(m.user_email)}
-                              </span>
-                              <span className="rh-team-email">
-                                {m.user_email}
-                              </span>
-                            </div>
-                            <span className={roleClass(m.role)}>{m.role}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-
-                  {vm.isOwner ? (
-                    <>
-                      <div className="rh-team-block">
-                        <div className="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
-                          <h3 className="rh-team-block-title mb-0">
-                            {vm.t('projects.sentInvitations')}
-                          </h3>
-                          <button
-                            type="button"
-                            className="btn btn-primary btn-sm"
-                            onClick={vm.openInvite}
-                          >
-                            {vm.t('projects.inviteTitle')}
-                          </button>
-                        </div>
-                        {vm.inviteMessage ? (
-                          <div
-                            className="alert alert-success py-2"
-                            role="status"
-                          >
-                            {vm.inviteMessage}
-                          </div>
-                        ) : null}
-                        {vm.projectInvitations.length === 0 ? (
-                          <EmptyState
-                            compact
-                            message={vm.t('projects.sentInvitationsEmpty')}
-                          />
-                        ) : (
-                          <ul className="rh-team-list">
-                            {vm.projectInvitations.map((inv) => (
-                              <li key={inv.id} className="rh-team-row">
-                                <div className="rh-team-row-main">
-                                  <span
-                                    className="rh-team-avatar"
-                                    aria-hidden="true"
-                                  >
-                                    {initialsFromEmail(inv.email)}
-                                  </span>
-                                  <div className="min-w-0">
-                                    <div className="rh-team-email">
-                                      {inv.email}
-                                    </div>
-                                    <div className="rh-team-meta">
-                                      {vm.t(`status.${inv.status}`)} ·{' '}
-                                      {vm.t('invitations.expires')}:{' '}
-                                      {new Date(
-                                        inv.expires_at,
-                                      ).toLocaleDateString()}
-                                    </div>
-                                  </div>
-                                </div>
-                                <div className="d-flex flex-wrap align-items-center gap-2">
-                                  <span className={roleClass(inv.role)}>
-                                    {inv.role}
-                                  </span>
-                                  {inv.status === 'PENDING' ? (
-                                    <button
-                                      type="button"
-                                      className="btn btn-outline-secondary btn-sm"
-                                      onClick={() =>
-                                        vm.requestCancelInvite(inv)
-                                      }
-                                    >
-                                      {vm.t('projects.cancelInvite')}
-                                    </button>
-                                  ) : (
-                                    <StatusBadge
-                                      status={inv.status}
-                                      label={vm.t(`status.${inv.status}`)}
-                                    />
-                                  )}
-                                </div>
-                              </li>
-                            ))}
-                          </ul>
-                        )}
-                      </div>
-
-                      <Popup
-                        open={vm.inviteOpen}
-                        onClose={vm.closeInvite}
-                        title={vm.t('projects.inviteTitle')}
-                        size="sm"
-                      >
-                        <p className="rh-team-hint">
-                          {vm.t('projects.inviteHint')}
-                        </p>
-                        {vm.inviteError ? (
-                          <div className="alert alert-danger py-2" role="alert">
-                            {vm.inviteError}
-                          </div>
-                        ) : null}
-                        <Formik<InviteFormValues>
-                          initialValues={vm.inviteInitial}
-                          validationSchema={vm.inviteSchema}
-                          onSubmit={vm.onInvite}
-                        >
-                          {({
-                            isSubmitting,
-                            values,
-                            handleChange,
-                            handleBlur,
-                          }) => (
-                            <Form noValidate>
-                              <TextInput
-                                name="email"
-                                label={vm.t('projects.inviteEmail')}
-                                type="email"
-                                autoComplete="email"
-                              />
-                              <div className="mb-3">
-                                <label className="form-label" htmlFor="role">
-                                  {vm.t('projects.inviteRole')}
-                                </label>
-                                <select
-                                  id="role"
-                                  name="role"
-                                  className="form-select"
-                                  value={values.role}
-                                  onChange={handleChange}
-                                  onBlur={handleBlur}
-                                >
-                                  <option value="EDITOR">
-                                    {vm.t('projects.roleEditor')}
-                                  </option>
-                                  <option value="VIEWER">
-                                    {vm.t('projects.roleViewer')}
-                                  </option>
-                                </select>
-                              </div>
-                              <div className="d-flex flex-wrap justify-content-end gap-2">
-                                <button
-                                  type="button"
-                                  className="btn btn-outline-secondary btn-sm"
-                                  disabled={isSubmitting}
-                                  onClick={vm.closeInvite}
-                                >
-                                  {vm.t('common.cancel')}
-                                </button>
-                                <button
-                                  type="submit"
-                                  className="btn btn-primary btn-sm"
-                                  disabled={isSubmitting}
-                                >
-                                  {vm.t('projects.inviteSubmit')}
-                                </button>
-                              </div>
-                            </Form>
-                          )}
-                        </Formik>
-                      </Popup>
-                    </>
-                  ) : null}
-                </section>
-              </div>
-            ) : null}
-
             {vm.activeSection === 'proposal' ? (
               <div
                 className="tab-pane"

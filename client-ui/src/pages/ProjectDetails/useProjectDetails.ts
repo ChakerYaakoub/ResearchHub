@@ -31,14 +31,13 @@ export type InviteFormValues = {
 export type ProjectConfirmKind = 'delete' | 'complete' | 'cancelInvite'
 
 export type ProjectDetailsSection =
-  | 'team'
   | 'proposal'
   | 'experiments'
   | 'publications'
   | 'submit'
 
 export type DraftPrepStep = {
-  id: Exclude<ProjectDetailsSection, 'team'>
+  id: ProjectDetailsSection
   labelKey: string
 }
 
@@ -53,7 +52,6 @@ const NORMAL_SECTIONS: {
   id: Exclude<ProjectDetailsSection, 'submit'>
   labelKey: string
 }[] = [
-  { id: 'team', labelKey: 'projects.team' },
   { id: 'proposal', labelKey: 'proposal.title' },
   { id: 'experiments', labelKey: 'experiments.title' },
   { id: 'publications', labelKey: 'publications.title' },
@@ -87,7 +85,7 @@ export function useProjectDetails() {
   )
   const [pendingInvite, setPendingInvite] = useState<Invitation | null>(null)
   const [activeSection, setActiveSection] =
-    useState<ProjectDetailsSection>('team')
+    useState<ProjectDetailsSection>('proposal')
   const [draftLanded, setDraftLanded] = useState(false)
 
   const reloadInvitations = useCallback(async () => {
@@ -348,13 +346,10 @@ export function useProjectDetails() {
           : null
 
   const navSections = showDraftPrep
-    ? ([
-        { id: 'team' as const, labelKey: 'projects.team' },
-        ...DRAFT_PREP_STEPS.map((s) => ({
-          id: s.id,
-          labelKey: s.labelKey,
-        })),
-      ] as const)
+    ? DRAFT_PREP_STEPS.map((s) => ({
+        id: s.id,
+        labelKey: s.labelKey,
+      }))
     : NORMAL_SECTIONS
 
   return {
