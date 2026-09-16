@@ -1,0 +1,49 @@
+.rh-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.85rem;
+  min-height: 12rem;
+  padding: 2rem 1rem;
+  color: var(--rh-text-muted);
+}
+
+.rh-loading--compact {
+  flex-direction: row;
+  min-height: 0;
+  padding: 1rem 0;
+  justify-content: flex-start;
+}
+
+.rh-loading--overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  min-height: 0;
+  padding: 1rem;
+  margin: 0;
+  background: color-mix(in srgb, var(--rh-surface-muted) 55%, transparent);
+  backdrop-filter: blur(1px);
+  pointer-events: none;
+}
+
+.rh-loading-spinner {
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 3px solid var(--rh-border);
+  border-top-color: var(--rh-primary);
+  border-radius: 50%;
+  animation: rh-spin 0.7s linear infinite;
+}
+
+.rh-loading-label {
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+@keyframes rh-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
