@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import './ScrollToTop.css'
 
-const SHOW_AFTER_PX = 280
+const SHOW_AFTER_PX = 120
 
 /** Fixed bottom-right control: appears after scroll, jumps to top. */
 export function ScrollToTop() {

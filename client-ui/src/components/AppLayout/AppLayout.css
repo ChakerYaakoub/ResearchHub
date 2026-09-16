@@ -6,17 +6,18 @@
 }
 
 .rh-main {
-  flex: 1;
+  flex: 1 0 auto;
 }
 
 .rh-footer {
+  flex-shrink: 0;
   background: var(--rh-surface);
   border-top: 1px solid var(--rh-border);
   color: var(--rh-text-muted);
   font-size: 0.9rem;
 }
 
-/* Header bar */
+/* Header */
 .rh-header {
   position: sticky;
   top: 0;
@@ -26,12 +27,15 @@
 }
 
 .rh-header-inner {
+  position: relative;
+  z-index: 2;
   display: flex;
   align-items: center;
   gap: 1rem;
   min-height: 3.75rem;
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
+  background: var(--rh-surface);
 }
 
 .rh-brand {
@@ -145,13 +149,17 @@
 
 .rh-mobile-panel {
   display: none;
-  border-top: 1px solid var(--rh-border);
-  padding: 0.75rem 0 1rem;
 }
 
 .rh-mobile-panel .rh-nav-list {
   flex-direction: column;
   align-items: flex-start;
+  gap: 0.35rem;
+  padding: 0.25rem 0 0.5rem;
+}
+
+.rh-mobile-panel .rh-nav-link {
+  padding: 0.55rem 0.25rem;
 }
 
 .rh-mobile-actions {
@@ -172,7 +180,7 @@
   display: none;
 }
 
-/* Mobile */
+/* Mobile menu — overlay + open/close animation */
 @media (max-width: 991.98px) {
   .rh-header-nav,
   .rh-header-end {
@@ -183,16 +191,58 @@
     display: inline-flex;
   }
 
-  .rh-header.is-open .rh-mobile-panel {
-    display: block;
-  }
-
-  .rh-header.is-open .rh-mobile-backdrop {
+  .rh-mobile-backdrop {
     display: block;
     position: fixed;
     inset: 0;
-    z-index: 1029;
+    z-index: 0;
     border: none;
-    background: rgba(15, 23, 32, 0.25);
+    margin: 0;
+    padding: 0;
+    background: rgba(15, 23, 32, 0.28);
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+      opacity 0.2s ease,
+      visibility 0.2s ease;
+  }
+
+  .rh-mobile-panel {
+    display: block;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    z-index: 1;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    background: var(--rh-surface);
+    border-bottom: 1px solid var(--rh-border);
+    box-shadow: 0 0.5rem 1rem rgba(15, 23, 32, 0.1);
+    padding: 1rem 1.25rem 1.25rem;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(-0.4rem);
+    transition:
+      opacity 0.2s ease,
+      transform 0.2s ease,
+      visibility 0.2s ease;
+  }
+
+  .rh-header.is-open .rh-mobile-backdrop {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  .rh-header.is-open .rh-mobile-panel {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0);
   }
 }

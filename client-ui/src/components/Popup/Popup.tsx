@@ -21,7 +21,7 @@ type PopupProps = {
 const FOCUSABLE =
   'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
 
-/** Simple modal: backdrop + panel. No body scroll lock. */
+/** Simple modal: backdrop + panel. Locks page scroll while open. */
 export function Popup({
   open,
   onClose,
@@ -32,6 +32,14 @@ export function Popup({
   const { t } = useTranslation()
   const titleId = useId()
   const panelRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!open) return
+    document.body.classList.add('rh-popup-open')
+    return () => {
+      document.body.classList.remove('rh-popup-open')
+    }
+  }, [open])
 
   useEffect(() => {
     if (!open) return

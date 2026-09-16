@@ -142,6 +142,14 @@ export function AppLayout() {
   return (
     <div className="rh-layout">
       <header className={`rh-header${menuOpen ? ' is-open' : ''}`}>
+        <button
+          type="button"
+          className="rh-mobile-backdrop"
+          aria-label={t('common.close')}
+          tabIndex={menuOpen ? 0 : -1}
+          onClick={closeMenu}
+        />
+
         <div className="container rh-header-inner">
           <Link className="rh-brand" to="/" onClick={closeMenu}>
             {t('nav.brand')}
@@ -181,22 +189,13 @@ export function AppLayout() {
           </button>
         </div>
 
-        <div className="container rh-mobile-panel">
+        <div className="rh-mobile-panel">
           <nav aria-label="Mobile">{renderNavLinks()}</nav>
           <div className="rh-mobile-actions">
             {renderLang()}
             {renderAuth()}
           </div>
         </div>
-
-        {menuOpen ? (
-          <button
-            type="button"
-            className="rh-mobile-backdrop"
-            aria-label={t('common.close')}
-            onClick={closeMenu}
-          />
-        ) : null}
       </header>
 
       <main className="rh-main">
@@ -205,7 +204,7 @@ export function AppLayout() {
 
       <ScrollToTop />
 
-      <footer className="rh-footer py-4 mt-auto">
+      <footer className="rh-footer py-4">
         <div className="container d-flex flex-column flex-md-row justify-content-between gap-2">
           <span>{t('nav.footerTagline')}</span>
           <span className="text-muted">

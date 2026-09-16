@@ -1,3 +1,8 @@
+/* Page scroll locked while a popup is open */
+body.rh-popup-open {
+  overflow: hidden;
+}
+
 .popup-backdrop {
   position: fixed;
   inset: 0;
@@ -7,6 +12,7 @@
   justify-content: center;
   padding: 1rem;
   background: rgba(15, 23, 32, 0.45);
+  overscroll-behavior: contain;
 }
 
 .popup-panel {
