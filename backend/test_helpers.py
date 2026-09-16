@@ -78,6 +78,32 @@ def make_project(owner: User, *, title: str = "Test project", **kwargs) -> Resea
     return project
 
 
+def make_instrument(
+    *,
+    code: str = "XRD-01",
+    name: str = "Diffractometer",
+    installation_name: str = "X-ray Facility",
+    technique: str = "XRD",
+):
+    """Create an ACTIVE installation + AVAILABLE instrument for experiment tests."""
+    from facilities.models import Installation, Instrument
+
+    installation, _ = Installation.objects.get_or_create(
+        name=installation_name,
+        defaults={"status": "ACTIVE"},
+    )
+    instrument, _ = Instrument.objects.get_or_create(
+        installation=installation,
+        code=code,
+        defaults={
+            "name": name,
+            "technique": technique,
+            "status": "AVAILABLE",
+        },
+    )
+    return instrument
+
+
 def add_member(
     project: ResearchProject,
     user: User,

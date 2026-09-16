@@ -39,10 +39,8 @@
   },
   "nav": {
     "brand": "ResearchHub",
-    "facilities": "Facilities",
-    "instruments": "Instruments",
     "howItWorks": "How it works",
-    "documentation": "Documentation",
+    "documentation": "Learn more",
     "dashboard": "Dashboard",
     "projects": "Projects",
     "invitations": "Invitations",
@@ -54,234 +52,224 @@
   "home": {
     "hero": {
       "brand": "ResearchHub",
-      "headline": "Manage proposals, experiments, and publications in one place",
-      "support": "Create a scientific project, submit it for review, schedule experiments, and invite collaborators.",
+      "headline": "Your research projects, from idea to publication",
+      "support": "Plan proposals, collaborate with your team, run experiments, and keep publications in one clear workspace.",
       "ctaRegister": "Get started",
-      "ctaHowItWorks": "How it works"
+      "ctaHowItWorks": "How it works",
+      "ctaDocumentation": "Learn more"
     },
     "stepsHeading": "From proposal to publication",
     "stepLabel": "Step {{n}}",
     "steps": [
       {
         "title": "Propose",
-        "body": "Draft your project and proposal with clear scientific objectives."
+        "body": "Describe your scientific goals, planned experiments, and related work in a clear proposal."
       },
       {
         "title": "Review",
-        "body": "Submit for scientific review and track approval status."
+        "body": "Submit for scientific review and follow the decision until your project is accepted."
       },
       {
         "title": "Experiment",
-        "body": "Schedule instrument time and record experiment notes."
+        "body": "After acceptance, choose instruments available for your work and run your experimental campaign."
       },
       {
         "title": "Publish",
-        "body": "Link publications and mark the project complete."
+        "body": "Record the publications that come out of the campaign and close the project when you are done."
       }
-    ]
-  },
-  "facilities": {
-    "title": "Facilities",
-    "intro": "ResearchHub lists fictional research facilities so teams can practice proposal workflows without a live beamline booking system.",
-    "items": [
+    ],
+    "benefitsHeading": "Why ResearchHub",
+    "benefits": [
       {
-        "name": "North Ridge Light Laboratory",
-        "focus": "Soft X-ray spectroscopy and materials science"
+        "title": "Built for research teams",
+        "body": "Lead a project as principal investigator, or join as a collaborator with the right level of access."
       },
       {
-        "name": "Coastal Imaging Centre",
-        "focus": "Imaging and structural biology support labs"
-      },
-      {
-        "name": "Alpine Neutron Hub",
-        "focus": "Sample environment and complementary techniques"
+        "title": "One place for the full story",
+        "body": "Keep proposal, experiments, and publications together so nothing gets lost between tools."
       }
-    ]
-  },
-  "instruments": {
-    "title": "Instruments",
-    "intro": "Instruments below are fictional stand-ins for beamlines and end-stations used when drafting experiment plans.",
-    "items": [
-      {
-        "name": "XR-Alpha",
-        "energy": "Soft X-ray",
-        "use": "Absorption spectroscopy and dichroism"
-      },
-      {
-        "name": "IMG-Beta",
-        "energy": "Hard X-ray",
-        "use": "Microscopy and tomography"
-      },
-      {
-        "name": "IR-Gamma",
-        "energy": "Infrared",
-        "use": "Vibrational spectroscopy of materials"
-      },
-      {
-        "name": "UV-Delta",
-        "energy": "VUV",
-        "use": "Gas-phase and surface photochemistry"
-      }
-    ]
-  },
-  "howItWorks": {
-    "title": "How it works",
-    "intro": "ResearchHub guides a scientific project from draft proposal to completed campaign. Status transitions are enforced on the server — you cannot skip steps.",
-    "phasesTitle": "Two phases of work",
+    ],
+    "phasesHeading": "Before and after acceptance",
     "phases": [
       {
         "title": "Before acceptance",
-        "body": "While the project is a draft (and later under review), you prepare the science case: objectives, proposal text, planned experiments, existing related publications, and your team."
+        "body": "Build your science case: write the proposal, invite your team, plan experiments, and link related publications."
       },
       {
         "title": "After acceptance",
-        "body": "Once an admin approves the proposal, you schedule and run executed experiments. The first executed experiment moves the project to in progress. Then you can add resulting publications and finally mark the project complete."
+        "body": "Run the campaign on the instruments you need, track resulting publications, and mark the project complete."
       }
     ],
-    "lifecycleTitle": "Project lifecycle",
+    "capabilitiesHeading": "What you can do",
+    "capabilities": [
+      {
+        "title": "Projects & team",
+        "body": "Create projects and invite colleagues by email with clear editing or viewing roles."
+      },
+      {
+        "title": "Proposals",
+        "body": "Capture methodology and expected results, then submit when you are ready for review."
+      },
+      {
+        "title": "Experiments",
+        "body": "Plan what you intend to run, then schedule and record experiments on available instruments."
+      },
+      {
+        "title": "Publications",
+        "body": "Link prior work early, then add the outputs that result from your campaign."
+      }
+    ],
+    "ctaHeading": "Ready to start?",
+    "ctaSupport": "Create an account to manage your projects, or learn more about the journey from proposal to publication."
+  },
+  "howItWorks": {
+    "title": "How it works",
+    "intro": "ResearchHub walks you from a research idea to a finished campaign — propose, get reviewed, experiment, and publish.",
+    "phasesTitle": "Two simple phases",
+    "phases": [
+      {
+        "title": "Before acceptance",
+        "body": "Prepare everything the reviewers need: objectives, proposal text, planned experiments, related publications, and your team."
+      },
+      {
+        "title": "After acceptance",
+        "body": "Once accepted, schedule and run experiments, add publications from the campaign, and complete the project when the work is done."
+      }
+    ],
+    "lifecycleTitle": "Your project journey",
     "steps": [
       {
-        "status": "DRAFT",
+        "status": "Draft",
         "title": "Create and prepare",
-        "body": "Create a project with title, description, and scientific objective. In draft you can write the proposal, invite collaborators, add planned experiments (intent for the campaign), and link existing or related publications.",
+        "body": "Start a project, write your proposal, invite collaborators, plan experiments, and link related publications.",
         "items": [
-          "Proposal methodology and expected results",
-          "Planned experiments only",
-          "Existing / related publications only",
+          "Define objectives and expected results",
+          "Plan the experiments you intend to run",
+          "Link related publications",
           "Invite editors and viewers by email"
         ]
       },
       {
-        "status": "SUBMITTED → UNDER_REVIEW",
+        "status": "Under review",
         "title": "Submit for scientific review",
-        "body": "When the proposal is ready, an owner or editor submits it. The project enters review. Platform admins see it in the separate admin application and approve or reject it.",
+        "body": "When the proposal is ready, submit it. Reviewers assess your science case and decide whether to accept it.",
         "items": [
-          "Researchers cannot approve their own proposals",
-          "Review happens in the admin app, not client-ui",
-          "Invalid status jumps are blocked by the API"
+          "You submit when the proposal feels complete",
+          "You can follow progress while it is under review",
+          "Acceptance unlocks the next stage of work"
         ]
       },
       {
-        "status": "APPROVED",
-        "title": "Start executed work",
-        "body": "After approval you may add executed experiments (schedule / run). Planned experiments stay as proposal artifacts and are no longer editable. Resulting publications are not available yet until work has started.",
+        "status": "Approved",
+        "title": "Start experimental work",
+        "body": "After acceptance, schedule and run experiments using the instruments available for your project.",
         "items": [
-          "Add executed experiments",
-          "First executed experiment → project becomes IN_PROGRESS"
+          "Choose instruments for each experiment",
+          "Move from planning into real campaign work"
         ]
       },
       {
-        "status": "IN_PROGRESS",
+        "status": "In progress",
         "title": "Run the campaign",
-        "body": "Continue executed experiments and record resulting publications that come from this project's work. Owners and editors can mark the project complete when the campaign is finished.",
+        "body": "Continue experiments and record the publications that come from this project’s work.",
         "items": [
-          "Executed experiments",
-          "Resulting publications",
-          "Complete action available to editors"
+          "Keep experiment records up to date",
+          "Add resulting publications",
+          "Complete the project when the campaign finishes"
         ]
       },
       {
-        "status": "COMPLETED",
+        "status": "Completed",
         "title": "Close the project",
-        "body": "The project is closed. You can still attach resulting publications. Rejected proposals stop the lifecycle; they do not move to experiments.",
+        "body": "The campaign is finished. You can still attach resulting publications if needed.",
         "items": [
-          "Resulting publications still allowed",
-          "REJECTED ends the path — no executed work"
+          "Project work is closed",
+          "Publications from the campaign remain available to add"
         ]
       }
     ],
-    "rolesTitle": "Who does what",
+    "rolesTitle": "Collaborate with clear roles",
     "roles": [
       {
         "title": "Owner",
-        "body": "Creates the project, invites collaborators, can delete the project, and has full edit rights."
+        "body": "Creates the project, invites the team, and has full control over the work."
       },
       {
         "title": "Editor",
-        "body": "Can edit proposal, experiments, and publications according to project status; can submit the proposal and complete the project."
+        "body": "Helps write the proposal, experiments, and publications, and can submit or complete the project."
       },
       {
         "title": "Viewer",
-        "body": "Read-only access to the project and its sections."
-      },
-      {
-        "title": "Platform admin",
-        "body": "Uses the admin app to review proposals and manage platform users. Super admins alone can create other admins."
+        "body": "Follows the project with read-only access."
       }
     ]
   },
   "documentation": {
-    "title": "Documentation",
-    "intro": "Practical guide to ResearchHub for researchers. This matches what the product does today — not future features.",
+    "title": "Learn more",
+    "intro": "A short overview of what ResearchHub offers researchers — from your first account to a completed project.",
     "sections": [
       {
-        "title": "Accounts & login",
-        "body": "Register with email and password as a researcher. Log in from client-ui. Sessions use JWT access and refresh tokens stored only for this browser origin.",
+        "title": "Create an account",
+        "body": "Register with your email and password, then sign in whenever you want to work on your projects.",
         "items": [
-          "One account email per invitation accept",
-          "Admin staff use a separate admin application and origin"
+          "One account for your research workspace",
+          "Secure sign-in with your email"
         ]
       },
       {
-        "title": "Projects",
-        "body": "A research project holds overview metadata, team, proposal, experiments, and publications. Open a project to see Overview always on top, then switch sections with tabs: Team, Proposal, Experiments, Publications.",
+        "title": "Work on projects with your team",
+        "body": "Each project brings together overview, team, proposal, experiments, and publications in one place.",
         "items": [
-          "Statuses: DRAFT → SUBMITTED → UNDER_REVIEW → APPROVED → IN_PROGRESS → COMPLETED (or REJECTED)",
-          "Dashboard lists your projects and pending invitations"
+          "See all your projects on the dashboard",
+          "Open a project and switch between its sections easily"
         ]
       },
       {
-        "title": "Team & invitations",
-        "body": "Owners invite collaborators by email with role EDITOR or VIEWER. The invitee must sign in with the same email and accept under Invitations. Access is granted only after acceptance — never when the invite is merely created.",
+        "title": "Invite collaborators",
+        "body": "Owners invite colleagues by email as editors or viewers. Guests accept from Invitations after signing in with the same email.",
         "items": [
-          "Invitations expire after 7 days",
-          "Owners can cancel pending invitations",
-          "Tokens are not exposed in normal project API responses"
+          "Invitations are time-limited",
+          "Access starts only after the invitation is accepted"
         ]
       },
       {
-        "title": "Proposal",
-        "body": "Create methodology and expected results while the project is DRAFT. Submit for review when ready. Admins approve or reject from the admin app.",
+        "title": "Write and submit proposals",
+        "body": "Capture your methodology and expected results, then submit for scientific review when you are ready.",
         "items": [
-          "Only one proposal per project",
-          "Submit moves the project into the review path"
+          "One proposal per project",
+          "Clear path from draft to review to acceptance"
         ]
       },
       {
-        "title": "Experiments (planned vs executed)",
-        "body": "Experiments have a kind that follows the lifecycle.",
+        "title": "Plan and run experiments",
+        "body": "Describe what you plan to do, then after acceptance schedule and record runs on instruments offered for your work.",
         "items": [
-          "PLANNED — proposal intent; create/edit only in DRAFT",
-          "EXECUTED — after acceptance; create/edit when APPROVED or IN_PROGRESS",
-          "First EXECUTED on an APPROVED project starts IN_PROGRESS",
-          "Each experiment also has a run status: planned, scheduled, completed, or cancelled"
+          "Plan early, execute after acceptance",
+          "Pick the instrument that fits each experiment"
         ]
       },
       {
-        "title": "Publications (existing vs resulting)",
-        "body": "Publications also have a kind tied to project status.",
+        "title": "Track publications",
+        "body": "Link related work while preparing the proposal, then add publications that result from the campaign.",
         "items": [
-          "EXISTING — related or prior work cited in the proposal; DRAFT only",
-          "RESULTING — outputs of this campaign; IN_PROGRESS or COMPLETED",
-          "Cannot add resulting publications while still only APPROVED"
+          "Related work early in the journey",
+          "Campaign outputs once experiments are underway"
         ]
       },
       {
-        "title": "Admin review",
-        "body": "Platform admins work in admin-ui. They list pending proposals, approve or reject, view projects and related entities, and (as super admin) manage admin accounts separately from researchers.",
+        "title": "Follow the full cycle",
+        "body": "Every project moves through a clear journey: draft, review, acceptance, active work, and completion.",
         "items": [
-          "Researchers never appear as creatable admins via role flip",
-          "Admin API calls require the admin origin"
+          "You always know where the project stands",
+          "Each stage unlocks the right next actions"
         ]
       },
       {
-        "title": "What is not in the product yet",
-        "body": "These are planned later and are not available in the UI today.",
+        "title": "What happens after you submit?",
+        "body": "Your proposal enters scientific review. If it is accepted, you can start experimental work. If it is not, the campaign does not move forward.",
         "items": [
-          "Request changes / resubmit / closed statuses",
-          "Results entity and document uploads",
-          "Public project pages",
-          "Email notifications beyond invitation plumbing"
+          "Acceptance opens experiments and campaign tracking",
+          "You stay in control of team and project details throughout"
         ]
       }
     ]
@@ -408,10 +396,14 @@
     "addExecuted": "Add experiment",
     "edit": "Edit experiment",
     "instrument": "Instrument",
+    "installation": "Installation",
+    "selectInstallation": "Select an installation",
+    "selectInstrument": "Select an instrument",
     "scheduledDate": "Scheduled date",
     "status": "Status",
     "notes": "Notes",
     "instrumentRequired": "Instrument is required.",
+    "installationRequired": "Installation is required.",
     "dateRequired": "Scheduled date is required.",
     "confirmDelete": "Delete this experiment?",
     "deleteTitle": "Delete experiment",

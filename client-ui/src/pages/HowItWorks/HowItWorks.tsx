@@ -4,7 +4,7 @@ import './HowItWorks.css'
 type TextBlock = { title: string; body: string }
 type WorkflowStep = TextBlock & { status: string; items?: string[] }
 
-/** Explains the ResearchHub project lifecycle. */
+/** Commercial overview of the researcher project journey. */
 export function HowItWorksPage() {
   const { t } = useTranslation()
   const phases = t('howItWorks.phases', { returnObjects: true }) as TextBlock[]
@@ -64,7 +64,7 @@ export function HowItWorksPage() {
           <div className="row g-3">
             {Array.isArray(roles) &&
               roles.map((role) => (
-                <div className="col-12 col-sm-6 col-lg-3" key={role.title}>
+                <div className="col-12 col-md-4" key={role.title}>
                   <article className="workflow-role p-3 h-100">
                     <h3 className="h6">{role.title}</h3>
                     <p className="small text-muted mb-0">{role.body}</p>

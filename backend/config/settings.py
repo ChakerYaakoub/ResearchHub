@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "experiments",
     "publications",
     "invitations",
+    "facilities",
 ]
 
 # Must be set before migrations that FK to User (custom model).

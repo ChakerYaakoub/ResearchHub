@@ -11,6 +11,7 @@ from test_helpers import (
     admin_client,
     auth_client,
     make_admin,
+    make_instrument,
     make_project,
     make_super_admin,
     make_user,
@@ -164,9 +165,10 @@ class AdminPanelApiTests(TestCase):
         self.assertTrue(any(p["id"] == submitted.data["id"] for p in all_rows.data))
 
     def test_experiments_publications_invitations(self):
+        instrument = make_instrument(code="X-Ray", name="X-Ray")
         Experiment.objects.create(
             project=self.project,
-            instrument="X-Ray",
+            instrument=instrument,
             scheduled_date="2030-01-15T10:00:00Z",
             status=ExperimentStatus.SCHEDULED,
         )

@@ -6,8 +6,6 @@ import { setAppLanguage, type AppLanguage } from '../../i18n'
 import { useAuthUi } from '../AuthUi'
 
 export const NAV_LINKS = [
-  { to: '/facilities', key: 'nav.facilities' },
-  { to: '/instruments', key: 'nav.instruments' },
   { to: '/how-it-works', key: 'nav.howItWorks' },
   { to: '/documentation', key: 'nav.documentation' },
 ] as const

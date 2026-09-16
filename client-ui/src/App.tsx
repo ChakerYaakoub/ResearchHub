@@ -11,10 +11,8 @@ import { PublicLayout } from './components/PublicLayout'
 import { RequireAuth } from './components/RequireAuth'
 import { DashboardPage } from './pages/Dashboard'
 import { DocumentationPage } from './pages/Documentation'
-import { FacilitiesPage } from './pages/Facilities'
 import { HomePage } from './pages/Home'
 import { HowItWorksPage } from './pages/HowItWorks'
-import { InstrumentsPage } from './pages/Instruments'
 import { InvitationsPage } from './pages/Invitations'
 import { ProjectDetailsPage } from './pages/ProjectDetails'
 import { ProjectsPage } from './pages/Projects'
@@ -27,8 +25,6 @@ function AppRoutes() {
       <Routes>
         <Route element={<PublicLayout />}>
           <Route path="/" element={<HomePage />} />
-          <Route path="/facilities" element={<FacilitiesPage />} />
-          <Route path="/instruments" element={<InstrumentsPage />} />
           <Route path="/how-it-works" element={<HowItWorksPage />} />
           <Route path="/documentation" element={<DocumentationPage />} />
         </Route>

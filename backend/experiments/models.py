@@ -1,7 +1,8 @@
-"""Experiments scheduled against a project (instrument is free text for MVP)."""
+"""Experiments scheduled against a project."""
 
 from django.db import models
 
+from facilities.models import Instrument
 from projects.models import ResearchProject
 
 
@@ -30,7 +31,11 @@ class Experiment(models.Model):
         choices=ExperimentKind.choices,
         default=ExperimentKind.PLANNED,
     )
-    instrument = models.CharField(max_length=255)
+    instrument = models.ForeignKey(
+        Instrument,
+        on_delete=models.PROTECT,
+        related_name="experiments",
+    )
     scheduled_date = models.DateTimeField()
     status = models.CharField(
         max_length=20,

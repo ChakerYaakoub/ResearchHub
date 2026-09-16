@@ -10,6 +10,7 @@ from test_helpers import (
     admin_client,
     auth_client,
     make_admin,
+    make_instrument,
     make_project,
     make_user,
 )
@@ -25,9 +26,10 @@ class ExperimentApiTests(TestCase):
         self.project.save(update_fields=["status"])
         add_member(self.project, self.viewer, MembershipRole.VIEWER)
         self.owner_client = auth_client(self.owner)
+        self.instrument = make_instrument()
         self.payload = {
             "kind": ExperimentKind.EXECUTED,
-            "instrument": "BL-1",
+            "instrument": self.instrument.id,
             "scheduled_date": "2030-06-01T12:00:00Z",
             "notes": "n",
         }
@@ -40,6 +42,7 @@ class ExperimentApiTests(TestCase):
         )
         self.assertEqual(created.status_code, status.HTTP_201_CREATED)
         self.assertEqual(created.data["kind"], ExperimentKind.EXECUTED)
+        self.assertEqual(created.data["instrument"], self.instrument.id)
         exp_id = created.data["id"]
         self.project.refresh_from_db()
         self.assertEqual(self.project.status, ProjectStatus.IN_PROGRESS)
@@ -75,7 +78,7 @@ class ExperimentApiTests(TestCase):
             f"/api/projects/{draft.id}/experiments/",
             {
                 "kind": ExperimentKind.PLANNED,
-                "instrument": "BL-draft",
+                "instrument": self.instrument.id,
                 "scheduled_date": "2030-06-01T12:00:00Z",
             },
             format="json",
@@ -91,7 +94,7 @@ class ExperimentApiTests(TestCase):
             f"/api/projects/{draft.id}/experiments/",
             {
                 "kind": ExperimentKind.EXECUTED,
-                "instrument": "BL-1",
+                "instrument": self.instrument.id,
                 "scheduled_date": "2030-06-01T12:00:00Z",
             },
             format="json",
@@ -105,7 +108,7 @@ class ExperimentApiTests(TestCase):
             f"/api/projects/{self.project.id}/experiments/",
             {
                 "kind": ExperimentKind.PLANNED,
-                "instrument": "BL-plan",
+                "instrument": self.instrument.id,
                 "scheduled_date": "2030-06-01T12:00:00Z",
             },
             format="json",
@@ -122,6 +125,7 @@ class ExperimentAfterApproveTests(TestCase):
         self.project = make_project(self.owner)
         self.owner_client = auth_client(self.owner)
         self.admin_api = admin_client(self.admin)
+        self.instrument = make_instrument(code="BL-2")
 
     def test_executed_experiment_allowed_after_approve(self):
         created = self.owner_client.post(
@@ -145,7 +149,7 @@ class ExperimentAfterApproveTests(TestCase):
             f"/api/projects/{self.project.id}/experiments/",
             {
                 "kind": ExperimentKind.EXECUTED,
-                "instrument": "BL-2",
+                "instrument": self.instrument.id,
                 "scheduled_date": "2030-07-01T10:00:00Z",
             },
             format="json",

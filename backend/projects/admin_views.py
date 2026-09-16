@@ -172,7 +172,9 @@ class AdminExperimentListView(APIView):
     permission_classes = _ADMIN_PERMS
 
     def get(self, request):
-        qs = Experiment.objects.select_related("project").order_by(
+        qs = Experiment.objects.select_related(
+            "project", "instrument", "instrument__installation"
+        ).order_by(
             "scheduled_date", "id"
         )
         return Response(AdminExperimentSerializer(qs, many=True).data)

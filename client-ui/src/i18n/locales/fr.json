@@ -39,10 +39,8 @@
   },
   "nav": {
     "brand": "ResearchHub",
-    "facilities": "Installations",
-    "instruments": "Instruments",
     "howItWorks": "Fonctionnement",
-    "documentation": "Documentation",
+    "documentation": "En savoir plus",
     "dashboard": "Tableau de bord",
     "projects": "Projets",
     "invitations": "Invitations",
@@ -54,234 +52,224 @@
   "home": {
     "hero": {
       "brand": "ResearchHub",
-      "headline": "Gérez propositions, expériences et publications au même endroit",
-      "support": "Créez un projet scientifique, soumettez-le à revue, planifiez des expériences et invitez des collaborateurs.",
+      "headline": "Vos projets de recherche, de l'idée à la publication",
+      "support": "Préparez vos propositions, collaborez avec votre équipe, menez vos expériences et suivez vos publications dans un seul espace clair.",
       "ctaRegister": "Commencer",
-      "ctaHowItWorks": "Fonctionnement"
+      "ctaHowItWorks": "Fonctionnement",
+      "ctaDocumentation": "En savoir plus"
     },
     "stepsHeading": "De la proposition à la publication",
     "stepLabel": "Étape {{n}}",
     "steps": [
       {
         "title": "Proposer",
-        "body": "Rédigez votre projet et votre proposition avec des objectifs scientifiques clairs."
+        "body": "Décrivez vos objectifs scientifiques, vos expériences prévues et les travaux associés dans une proposition claire."
       },
       {
         "title": "Revue",
-        "body": "Soumettez pour revue scientifique et suivez le statut d'approbation."
+        "body": "Soumettez pour revue scientifique et suivez la décision jusqu'à l'acceptation de votre projet."
       },
       {
         "title": "Expérimenter",
-        "body": "Planifiez le temps d'instrument et consignez les notes d'expérience."
+        "body": "Après acceptation, choisissez les instruments disponibles pour votre travail et menez votre campagne expérimentale."
       },
       {
         "title": "Publier",
-        "body": "Associez des publications et marquez le projet comme terminé."
+        "body": "Enregistrez les publications issues de la campagne et clôturez le projet lorsque vous avez terminé."
       }
-    ]
-  },
-  "facilities": {
-    "title": "Installations",
-    "intro": "ResearchHub liste des installations fictives pour s'entraîner aux workflows de proposition sans système de réservation réel.",
-    "items": [
+    ],
+    "benefitsHeading": "Pourquoi ResearchHub",
+    "benefits": [
       {
-        "name": "Laboratoire de lumière North Ridge",
-        "focus": "Spectroscopie soft X-ray et science des matériaux"
+        "title": "Conçu pour les équipes de recherche",
+        "body": "Pilotez un projet en tant que responsable, ou rejoignez-le en collaborateur avec le bon niveau d'accès."
       },
       {
-        "name": "Centre d'imagerie côtier",
-        "focus": "Imagerie et laboratoires de support en biologie structurale"
-      },
-      {
-        "name": "Hub neutrons alpin",
-        "focus": "Environnements d'échantillon et techniques complémentaires"
+        "title": "Toute l'histoire au même endroit",
+        "body": "Gardez proposition, expériences et publications ensemble pour ne rien perdre entre les outils."
       }
-    ]
-  },
-  "instruments": {
-    "title": "Instruments",
-    "intro": "Les instruments ci-dessous sont des exemples fictifs de lignes et stations pour préparer des plans d'expérience.",
-    "items": [
-      {
-        "name": "XR-Alpha",
-        "energy": "Soft X-ray",
-        "use": "Spectroscopie d'absorption et dichroïsme"
-      },
-      {
-        "name": "IMG-Beta",
-        "energy": "Hard X-ray",
-        "use": "Microscopie et tomographie"
-      },
-      {
-        "name": "IR-Gamma",
-        "energy": "Infrarouge",
-        "use": "Spectroscopie vibrationnelle des matériaux"
-      },
-      {
-        "name": "UV-Delta",
-        "energy": "VUV",
-        "use": "Photochimie en phase gazeuse et de surface"
-      }
-    ]
-  },
-  "howItWorks": {
-    "title": "Fonctionnement",
-    "intro": "ResearchHub accompagne un projet scientifique du brouillon de proposition jusqu'à la campagne terminée. Les transitions de statut sont contrôlées côté serveur — vous ne pouvez pas sauter d'étapes.",
-    "phasesTitle": "Deux phases de travail",
+    ],
+    "phasesHeading": "Avant et après acceptation",
     "phases": [
       {
         "title": "Avant acceptation",
-        "body": "Tant que le projet est un brouillon (puis en revue), vous préparez le dossier scientifique : objectifs, texte de proposition, expériences planifiées, publications existantes ou connexes, et votre équipe."
+        "body": "Construisez votre dossier scientifique : rédigez la proposition, invitez l'équipe, planifiez les expériences et liez les publications associées."
       },
       {
         "title": "Après acceptation",
-        "body": "Une fois la proposition approuvée par un admin, vous planifiez et menez des expériences exécutées. La première expérience exécutée passe le projet en cours. Ensuite vous ajoutez des publications résultantes, puis vous pouvez marquer le projet comme terminé."
+        "body": "Menez la campagne sur les instruments dont vous avez besoin, suivez les publications résultantes et marquez le projet comme terminé."
       }
     ],
-    "lifecycleTitle": "Cycle de vie du projet",
+    "capabilitiesHeading": "Ce que vous pouvez faire",
+    "capabilities": [
+      {
+        "title": "Projets et équipe",
+        "body": "Créez des projets et invitez des collègues par e-mail avec des rôles d'édition ou de lecture clairs."
+      },
+      {
+        "title": "Propositions",
+        "body": "Décrivez méthodologie et résultats attendus, puis soumettez lorsque vous êtes prêt pour la revue."
+      },
+      {
+        "title": "Expériences",
+        "body": "Planifiez ce que vous comptez faire, puis programmez et consignez les expériences sur les instruments disponibles."
+      },
+      {
+        "title": "Publications",
+        "body": "Liez les travaux antérieurs tôt, puis ajoutez les résultats issus de votre campagne."
+      }
+    ],
+    "ctaHeading": "Prêt à commencer ?",
+    "ctaSupport": "Créez un compte pour gérer vos projets, ou découvrez le parcours de la proposition à la publication."
+  },
+  "howItWorks": {
+    "title": "Fonctionnement",
+    "intro": "ResearchHub vous accompagne d'une idée de recherche jusqu'à une campagne terminée — proposer, être revu, expérimenter et publier.",
+    "phasesTitle": "Deux phases simples",
+    "phases": [
+      {
+        "title": "Avant acceptation",
+        "body": "Préparez tout ce dont la revue a besoin : objectifs, texte de proposition, expériences prévues, publications associées et votre équipe."
+      },
+      {
+        "title": "Après acceptation",
+        "body": "Une fois accepté, programmez et menez les expériences, ajoutez les publications de la campagne, puis terminez le projet lorsque le travail est fini."
+      }
+    ],
+    "lifecycleTitle": "Le parcours de votre projet",
     "steps": [
       {
-        "status": "DRAFT",
+        "status": "Brouillon",
         "title": "Créer et préparer",
-        "body": "Créez un projet avec titre, description et objectif scientifique. En brouillon vous rédigez la proposition, invitez des collaborateurs, ajoutez des expériences planifiées (intention de campagne) et liez des publications existantes ou connexes.",
+        "body": "Démarrez un projet, rédigez votre proposition, invitez des collaborateurs, planifiez les expériences et liez les publications associées.",
         "items": [
-          "Méthodologie et résultats attendus de la proposition",
-          "Expériences planifiées uniquement",
-          "Publications existantes / connexes uniquement",
+          "Définir objectifs et résultats attendus",
+          "Planifier les expériences à mener",
+          "Lier les publications associées",
           "Inviter éditeurs et lecteurs par e-mail"
         ]
       },
       {
-        "status": "SUBMITTED → UNDER_REVIEW",
+        "status": "En revue",
         "title": "Soumettre à la revue scientifique",
-        "body": "Quand la proposition est prête, un propriétaire ou éditeur la soumet. Le projet entre en revue. Les admins de la plateforme le voient dans l'application admin séparée et l'approuvent ou le rejettent.",
+        "body": "Quand la proposition est prête, soumettez-la. La revue évalue votre dossier et décide de l'accepter ou non.",
         "items": [
-          "Les chercheurs ne peuvent pas approuver leurs propres propositions",
-          "La revue se fait dans l'app admin, pas dans client-ui",
-          "Les sauts de statut invalides sont bloqués par l'API"
+          "Vous soumettez quand la proposition est aboutie",
+          "Vous suivez l'avancement pendant la revue",
+          "L'acceptation ouvre l'étape suivante"
         ]
       },
       {
-        "status": "APPROVED",
-        "title": "Démarrer le travail exécuté",
-        "body": "Après approbation vous pouvez ajouter des expériences exécutées (planification / déroulement). Les expériences planifiées restent des artefacts de proposition et ne sont plus modifiables. Les publications résultantes ne sont pas encore disponibles tant que le travail n'a pas démarré.",
+        "status": "Approuvé",
+        "title": "Démarrer le travail expérimental",
+        "body": "Après acceptation, programmez et menez des expériences avec les instruments disponibles pour votre projet.",
         "items": [
-          "Ajouter des expériences exécutées",
-          "Première expérience exécutée → le projet passe en IN_PROGRESS"
+          "Choisir un instrument pour chaque expérience",
+          "Passer de la planification à la campagne réelle"
         ]
       },
       {
-        "status": "IN_PROGRESS",
+        "status": "En cours",
         "title": "Mener la campagne",
-        "body": "Poursuivez les expériences exécutées et enregistrez les publications résultantes issues de ce projet. Propriétaires et éditeurs peuvent marquer le projet comme terminé lorsque la campagne est finie.",
+        "body": "Poursuivez les expériences et enregistrez les publications issues du travail de ce projet.",
         "items": [
-          "Expériences exécutées",
-          "Publications résultantes",
-          "Action Terminer disponible pour les éditeurs"
+          "Tenir à jour le suivi des expériences",
+          "Ajouter les publications résultantes",
+          "Terminer le projet quand la campagne est finie"
         ]
       },
       {
-        "status": "COMPLETED",
+        "status": "Terminé",
         "title": "Clôturer le projet",
-        "body": "Le projet est clos. Vous pouvez encore ajouter des publications résultantes. Une proposition rejetée arrête le cycle ; elle ne mène pas aux expériences.",
+        "body": "La campagne est terminée. Vous pouvez encore ajouter des publications résultantes si besoin.",
         "items": [
-          "Publications résultantes encore autorisées",
-          "REJECTED termine le parcours — pas de travail exécuté"
+          "Le travail du projet est clos",
+          "Les publications de la campagne restent ajoutables"
         ]
       }
     ],
-    "rolesTitle": "Qui fait quoi",
+    "rolesTitle": "Collaborer avec des rôles clairs",
     "roles": [
       {
         "title": "Propriétaire",
-        "body": "Crée le projet, invite les collaborateurs, peut supprimer le projet et a tous les droits d'édition."
+        "body": "Crée le projet, invite l'équipe et garde le contrôle complet du travail."
       },
       {
         "title": "Éditeur",
-        "body": "Peut modifier proposition, expériences et publications selon le statut du projet ; peut soumettre la proposition et terminer le projet."
+        "body": "Aide à rédiger proposition, expériences et publications, et peut soumettre ou terminer le projet."
       },
       {
         "title": "Lecteur",
-        "body": "Accès en lecture seule au projet et à ses sections."
-      },
-      {
-        "title": "Admin plateforme",
-        "body": "Utilise l'app admin pour revoir les propositions et gérer les utilisateurs. Seuls les super admins peuvent créer d'autres admins."
+        "body": "Suit le projet en accès lecture seule."
       }
     ]
   },
   "documentation": {
-    "title": "Documentation",
-    "intro": "Guide pratique de ResearchHub pour les chercheurs. Il décrit le produit actuel — pas les fonctionnalités futures.",
+    "title": "En savoir plus",
+    "intro": "Un aperçu court de ce que ResearchHub offre aux chercheurs — du premier compte jusqu'au projet terminé.",
     "sections": [
       {
-        "title": "Comptes et connexion",
-        "body": "Inscrivez-vous avec e-mail et mot de passe en tant que chercheur. Connectez-vous depuis client-ui. Les sessions utilisent des jetons JWT access et refresh stockés uniquement pour cette origine navigateur.",
+        "title": "Créer un compte",
+        "body": "Inscrivez-vous avec votre e-mail et mot de passe, puis connectez-vous dès que vous voulez travailler sur vos projets.",
         "items": [
-          "Un e-mail de compte doit correspondre pour accepter une invitation",
-          "Le personnel admin utilise une application et une origine séparées"
+          "Un compte pour votre espace de recherche",
+          "Connexion sécurisée avec votre e-mail"
         ]
       },
       {
-        "title": "Projets",
-        "body": "Un projet de recherche regroupe l'aperçu, l'équipe, la proposition, les expériences et les publications. Ouvrez un projet : l'aperçu reste en haut, puis basculez les sections via les onglets Équipe, Proposition, Expériences, Publications.",
+        "title": "Travailler en équipe sur des projets",
+        "body": "Chaque projet regroupe aperçu, équipe, proposition, expériences et publications au même endroit.",
         "items": [
-          "Statuts : DRAFT → SUBMITTED → UNDER_REVIEW → APPROVED → IN_PROGRESS → COMPLETED (ou REJECTED)",
-          "Le tableau de bord liste vos projets et invitations en attente"
+          "Retrouvez tous vos projets sur le tableau de bord",
+          "Ouvrez un projet et naviguez facilement entre ses sections"
         ]
       },
       {
-        "title": "Équipe et invitations",
-        "body": "Les propriétaires invitent des collaborateurs par e-mail avec le rôle EDITOR ou VIEWER. L'invité doit se connecter avec le même e-mail et accepter sous Invitations. L'accès n'est accordé qu'après acceptation — jamais à la seule création de l'invitation.",
+        "title": "Inviter des collaborateurs",
+        "body": "Les propriétaires invitent des collègues par e-mail en éditeur ou lecteur. Les invités acceptent sous Invitations après connexion avec le même e-mail.",
         "items": [
-          "Les invitations expirent après 7 jours",
-          "Les propriétaires peuvent annuler les invitations en attente",
-          "Les jetons ne sont pas exposés dans les réponses API projet normales"
+          "Les invitations sont limitées dans le temps",
+          "L'accès commence seulement après acceptation"
         ]
       },
       {
-        "title": "Proposition",
-        "body": "Rédigez méthodologie et résultats attendus tant que le projet est DRAFT. Soumettez pour revue quand c'est prêt. Les admins approuvent ou rejettent depuis l'app admin.",
+        "title": "Rédiger et soumettre des propositions",
+        "body": "Décrivez méthodologie et résultats attendus, puis soumettez pour revue scientifique lorsque vous êtes prêt.",
         "items": [
-          "Une seule proposition par projet",
-          "La soumission engage le parcours de revue"
+          "Une proposition par projet",
+          "Un parcours clair du brouillon à l'acceptation"
         ]
       },
       {
-        "title": "Expériences (planifiées vs exécutées)",
-        "body": "Les expériences ont un type (kind) lié au cycle de vie.",
+        "title": "Planifier et mener des expériences",
+        "body": "Décrivez ce que vous comptez faire, puis après acceptation programmez et consignez les runs sur les instruments proposés pour votre travail.",
         "items": [
-          "PLANNED — intention de proposition ; création/édition seulement en DRAFT",
-          "EXECUTED — après acceptation ; création/édition en APPROVED ou IN_PROGRESS",
-          "La première EXECUTED sur un projet APPROVED démarre IN_PROGRESS",
-          "Chaque expérience a aussi un statut d'exécution : planifiée, programmée, terminée ou annulée"
+          "Planifier tôt, exécuter après acceptation",
+          "Choisir l'instrument adapté à chaque expérience"
         ]
       },
       {
-        "title": "Publications (existantes vs résultantes)",
-        "body": "Les publications ont aussi un type lié au statut du projet.",
+        "title": "Suivre les publications",
+        "body": "Liez les travaux associés pendant la préparation, puis ajoutez les publications issues de la campagne.",
         "items": [
-          "EXISTING — travaux connexes ou antérieurs cités dans la proposition ; DRAFT seulement",
-          "RESULTING — productions de cette campagne ; IN_PROGRESS ou COMPLETED",
-          "Impossible d'ajouter des publications résultantes tant que le projet est seulement APPROVED"
+          "Travaux associés au début du parcours",
+          "Résultats de campagne une fois les expériences lancées"
         ]
       },
       {
-        "title": "Revue admin",
-        "body": "Les admins travaillent dans admin-ui. Ils listent les propositions en attente, approuvent ou rejettent, consultent les projets et entités liées, et (en super admin) gèrent les comptes admin séparément des chercheurs.",
+        "title": "Suivre le cycle complet",
+        "body": "Chaque projet suit un parcours clair : brouillon, revue, acceptation, travail actif, puis clôture.",
         "items": [
-          "On ne transforme pas un chercheur en admin par simple changement de rôle",
-          "Les appels API admin exigent l'origine admin"
+          "Vous savez toujours où en est le projet",
+          "Chaque étape débloque les bonnes actions suivantes"
         ]
       },
       {
-        "title": "Pas encore dans le produit",
-        "body": "Éléments prévus plus tard et absents de l'interface aujourd'hui.",
+        "title": "Que se passe-t-il après la soumission ?",
+        "body": "Votre proposition entre en revue scientifique. Si elle est acceptée, vous pouvez démarrer le travail expérimental. Sinon, la campagne ne va pas plus loin.",
         "items": [
-          "Demande de modifications / resoumission / statut fermé",
-          "Entité résultats et téléversement de documents",
-          "Pages projets publiques",
-          "Notifications e-mail au-delà du socle d'invitation"
+          "L'acceptation ouvre expériences et suivi de campagne",
+          "Vous restez maître de l'équipe et des détails du projet"
         ]
       }
     ]
@@ -408,10 +396,14 @@
     "addExecuted": "Ajouter une expérience",
     "edit": "Modifier l'expérience",
     "instrument": "Instrument",
+    "installation": "Installation",
+    "selectInstallation": "Choisir une installation",
+    "selectInstrument": "Choisir un instrument",
     "scheduledDate": "Date prévue",
     "status": "Statut",
     "notes": "Notes",
     "instrumentRequired": "L'instrument est obligatoire.",
+    "installationRequired": "L'installation est obligatoire.",
     "dateRequired": "La date prévue est obligatoire.",
     "confirmDelete": "Supprimer cette expérience ?",
     "deleteTitle": "Supprimer l'expérience",

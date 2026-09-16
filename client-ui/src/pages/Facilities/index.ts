@@ -1,2 +1,0 @@
-export { FacilitiesPage } from './Facilities'
-
