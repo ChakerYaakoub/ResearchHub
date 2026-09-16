@@ -53,6 +53,49 @@ class FacilitiesAdminApiTests(TestCase):
         self.assertEqual(listed.status_code, status.HTTP_200_OK)
         self.assertEqual(len(listed.data), 1)
 
+    def test_admin_list_filters_search_and_status(self):
+        active = Installation.objects.create(
+            name="Alpha Synchrotron",
+            location="Campus A",
+            status=InstallationStatus.ACTIVE,
+        )
+        Installation.objects.create(
+            name="Beta Lab",
+            location="Campus B",
+            status=InstallationStatus.INACTIVE,
+        )
+        Instrument.objects.create(
+            installation=active,
+            code="XRD-99",
+            name="Diffractometer",
+            technique="XRD",
+            status=InstrumentStatus.AVAILABLE,
+        )
+        Instrument.objects.create(
+            installation=active,
+            code="NMR-01",
+            name="Spectrometer",
+            technique="NMR",
+            status=InstrumentStatus.UNAVAILABLE,
+        )
+
+        installations = self.admin_api.get(
+            "/api/admin/installations/?status=ACTIVE&search=Alpha"
+        )
+        self.assertEqual(installations.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(installations.data), 1)
+        self.assertEqual(installations.data[0]["name"], "Alpha Synchrotron")
+
+        instruments = self.admin_api.get(
+            "/api/admin/instruments/?status=AVAILABLE&search=XRD"
+        )
+        self.assertEqual(instruments.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(instruments.data), 1)
+        self.assertEqual(instruments.data[0]["code"], "XRD-99")
+
+        bad = self.admin_api.get("/api/admin/installations/?status=NOPE")
+        self.assertEqual(bad.status_code, status.HTTP_400_BAD_REQUEST)
+
     def test_researcher_cannot_admin_create(self):
         researcher = make_user("researcher@example.com")
         client = auth_client(researcher)

@@ -1,11 +1,13 @@
 """Admin and researcher endpoints for installations / instruments."""
 
+from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from projects.admin_filters import invalid_choice_response, query_search
 from projects.permissions import IsAdminUiOrigin, IsPlatformAdmin
 
 from .models import Installation, InstallationStatus, Instrument, InstrumentStatus
@@ -47,12 +49,22 @@ class InstrumentListView(APIView):
 
 
 class AdminInstallationListCreateView(APIView):
-    """GET/POST `/api/admin/installations/`."""
+    """GET/POST `/api/admin/installations/` — optional ?status= & ?search=."""
 
     permission_classes = _ADMIN_PERMS
 
     def get(self, request):
         qs = Installation.objects.all()
+        status_filter = (request.query_params.get("status") or "").strip().upper()
+        if status_filter:
+            if status_filter not in InstallationStatus.values:
+                return invalid_choice_response("status", InstallationStatus.values)
+            qs = qs.filter(status=status_filter)
+        search = query_search(request)
+        if search:
+            qs = qs.filter(
+                Q(name__icontains=search) | Q(location__icontains=search)
+            )
         return Response(InstallationSerializer(qs, many=True).data)
 
     def post(self, request):
@@ -92,7 +104,7 @@ class AdminInstallationDetailView(APIView):
 
 
 class AdminInstrumentListCreateView(APIView):
-    """GET/POST `/api/admin/instruments/` — optional `?installation=` on GET."""
+    """GET/POST `/api/admin/instruments/` — ?installation=, ?status=, ?search=."""
 
     permission_classes = _ADMIN_PERMS
 
@@ -101,6 +113,18 @@ class AdminInstrumentListCreateView(APIView):
         installation_id = request.query_params.get("installation")
         if installation_id:
             qs = qs.filter(installation_id=installation_id)
+        status_filter = (request.query_params.get("status") or "").strip().upper()
+        if status_filter:
+            if status_filter not in InstrumentStatus.values:
+                return invalid_choice_response("status", InstrumentStatus.values)
+            qs = qs.filter(status=status_filter)
+        search = query_search(request)
+        if search:
+            qs = qs.filter(
+                Q(code__icontains=search)
+                | Q(name__icontains=search)
+                | Q(technique__icontains=search)
+            )
         return Response(InstrumentSerializer(qs, many=True).data)
 
     def post(self, request):
