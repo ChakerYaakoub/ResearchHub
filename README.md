@@ -55,6 +55,8 @@ Publication
 
 Same palette and responsive rules in **both** frontends. Use CSS tokens (override Bootstrap primary/secondary). Do not put third-party facility names in product copy.
 
+**Bootstrap-first** in `client-ui` and `admin-ui`; add page CSS only when needed. **client-ui** UI copy is i18next **en/fr** in `src/i18n/locales/` (not hard-coded in JSX). **admin-ui** has no i18n yet.
+
 | Token | Hex | Role |
 |-------|-----|------|
 | Primary / CTAs | `#B82721` | Main buttons |
@@ -91,8 +93,7 @@ User → DuckDNS → Nginx → client-ui | admin-ui | Django API → PostgreSQL
 
 ## Project status
 
-**Phase 8 complete** — Django/DRF backend tests (auth, IDOR, workflow, invitations); gate before UI.  
-**UI split done** — `client-ui` + `admin-ui` (separate origins; admin API Origin gate).
+**Phase 9 complete** — public `client-ui` marketing pages + JWT login/register (brand tokens, responsive).  
 
 ```text
 backend/          # Django domain apps + /api/
@@ -105,7 +106,7 @@ deploy/           # Google Cloud / production helpers (Phase 17)
 docker-compose.yml# Local Docker Compose
 ```
 
-Next: **Phase 9** — Public React website (`client-ui`).
+Next: **Phase 10** — Researcher dashboard (`client-ui`).
 
 ## API authentication
 

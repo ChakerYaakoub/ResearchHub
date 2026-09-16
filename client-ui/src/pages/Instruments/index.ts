@@ -1,0 +1,2 @@
+export { InstrumentsPage } from './Instruments'
+

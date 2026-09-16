@@ -1,0 +1,173 @@
+{
+  "common": {
+    "brand": "ResearchHub",
+    "logIn": "Connexion",
+    "register": "Inscription",
+    "logOut": "Déconnexion",
+    "email": "E-mail",
+    "password": "Mot de passe",
+    "close": "Fermer",
+    "scrollToTop": "Remonter",
+    "toggleNav": "Ouvrir le menu",
+    "langEn": "EN",
+    "langFr": "FR"
+  },
+  "validation": {
+    "emailRequired": "L'e-mail est obligatoire.",
+    "emailInvalid": "Saisissez une adresse e-mail valide.",
+    "passwordRequired": "Le mot de passe est obligatoire.",
+    "passwordMin": "Le mot de passe doit contenir au moins 8 caractères."
+  },
+  "errors": {
+    "requestFailed": "Échec de la requête",
+    "loginFailed": "Échec de la connexion.",
+    "registerFailed": "Échec de l'inscription."
+  },
+  "nav": {
+    "brand": "ResearchHub",
+    "facilities": "Installations",
+    "instruments": "Instruments",
+    "howItWorks": "Fonctionnement",
+    "documentation": "Documentation",
+    "footerTagline": "ResearchHub — gestion de projets et d'expériences scientifiques",
+    "copyrightPrefix": "©"
+  },
+  "home": {
+    "hero": {
+      "brand": "ResearchHub",
+      "headline": "Gérez propositions, expériences et publications au même endroit",
+      "support": "Créez un projet scientifique, soumettez-le à revue, planifiez des expériences et invitez des collaborateurs.",
+      "ctaRegister": "Commencer",
+      "ctaHowItWorks": "Fonctionnement"
+    },
+    "stepsHeading": "De la proposition à la publication",
+    "stepLabel": "Étape {{n}}",
+    "steps": [
+      {
+        "title": "Proposer",
+        "body": "Rédigez votre projet et votre proposition avec des objectifs scientifiques clairs."
+      },
+      {
+        "title": "Revue",
+        "body": "Soumettez pour revue scientifique et suivez le statut d'approbation."
+      },
+      {
+        "title": "Expérimenter",
+        "body": "Planifiez le temps d'instrument et consignez les notes d'expérience."
+      },
+      {
+        "title": "Publier",
+        "body": "Associez des publications et marquez le projet comme terminé."
+      }
+    ]
+  },
+  "facilities": {
+    "title": "Installations",
+    "intro": "ResearchHub liste des installations fictives pour s'entraîner aux workflows de proposition sans système de réservation réel.",
+    "items": [
+      {
+        "name": "Laboratoire de lumière North Ridge",
+        "focus": "Spectroscopie soft X-ray et science des matériaux"
+      },
+      {
+        "name": "Centre d'imagerie côtier",
+        "focus": "Imagerie et laboratoires de support en biologie structurale"
+      },
+      {
+        "name": "Hub neutrons alpin",
+        "focus": "Environnements d'échantillon et techniques complémentaires"
+      }
+    ]
+  },
+  "instruments": {
+    "title": "Instruments",
+    "intro": "Les instruments ci-dessous sont des exemples fictifs de lignes et stations pour préparer des plans d'expérience.",
+    "items": [
+      {
+        "name": "XR-Alpha",
+        "energy": "Soft X-ray",
+        "use": "Spectroscopie d'absorption et dichroïsme"
+      },
+      {
+        "name": "IMG-Beta",
+        "energy": "Hard X-ray",
+        "use": "Microscopie et tomographie"
+      },
+      {
+        "name": "IR-Gamma",
+        "energy": "Infrarouge",
+        "use": "Spectroscopie vibrationnelle des matériaux"
+      },
+      {
+        "name": "UV-Delta",
+        "energy": "VUV",
+        "use": "Photochimie en phase gazeuse et de surface"
+      }
+    ]
+  },
+  "howItWorks": {
+    "title": "Fonctionnement",
+    "intro": "ResearchHub suit un cycle de projet simple. Les transitions de statut invalides sont rejetées côté serveur.",
+    "steps": [
+      {
+        "status": "DRAFT",
+        "title": "Créer un projet",
+        "body": "Décrivez le cas scientifique et préparez une proposition tant que le projet est en brouillon."
+      },
+      {
+        "status": "UNDER_REVIEW",
+        "title": "Soumettre à revue",
+        "body": "Les éditeurs soumettent la proposition. Les admins de la plateforme approuvent ou rejettent depuis l'app admin."
+      },
+      {
+        "status": "APPROVED",
+        "title": "Planifier les expériences",
+        "body": "Après approbation, planifiez les instruments et démarrez le travail expérimental."
+      },
+      {
+        "status": "COMPLETED",
+        "title": "Publier et clôturer",
+        "body": "Ajoutez des publications et marquez le projet comme terminé lorsque la campagne est finie."
+      }
+    ]
+  },
+  "documentation": {
+    "title": "Documentation",
+    "intro": "Vue d'ensemble publique des concepts ResearchHub. La doc API détaillée est côté backend ; cette page aide les chercheurs à découvrir la plateforme.",
+    "sections": [
+      {
+        "title": "Comptes",
+        "body": "Inscrivez-vous avec e-mail et mot de passe. Les sessions utilisent des jetons JWT access et refresh stockés uniquement sur cette origine."
+      },
+      {
+        "title": "Projets et rôles",
+        "body": "Les propriétaires gèrent invitations et collaborateurs. Les éditeurs peuvent modifier le contenu ; les lecteurs ont un accès en lecture seule."
+      },
+      {
+        "title": "Invitations",
+        "body": "Les propriétaires invitent par e-mail. L'accès n'est accordé qu'après acceptation avec un compte dont l'e-mail correspond."
+      },
+      {
+        "title": "Revue admin",
+        "body": "Les admins de la plateforme approuvent ou rejettent les propositions depuis une application admin séparée."
+      }
+    ]
+  },
+  "login": {
+    "title": "Connexion",
+    "subtitle": "Utilisez votre e-mail et mot de passe ResearchHub.",
+    "submit": "Se connecter",
+    "submitting": "Connexion…",
+    "noAccount": "Pas de compte ?",
+    "registerLink": "S'inscrire"
+  },
+  "register": {
+    "title": "Inscription",
+    "subtitle": "Créez un compte chercheur pour gérer des projets.",
+    "passwordHint": "Utilisez un mot de passe fort (8 caractères ou plus).",
+    "submit": "Créer un compte",
+    "submitting": "Création du compte…",
+    "haveAccount": "Déjà inscrit ?",
+    "loginLink": "Se connecter"
+  }
+}

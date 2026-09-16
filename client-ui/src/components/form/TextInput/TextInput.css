@@ -1,0 +1,31 @@
+.rh-text-input {
+  margin-bottom: 0.75rem;
+}
+
+.rh-text-input .form-label {
+  font-weight: 500;
+  margin-bottom: 0.35rem;
+}
+
+/* Keep control size stable: no Bootstrap invalid icon / padding jump. */
+.rh-text-input .form-control.is-invalid {
+  background-image: none;
+  padding-right: 0.75rem;
+}
+
+.rh-text-input .form-control:focus {
+  box-shadow: 0 0 0 0.2rem rgba(50, 139, 160, 0.25);
+}
+
+/* Always reserve one line for helper or error so the form does not reflow. */
+.rh-text-input-slot {
+  min-height: 1.25rem;
+  margin-top: 0.25rem;
+  font-size: 0.875em;
+  line-height: 1.25rem;
+  color: var(--rh-text-muted, #6c757d);
+}
+
+.rh-text-input-slot.is-error {
+  color: var(--bs-form-invalid-color, #dc3545);
+}

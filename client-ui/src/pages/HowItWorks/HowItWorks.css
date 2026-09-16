@@ -1,0 +1,22 @@
+.page-header {
+  border-bottom: 1px solid var(--rh-border);
+  background: var(--rh-surface);
+}
+
+.page-title {
+  color: var(--rh-primary);
+}
+
+.workflow-step {
+  background: var(--rh-surface);
+  border: 1px solid var(--rh-border);
+  border-radius: 0.35rem;
+  border-left: 4px solid var(--rh-accent);
+}
+
+.workflow-status {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--rh-accent);
+}

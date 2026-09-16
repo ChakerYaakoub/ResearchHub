@@ -1,0 +1,248 @@
+/* Layout */
+.rh-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.rh-main {
+  flex: 1 0 auto;
+}
+
+.rh-footer {
+  flex-shrink: 0;
+  background: var(--rh-surface);
+  border-top: 1px solid var(--rh-border);
+  color: var(--rh-text-muted);
+  font-size: 0.9rem;
+}
+
+/* Header */
+.rh-header {
+  position: sticky;
+  top: 0;
+  z-index: 1030;
+  background: var(--rh-surface);
+  border-bottom: 1px solid var(--rh-border);
+}
+
+.rh-header-inner {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-height: 3.75rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  background: var(--rh-surface);
+}
+
+.rh-brand {
+  flex-shrink: 0;
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: var(--rh-primary) !important;
+  text-decoration: none;
+}
+
+.rh-brand:hover {
+  color: var(--rh-primary-hover) !important;
+}
+
+.rh-nav-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.rh-nav-link {
+  display: inline-block;
+  padding: 0.35rem 0.5rem;
+  color: var(--rh-text) !important;
+  font-weight: 500;
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+}
+
+.rh-nav-link:hover {
+  color: var(--rh-accent) !important;
+}
+
+.rh-nav-link.is-active {
+  color: var(--rh-accent) !important;
+  font-weight: 600;
+  border-bottom-color: var(--rh-accent);
+}
+
+.rh-header-end {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+.rh-lang {
+  display: inline-flex;
+}
+
+.rh-lang-btn {
+  padding: 0.25rem 0.55rem;
+  border: 1px solid var(--rh-border);
+  background: transparent;
+  color: var(--rh-text-muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.rh-lang-btn:first-child {
+  border-radius: 0.25rem 0 0 0.25rem;
+}
+
+.rh-lang-btn:last-child {
+  border-radius: 0 0.25rem 0.25rem 0;
+  margin-left: -1px;
+}
+
+.rh-lang-btn.is-active {
+  color: var(--rh-accent);
+  border-color: var(--rh-accent);
+}
+
+.rh-nav-auth {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.rh-nav-user {
+  max-width: 10rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.85rem;
+  color: var(--rh-text-muted);
+}
+
+.rh-toggler {
+  margin-left: auto;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--rh-text);
+  cursor: pointer;
+}
+
+.rh-toggler:hover {
+  color: var(--rh-accent);
+}
+
+.rh-mobile-panel {
+  display: none;
+}
+
+.rh-mobile-panel .rh-nav-list {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+  padding: 0.25rem 0 0.5rem;
+}
+
+.rh-mobile-panel .rh-nav-link {
+  padding: 0.55rem 0.25rem;
+}
+
+.rh-mobile-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--rh-border);
+}
+
+.rh-mobile-actions .rh-nav-auth {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.rh-mobile-backdrop {
+  display: none;
+}
+
+/* Mobile menu — overlay + open/close animation */
+@media (max-width: 991.98px) {
+  .rh-header-nav,
+  .rh-header-end {
+    display: none;
+  }
+
+  .rh-toggler {
+    display: inline-flex;
+  }
+
+  .rh-mobile-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    border: none;
+    margin: 0;
+    padding: 0;
+    background: rgba(15, 23, 32, 0.28);
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+      opacity 0.2s ease,
+      visibility 0.2s ease;
+  }
+
+  .rh-mobile-panel {
+    display: block;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    z-index: 1;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    background: var(--rh-surface);
+    border-bottom: 1px solid var(--rh-border);
+    box-shadow: 0 0.5rem 1rem rgba(15, 23, 32, 0.1);
+    padding: 1rem 1.25rem 1.25rem;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(-0.4rem);
+    transition:
+      opacity 0.2s ease,
+      transform 0.2s ease,
+      visibility 0.2s ease;
+  }
+
+  .rh-header.is-open .rh-mobile-backdrop {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  .rh-header.is-open .rh-mobile-panel {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+}
