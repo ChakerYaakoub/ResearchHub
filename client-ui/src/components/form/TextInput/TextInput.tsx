@@ -1,53 +1,29 @@
-import { useField } from 'formik'
-import type { InputHTMLAttributes } from 'react'
+import { useTextInput, type TextInputProps } from './useTextInput'
 import './TextInput.css'
 
-type TextInputProps = {
-  name: string
-  label: string
-  helperText?: string
-} & Omit<InputHTMLAttributes<HTMLInputElement>, 'name'>
-
 /** Formik-backed Bootstrap control with stable label / message slot height. */
-export function TextInput({
-  name,
-  label,
-  helperText,
-  id,
-  className,
-  ...rest
-}: TextInputProps) {
-  const [field, meta] = useField(name)
-  const inputId = id ?? name
-  const showError = Boolean(meta.touched && meta.error)
-  const message = showError ? meta.error : (helperText ?? '')
-  const describedBy = message ? `${inputId}-msg` : undefined
+export function TextInput(props: TextInputProps) {
+  const vm = useTextInput(props)
 
   return (
     <div className="rh-text-input">
-      <label className="form-label" htmlFor={inputId}>
-        {label}
+      <label className="form-label" htmlFor={vm.inputId}>
+        {vm.label}
       </label>
       <input
-        {...field}
-        {...rest}
-        id={inputId}
-        className={[
-          'form-control',
-          showError ? 'is-invalid' : '',
-          className ?? '',
-        ]
-          .filter(Boolean)
-          .join(' ')}
-        aria-invalid={showError || undefined}
-        aria-describedby={describedBy}
+        {...vm.field}
+        {...vm.rest}
+        id={vm.inputId}
+        className={vm.inputClassName}
+        aria-invalid={vm.showError || undefined}
+        aria-describedby={vm.describedBy}
       />
       <div
-        id={`${inputId}-msg`}
-        className={`rh-text-input-slot${showError ? ' is-error' : ''}`}
-        role={showError ? 'alert' : undefined}
+        id={`${vm.inputId}-msg`}
+        className={`rh-text-input-slot${vm.showError ? ' is-error' : ''}`}
+        role={vm.showError ? 'alert' : undefined}
       >
-        {message || '\u00a0'}
+        {vm.message || '\u00a0'}
       </div>
     </div>
   )

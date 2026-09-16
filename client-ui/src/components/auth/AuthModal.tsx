@@ -1,54 +1,25 @@
-import { useTranslation } from 'react-i18next'
-import {
-  Navigate,
-  useLocation,
-  useNavigate,
-  type Location,
-} from 'react-router-dom'
-import { useAuth } from '../../auth'
+import { Navigate } from 'react-router-dom'
 import { Popup } from '../Popup'
 import { LoginForm } from './LoginForm'
 import { RegisterForm } from './RegisterForm'
+import { useAuthModal, type AuthModalProps } from './useAuthModal'
 
-export type AuthModalMode = 'login' | 'register'
-
-type AuthModalProps = {
-  mode: AuthModalMode
-}
-
-type LocationState = { background?: Location }
+export type { AuthModalMode } from './useAuthModal'
 
 /** Auth overlay over the marketing page kept via background location. */
-export function AuthModal({ mode }: AuthModalProps) {
-  const { t } = useTranslation()
-  const { isAuthenticated } = useAuth()
-  const navigate = useNavigate()
-  const location = useLocation()
-  const background = (location.state as LocationState | null)?.background
+export function AuthModal(props: AuthModalProps) {
+  const vm = useAuthModal(props)
 
-  function close() {
-    if (background) {
-      navigate(background, { replace: true })
-      return
-    }
-    navigate('/', { replace: true })
-  }
-
-  if (isAuthenticated) {
-    return <Navigate to={background ?? '/'} replace />
+  if (vm.isAuthenticated) {
+    return <Navigate to={vm.redirectTo} replace />
   }
 
   return (
-    <Popup
-      open
-      onClose={close}
-      title={mode === 'login' ? t('login.title') : t('register.title')}
-      size="md"
-    >
-      {mode === 'login' ? (
-        <LoginForm onSuccess={close} />
+    <Popup open onClose={vm.close} title={vm.title} size="md">
+      {vm.mode === 'login' ? (
+        <LoginForm onSuccess={vm.close} />
       ) : (
-        <RegisterForm onSuccess={close} />
+        <RegisterForm onSuccess={vm.close} />
       )}
     </Popup>
   )

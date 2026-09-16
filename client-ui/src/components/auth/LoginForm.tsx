@@ -1,42 +1,22 @@
 import { Form, Formik } from 'formik'
-import { useTranslation } from 'react-i18next'
-import { Link, useLocation, type Location } from 'react-router-dom'
-import { ApiError } from '../../api/client'
-import { useAuth } from '../../auth'
+import { Link } from 'react-router-dom'
 import { TextInput } from '../form/TextInput'
-import { loginSchema, type AuthFormValues } from './authSchemas'
-
-type LoginFormProps = {
-  onSuccess: () => void
-}
+import type { AuthFormValues } from './authSchemas'
+import { useLoginForm, type LoginFormProps } from './useLoginForm'
 
 /** Formik login form targeting `/api/auth/login/`. */
-export function LoginForm({ onSuccess }: LoginFormProps) {
-  const { t } = useTranslation()
-  const { login } = useAuth()
-  const location = useLocation()
-  const background = (location.state as { background?: Location } | null)
-    ?.background
+export function LoginForm(props: LoginFormProps) {
+  const vm = useLoginForm(props)
 
   return (
     <Formik<AuthFormValues>
-      initialValues={{ email: '', password: '' }}
-      validationSchema={loginSchema(t)}
-      onSubmit={async (values, helpers) => {
-        helpers.setStatus(undefined)
-        try {
-          await login(values.email.trim(), values.password)
-          onSuccess()
-        } catch (err) {
-          helpers.setStatus(
-            err instanceof ApiError ? err.message : t('errors.loginFailed'),
-          )
-        }
-      }}
+      initialValues={vm.initialValues}
+      validationSchema={vm.validationSchema}
+      onSubmit={vm.onSubmit}
     >
       {({ isSubmitting, status }) => (
         <>
-          <p className="text-muted small mb-3">{t('login.subtitle')}</p>
+          <p className="text-muted small mb-3">{vm.t('login.subtitle')}</p>
           {status ? (
             <div className="alert alert-danger py-2" role="alert">
               {status}
@@ -45,13 +25,13 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
           <Form noValidate>
             <TextInput
               name="email"
-              label={t('common.email')}
+              label={vm.t('common.email')}
               type="email"
               autoComplete="email"
             />
             <TextInput
               name="password"
-              label={t('common.password')}
+              label={vm.t('common.password')}
               type="password"
               autoComplete="current-password"
             />
@@ -60,13 +40,13 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
               type="submit"
               disabled={isSubmitting}
             >
-              {isSubmitting ? t('login.submitting') : t('login.submit')}
+              {isSubmitting ? vm.t('login.submitting') : vm.t('login.submit')}
             </button>
           </Form>
           <p className="mt-3 mb-0 small text-muted">
-            {t('login.noAccount')}{' '}
-            <Link to="/register" state={{ background }}>
-              {t('login.registerLink')}
+            {vm.t('login.noAccount')}{' '}
+            <Link to="/register" state={{ background: vm.background }}>
+              {vm.t('login.registerLink')}
             </Link>
           </p>
         </>
