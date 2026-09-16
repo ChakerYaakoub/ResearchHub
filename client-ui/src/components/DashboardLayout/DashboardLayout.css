@@ -54,6 +54,11 @@
 .rh-dash-main {
   flex: 1;
   min-width: 0;
+  background: var(--rh-surface-muted, #ededed);
+}
+
+.rh-dash-content {
+  flex: 1;
 }
 
 .rh-dash-header {
