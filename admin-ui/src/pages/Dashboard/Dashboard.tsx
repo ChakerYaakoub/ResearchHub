@@ -51,7 +51,15 @@ export function DashboardPage() {
                 <article key={p.id} className="rh-review-card">
                   <div className="d-flex flex-wrap justify-content-between gap-2 mb-1">
                     <h3 className="h6 mb-0">{p.project_title}</h3>
-                    <StatusBadge status={p.status} />
+                    <div className="d-flex flex-wrap gap-1">
+                      <StatusBadge status={p.status} />
+                      {p.status === 'PENDING' && p.reviewed_at ? (
+                        <StatusBadge
+                          status="RESUBMITTED"
+                          label={vm.copy.resubmitted}
+                        />
+                      ) : null}
+                    </div>
                   </div>
                   <p className="small text-muted mb-0">
                     {p.submitted_at

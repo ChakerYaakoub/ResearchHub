@@ -36,6 +36,12 @@ export function ProposalSection(props: ProposalSectionProps) {
         </div>
       </div>
 
+      {vm.canMutate && vm.isRejected ? (
+        <div className="alert alert-warning py-2 mb-3" role="status">
+          {vm.t('projects.draftPrep.rejectedNote')}
+        </div>
+      ) : null}
+
       {vm.loading ? (
         <div className="position-relative py-2">
           <LoadingState overlay compact label={vm.t('common.loading')} />
@@ -95,17 +101,14 @@ export function ProposalSection(props: ProposalSectionProps) {
               </>
             ) : null}
           </dl>
-          {vm.canMutate && vm.hasProposal ? (
+          {vm.showContinue && vm.onContinue ? (
             <div className="mt-3">
               <button
                 type="button"
-                className="btn btn-outline-secondary btn-sm"
-                disabled={vm.submitting}
-                onClick={() => void vm.onSubmitProposal()}
+                className="btn btn-primary btn-sm"
+                onClick={vm.onContinue}
               >
-                {vm.submitting
-                  ? vm.t('proposal.submitting')
-                  : vm.t('proposal.submit')}
+                {vm.t('projects.draftPrep.continueExperiments')}
               </button>
             </div>
           ) : null}

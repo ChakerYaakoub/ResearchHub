@@ -147,6 +147,17 @@ class AdminPanelApiTests(TestCase):
             format="json",
         )
         self.assertEqual(created.status_code, status.HTTP_201_CREATED)
+
+        draft_rows = self.admin_api.get("/api/admin/proposals/?status=DRAFT")
+        self.assertEqual(draft_rows.status_code, status.HTTP_200_OK)
+        self.assertTrue(any(p["id"] == created.data["id"] for p in draft_rows.data))
+
+        pending_before = self.admin_api.get("/api/admin/proposals/?status=PENDING")
+        self.assertEqual(pending_before.status_code, status.HTTP_200_OK)
+        self.assertFalse(
+            any(p["id"] == created.data["id"] for p in pending_before.data)
+        )
+
         submitted = self.owner_client.post(
             f"/api/projects/{self.project.id}/proposal/submit/"
         )
@@ -159,6 +170,11 @@ class AdminPanelApiTests(TestCase):
         all_pending = self.admin_api.get("/api/admin/proposals/?status=PENDING")
         self.assertEqual(all_pending.status_code, status.HTTP_200_OK)
         self.assertTrue(any(p["id"] == submitted.data["id"] for p in all_pending.data))
+
+        draft_after = self.admin_api.get("/api/admin/proposals/?status=DRAFT")
+        self.assertFalse(
+            any(p["id"] == submitted.data["id"] for p in draft_after.data)
+        )
 
         all_rows = self.admin_api.get("/api/admin/proposals/")
         self.assertEqual(all_rows.status_code, status.HTTP_200_OK)

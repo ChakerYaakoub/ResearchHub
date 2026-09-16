@@ -12,7 +12,9 @@ export function PageHeader(props: PageHeaderProps) {
           <p className="text-muted mb-0 small">{vm.subtitle}</p>
         ) : null}
       </div>
-      {vm.actions ? <div className="d-flex flex-wrap gap-2">{vm.actions}</div> : null}
+      {vm.actions ? (
+        <div className="d-flex flex-wrap align-items-center gap-2">{vm.actions}</div>
+      ) : null}
     </div>
   )
 }

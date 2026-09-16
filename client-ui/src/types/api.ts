@@ -6,8 +6,14 @@ export type ProjectStatus =
   | 'UNDER_REVIEW'
   | 'APPROVED'
   | 'REJECTED'
+  | 'RESUBMITTED'
   | 'IN_PROGRESS'
   | 'COMPLETED'
+
+/** Project is open for draft-like prep (first submit or revise after reject). */
+export function isPreparingStatus(status: ProjectStatus): boolean {
+  return status === 'DRAFT' || status === 'REJECTED'
+}
 
 export type Project = {
   id: number

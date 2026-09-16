@@ -1,0 +1,99 @@
+/*
+  Status badge colors — logical families (client-ui + admin-ui must stay in sync).
+
+  Idle / not decided …… gray (Draft, Pending, Planned)
+  Waiting / in queue … warm (Submitted → Resubmitted → Under review)
+  Active / cleared ….… brand accent teal
+  Finished …………….… deep teal
+  Negative …………….… brand primary red
+  Dead / expired …….… dark slate
+*/
+
+.rh-status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 0.4em 0.65em;
+  vertical-align: middle;
+}
+
+/* —— Idle / not started / not decided yet —— */
+.rh-status-badge--draft,
+.rh-status-badge--planned,
+.rh-status-badge--pending {
+  background-color: #6c757d;
+  color: #fff;
+}
+
+.rh-status-badge--cancelled {
+  background-color: #78716c;
+  color: #fff;
+}
+
+/* —— Waiting / in queue (warm) —— */
+.rh-status-badge--submitted {
+  background-color: #e67e22;
+  color: #fff;
+}
+
+.rh-status-badge--resubmitted {
+  background-color: #c2410c;
+  color: #fff;
+}
+
+.rh-status-badge--under_review {
+  background-color: #fbd600;
+  color: #5c4400;
+}
+
+/* —— Active / cleared (brand accent) —— */
+.rh-status-badge--approved,
+.rh-status-badge--in_progress,
+.rh-status-badge--accepted,
+.rh-status-badge--scheduled {
+  background-color: #328ba0;
+  color: #fff;
+}
+
+/* —— Finished successfully —— */
+.rh-status-badge--completed {
+  background-color: #0f766e;
+  color: #fff;
+}
+
+/* —— Negative (brand primary) —— */
+.rh-status-badge--rejected,
+.rh-status-badge--declined {
+  background-color: #b82721;
+  color: #fff;
+}
+
+/* —— Dead —— */
+.rh-status-badge--expired {
+  background-color: #1e293b;
+  color: #fff;
+}
+
+/* —— Roles (identity, not lifecycle) —— */
+.rh-status-badge--admin {
+  background-color: #b91c1c;
+  color: #fff;
+}
+
+.rh-status-badge--super_admin {
+  background-color: #111827;
+  color: #fff;
+}
+
+.rh-status-badge--researcher {
+  background-color: #2563eb;
+  color: #fff;
+}
+
+.rh-status-badge--unknown {
+  background-color: #e5e7eb;
+  color: #374151;
+}

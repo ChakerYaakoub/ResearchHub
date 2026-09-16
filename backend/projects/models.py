@@ -12,6 +12,7 @@ class ProjectStatus(models.TextChoices):
     UNDER_REVIEW = "UNDER_REVIEW", "Under review"
     APPROVED = "APPROVED", "Approved"
     REJECTED = "REJECTED", "Rejected"
+    RESUBMITTED = "RESUBMITTED", "Resubmitted"
     IN_PROGRESS = "IN_PROGRESS", "In progress"
     COMPLETED = "COMPLETED", "Completed"
 

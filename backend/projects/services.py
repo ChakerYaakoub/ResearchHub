@@ -13,9 +13,15 @@ ALLOWED_TRANSITIONS: dict[str, frozenset[str]] = {
     ),
     ProjectStatus.APPROVED: frozenset({ProjectStatus.IN_PROGRESS}),
     ProjectStatus.IN_PROGRESS: frozenset({ProjectStatus.COMPLETED}),
-    ProjectStatus.REJECTED: frozenset(),
+    ProjectStatus.REJECTED: frozenset({ProjectStatus.RESUBMITTED}),
+    ProjectStatus.RESUBMITTED: frozenset({ProjectStatus.UNDER_REVIEW}),
     ProjectStatus.COMPLETED: frozenset(),
 }
+
+# Draft-like statuses: revise proposal / planned experiments / existing pubs.
+PREPARING_STATUSES = frozenset(
+    {ProjectStatus.DRAFT, ProjectStatus.REJECTED}
+)
 
 
 class WorkflowError(Exception):
@@ -24,6 +30,11 @@ class WorkflowError(Exception):
     def __init__(self, detail: str):
         self.detail = detail
         super().__init__(detail)
+
+
+def is_preparing(project: ResearchProject) -> bool:
+    """True when researchers may still prepare draft-like content."""
+    return project.status in PREPARING_STATUSES
 
 
 def transition_project(project: ResearchProject, to_status: str) -> ResearchProject:
@@ -52,14 +63,14 @@ def complete_project(project: ResearchProject) -> ResearchProject:
 
 
 def assert_can_mutate_experiments(project: ResearchProject, kind: str) -> None:
-    """PLANNED only in DRAFT; EXECUTED only when APPROVED or IN_PROGRESS."""
+    """PLANNED only while preparing; EXECUTED only when APPROVED or IN_PROGRESS."""
     from experiments.models import ExperimentKind
 
     if kind == ExperimentKind.PLANNED:
-        if project.status != ProjectStatus.DRAFT:
+        if not is_preparing(project):
             raise WorkflowError(
                 "Planned experiments can only be added or changed when the "
-                "project is DRAFT."
+                "project is DRAFT or REJECTED."
             )
         return
     if kind == ExperimentKind.EXECUTED:
@@ -76,14 +87,14 @@ def assert_can_mutate_experiments(project: ResearchProject, kind: str) -> None:
 
 
 def assert_can_mutate_publications(project: ResearchProject, kind: str) -> None:
-    """EXISTING only in DRAFT; RESULTING when IN_PROGRESS or COMPLETED."""
+    """EXISTING only while preparing; RESULTING when IN_PROGRESS or COMPLETED."""
     from publications.models import PublicationKind
 
     if kind == PublicationKind.EXISTING:
-        if project.status != ProjectStatus.DRAFT:
+        if not is_preparing(project):
             raise WorkflowError(
                 "Existing publications can only be added or changed when the "
-                "project is DRAFT."
+                "project is DRAFT or REJECTED."
             )
         return
     if kind == PublicationKind.RESULTING:

@@ -4,7 +4,7 @@ from django.db import transaction
 from django.utils import timezone
 
 from projects.models import ProjectStatus, ResearchProject
-from projects.services import WorkflowError, transition_project
+from projects.services import WorkflowError, is_preparing, transition_project
 
 from .models import Proposal, ProposalStatus
 
@@ -12,13 +12,15 @@ from .models import Proposal, ProposalStatus
 @transaction.atomic
 def submit_proposal(project: ResearchProject) -> Proposal:
     """
-    Submit proposal and advance project DRAFT → SUBMITTED → UNDER_REVIEW.
+    Submit (or resubmit) proposal into scientific review.
 
-    Requires an existing proposal and project in DRAFT.
+    DRAFT → SUBMITTED → UNDER_REVIEW
+    REJECTED → RESUBMITTED → UNDER_REVIEW
     """
-    if project.status != ProjectStatus.DRAFT:
+    if not is_preparing(project):
         raise WorkflowError(
-            f"Proposal can only be submitted when project is DRAFT (now {project.status})."
+            "Proposal can only be submitted when project is DRAFT or REJECTED "
+            f"(now {project.status})."
         )
     try:
         proposal = project.proposal
@@ -29,8 +31,12 @@ def submit_proposal(project: ResearchProject) -> Proposal:
     proposal.submitted_at = timezone.now()
     proposal.save(update_fields=["status", "submitted_at"])
 
-    transition_project(project, ProjectStatus.SUBMITTED)
-    transition_project(project, ProjectStatus.UNDER_REVIEW)
+    if project.status == ProjectStatus.DRAFT:
+        transition_project(project, ProjectStatus.SUBMITTED)
+        transition_project(project, ProjectStatus.UNDER_REVIEW)
+    else:
+        transition_project(project, ProjectStatus.RESUBMITTED)
+        transition_project(project, ProjectStatus.UNDER_REVIEW)
     return proposal
 
 

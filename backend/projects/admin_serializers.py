@@ -120,6 +120,7 @@ class AdminProjectDetailSerializer(serializers.ModelSerializer):
 
 class AdminProposalSerializer(serializers.ModelSerializer):
     project_title = serializers.CharField(source="project.title", read_only=True)
+    project_status = serializers.CharField(source="project.status", read_only=True)
 
     class Meta:
         model = Proposal
@@ -127,6 +128,7 @@ class AdminProposalSerializer(serializers.ModelSerializer):
             "id",
             "project",
             "project_title",
+            "project_status",
             "methodology",
             "expected_results",
             "submitted_at",

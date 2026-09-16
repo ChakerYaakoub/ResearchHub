@@ -31,10 +31,31 @@ export type InviteFormValues = {
 export type ProjectConfirmKind = 'delete' | 'complete' | 'cancelInvite'
 
 export type ProjectDetailsSection =
-  | 'team'
   | 'proposal'
   | 'experiments'
   | 'publications'
+  | 'submit'
+
+export type DraftPrepStep = {
+  id: ProjectDetailsSection
+  labelKey: string
+}
+
+export const DRAFT_PREP_STEPS: DraftPrepStep[] = [
+  { id: 'proposal', labelKey: 'projects.draftPrep.stepProposal' },
+  { id: 'experiments', labelKey: 'projects.draftPrep.stepExperiments' },
+  { id: 'publications', labelKey: 'projects.draftPrep.stepPublications' },
+  { id: 'submit', labelKey: 'projects.draftPrep.stepSubmit' },
+]
+
+const NORMAL_SECTIONS: {
+  id: Exclude<ProjectDetailsSection, 'submit'>
+  labelKey: string
+}[] = [
+  { id: 'proposal', labelKey: 'proposal.title' },
+  { id: 'experiments', labelKey: 'experiments.title' },
+  { id: 'publications', labelKey: 'publications.title' },
+]
 
 /** Project detail shell: metadata, collaborators, owner invite, complete. */
 export function useProjectDetails() {
@@ -64,7 +85,8 @@ export function useProjectDetails() {
   )
   const [pendingInvite, setPendingInvite] = useState<Invitation | null>(null)
   const [activeSection, setActiveSection] =
-    useState<ProjectDetailsSection>('team')
+    useState<ProjectDetailsSection>('proposal')
+  const [draftLanded, setDraftLanded] = useState(false)
 
   const reloadInvitations = useCallback(async () => {
     if (!access || !id) return
@@ -134,18 +156,37 @@ export function useProjectDetails() {
   )
 
   const status = project?.status
-  const canAddPlannedExperiment = Boolean(canEdit && status === 'DRAFT')
+  const preparing = Boolean(status && (status === 'DRAFT' || status === 'REJECTED'))
+  const showDraftPrep = Boolean(project && preparing && canEdit)
+
+  useEffect(() => {
+    if (!project || loading) return
+    if (showDraftPrep && !draftLanded) {
+      setActiveSection('proposal')
+      setDraftLanded(true)
+    }
+    if (!showDraftPrep && draftLanded) {
+      setDraftLanded(false)
+    }
+  }, [project, loading, showDraftPrep, draftLanded])
+
+  useEffect(() => {
+    if (!project) return
+    if (!preparing && activeSection === 'submit') {
+      setActiveSection('proposal')
+    }
+  }, [project, preparing, activeSection])
+
+  const canAddPlannedExperiment = Boolean(canEdit && preparing)
   const canAddExecutedExperiment = Boolean(
     canEdit && (status === 'APPROVED' || status === 'IN_PROGRESS'),
   )
-  const canAddExistingPublication = Boolean(canEdit && status === 'DRAFT')
+  const canAddExistingPublication = Boolean(canEdit && preparing)
   const canAddResultingPublication = Boolean(
     canEdit && (status === 'IN_PROGRESS' || status === 'COMPLETED'),
   )
 
-  const canComplete = Boolean(
-    canEdit && project?.status === 'IN_PROGRESS',
-  )
+  const canComplete = Boolean(canEdit && project?.status === 'IN_PROGRESS')
 
   const inviteInitial: InviteFormValues = {
     email: '',
@@ -304,6 +345,13 @@ export function useProjectDetails() {
             }
           : null
 
+  const navSections = showDraftPrep
+    ? DRAFT_PREP_STEPS.map((s) => ({
+        id: s.id,
+        labelKey: s.labelKey,
+      }))
+    : NORMAL_SECTIONS
+
   return {
     t,
     id,
@@ -314,6 +362,9 @@ export function useProjectDetails() {
     error,
     isOwner,
     canEdit,
+    showDraftPrep,
+    draftPrepSteps: DRAFT_PREP_STEPS,
+    navSections,
     canAddPlannedExperiment,
     canAddExecutedExperiment,
     canAddExistingPublication,
@@ -337,6 +388,9 @@ export function useProjectDetails() {
     refreshProject,
     activeSection,
     setActiveSection,
+    goToExperiments: () => setActiveSection('experiments'),
+    goToPublications: () => setActiveSection('publications'),
+    goToSubmit: () => setActiveSection('submit'),
     confirmOpen: confirmKind != null,
     confirmDialog,
     confirmBusy,

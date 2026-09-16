@@ -112,7 +112,8 @@ class AdminStatsView(APIView):
         data = {
             "total_projects": ResearchProject.objects.count(),
             "pending_proposals": Proposal.objects.filter(
-                status=ProposalStatus.PENDING
+                status=ProposalStatus.PENDING,
+                project__status=ProjectStatus.UNDER_REVIEW,
             ).count(),
             "scheduled_experiments": Experiment.objects.filter(
                 status=ExperimentStatus.SCHEDULED
