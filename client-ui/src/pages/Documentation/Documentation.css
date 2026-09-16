@@ -12,3 +12,12 @@
   border: 1px solid var(--rh-border);
   border-radius: 0.35rem;
 }
+
+.doc-items {
+  padding-left: 1.15rem;
+  color: var(--rh-text);
+}
+
+.doc-items li + li {
+  margin-top: 0.3rem;
+}

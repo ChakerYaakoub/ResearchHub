@@ -1,9 +1,9 @@
 import { useTranslation } from 'react-i18next'
 import './Documentation.css'
 
-type DocSection = { title: string; body: string }
+type DocSection = { title: string; body: string; items?: string[] }
 
-/** Public documentation overview. */
+/** Public documentation overview aligned with the live product. */
 export function DocumentationPage() {
   const { t } = useTranslation()
   const sections = t('documentation.sections', {
@@ -15,7 +15,7 @@ export function DocumentationPage() {
       <header className="page-header py-4">
         <div className="container">
           <h1 className="page-title h2 mb-2">{t('documentation.title')}</h1>
-          <p className="text-muted mb-0 col-lg-8 px-0">
+          <p className="text-muted mb-0 col-lg-9 px-0">
             {t('documentation.intro')}
           </p>
         </div>
@@ -24,10 +24,17 @@ export function DocumentationPage() {
         <div className="row g-3">
           {Array.isArray(sections) &&
             sections.map((section) => (
-              <div className="col-12 col-md-6" key={section.title}>
+              <div className="col-12 col-lg-6" key={section.title}>
                 <article className="doc-block p-3 h-100">
                   <h2 className="h5">{section.title}</h2>
-                  <p className="mb-0 text-muted">{section.body}</p>
+                  <p className="text-muted">{section.body}</p>
+                  {Array.isArray(section.items) && section.items.length > 0 ? (
+                    <ul className="doc-items mb-0">
+                      {section.items.map((item) => (
+                        <li key={item}>{item}</li>
+                      ))}
+                    </ul>
+                  ) : null}
                 </article>
               </div>
             ))}
