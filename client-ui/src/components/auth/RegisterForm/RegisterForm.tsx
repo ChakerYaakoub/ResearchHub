@@ -1,5 +1,4 @@
 import { Form, Formik } from 'formik'
-import { Link } from 'react-router-dom'
 import { TextInput } from '../../form/TextInput'
 import type { AuthFormValues } from '../authSchemas'
 import { useRegisterForm, type RegisterFormProps } from './useRegisterForm'
@@ -48,9 +47,13 @@ export function RegisterForm(props: RegisterFormProps) {
           </Form>
           <p className="mt-3 mb-0 small text-muted">
             {vm.t('register.haveAccount')}{' '}
-            <Link to="/login" state={{ background: vm.background }}>
+            <button
+              type="button"
+              className="btn btn-link btn-sm p-0 align-baseline"
+              onClick={vm.onSwitchToLogin}
+            >
               {vm.t('register.loginLink')}
-            </Link>
+            </button>
           </p>
         </>
       )}
