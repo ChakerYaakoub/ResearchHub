@@ -43,6 +43,8 @@
     "dashboard": "Dashboard",
     "projects": "Projects",
     "invitations": "Invitations",
+    "publicSite": "Public site",
+    "goToDashboard": "Go to dashboard",
     "footerTagline": "ResearchHub — scientific project & experiment management",
     "copyrightPrefix": "©"
   },

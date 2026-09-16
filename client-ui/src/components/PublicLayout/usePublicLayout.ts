@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useLocation, type Location } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import { useAuth } from '../../auth'
 import { setAppLanguage, type AppLanguage } from '../../i18n'
+import { useAuthUi } from '../AuthUi'
 
 export const NAV_LINKS = [
   { to: '/facilities', key: 'nav.facilities' },
@@ -11,38 +12,15 @@ export const NAV_LINKS = [
   { to: '/documentation', key: 'nav.documentation' },
 ] as const
 
-export const APP_NAV_LINKS = [
-  { to: '/dashboard', key: 'nav.dashboard' },
-  { to: '/projects', key: 'nav.projects' },
-  { to: '/invitations', key: 'nav.invitations' },
-] as const
-
-type LocationState = { background?: Location }
-
-function isAuthPath(pathname: string) {
-  return pathname === '/login' || pathname === '/register'
-}
-
-function navPathname(location: Location): string {
-  const background = (location.state as LocationState | null)?.background
-  if (background) return background.pathname
-  if (isAuthPath(location.pathname)) return '/'
-  return location.pathname
-}
-
-/** Shell nav/auth/lang state for AppLayout. */
-export function useAppLayout() {
+/** Public marketing shell — auth via modal buttons only. */
+export function usePublicLayout() {
   const { t, i18n } = useTranslation()
   const location = useLocation()
   const [menuOpen, setMenuOpen] = useState(false)
   const { user, isAuthenticated, logout } = useAuth()
+  const { openLogin, openRegister } = useAuthUi()
   const current = (i18n.language?.startsWith('fr') ? 'fr' : 'en') as AppLanguage
-  const activePath = navPathname(location)
-  const authBackground =
-    (location.state as LocationState | null)?.background ??
-    (isAuthPath(location.pathname)
-      ? ({ ...location, pathname: activePath } as Location)
-      : location)
+  const activePath = location.pathname
 
   const closeMenu = () => setMenuOpen(false)
 
@@ -63,6 +41,16 @@ export function useAppLayout() {
     setMenuOpen((v) => !v)
   }
 
+  function onOpenLogin() {
+    closeMenu()
+    openLogin()
+  }
+
+  function onOpenRegister() {
+    closeMenu()
+    openRegister()
+  }
+
   return {
     t,
     menuOpen,
@@ -70,13 +58,13 @@ export function useAppLayout() {
     toggleMenu,
     current,
     activePath,
-    authBackground,
     isAuthenticated,
     user,
     onLogout,
     onLang,
+    onOpenLogin,
+    onOpenRegister,
     navLinks: NAV_LINKS,
-    appNavLinks: isAuthenticated ? APP_NAV_LINKS : [],
     copyrightYear: new Date().getFullYear(),
   }
 }

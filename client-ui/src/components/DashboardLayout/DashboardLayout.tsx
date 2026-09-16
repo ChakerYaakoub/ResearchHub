@@ -13,11 +13,15 @@ export function DashboardLayout() {
           <li key={item.to}>
             <NavLink
               to={item.to}
-              className={({ isActive }) =>
-                `rh-dash-link${isActive ? ' is-active' : ''}`
-              }
+              className={() => {
+                const active =
+                  item.to === '/dashboard'
+                    ? vm.activePath === '/dashboard'
+                    : vm.activePath === item.to ||
+                      vm.activePath.startsWith(`${item.to}/`)
+                return `rh-dash-link${active ? ' is-active' : ''}`
+              }}
               onClick={vm.closeSidebar}
-              end={item.to === '/dashboard'}
             >
               {vm.t(item.key)}
             </NavLink>

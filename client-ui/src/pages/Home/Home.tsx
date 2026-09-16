@@ -20,13 +20,19 @@ export function HomePage() {
             {vm.t('home.hero.support')}
           </p>
           <div className="d-flex flex-wrap gap-2">
-            <Link
-              className="btn btn-primary"
-              to="/register"
-              state={{ background: vm.location }}
-            >
-              {vm.t('home.hero.ctaRegister')}
-            </Link>
+            {vm.isAuthenticated ? (
+              <Link className="btn btn-primary" to="/dashboard">
+                {vm.t('nav.goToDashboard')}
+              </Link>
+            ) : (
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={vm.openRegister}
+              >
+                {vm.t('home.hero.ctaRegister')}
+              </button>
+            )}
             <Link className="btn btn-outline-secondary" to="/how-it-works">
               {vm.t('home.hero.ctaHowItWorks')}
             </Link>

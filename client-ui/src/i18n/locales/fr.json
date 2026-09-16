@@ -43,6 +43,8 @@
     "dashboard": "Tableau de bord",
     "projects": "Projets",
     "invitations": "Invitations",
+    "publicSite": "Site public",
+    "goToDashboard": "Aller au tableau de bord",
     "footerTagline": "ResearchHub — gestion de projets et d'expériences scientifiques",
     "copyrightPrefix": "©"
   },

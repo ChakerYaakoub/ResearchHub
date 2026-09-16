@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../auth'
 import { setAppLanguage, type AppLanguage } from '../../i18n'
 
@@ -14,6 +14,7 @@ export const SIDEBAR_LINKS = [
 export function useDashboardLayout() {
   const { t, i18n } = useTranslation()
   const location = useLocation()
+  const navigate = useNavigate()
   const { user, logout } = useAuth()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const current = (i18n.language?.startsWith('fr') ? 'fr' : 'en') as AppLanguage
@@ -33,6 +34,7 @@ export function useDashboardLayout() {
   async function onLogout() {
     closeSidebar()
     await logout()
+    navigate('/', { replace: true })
   }
 
   async function onLang(lng: AppLanguage) {
