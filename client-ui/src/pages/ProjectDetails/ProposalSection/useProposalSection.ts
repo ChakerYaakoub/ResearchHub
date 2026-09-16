@@ -1,0 +1,141 @@
+import type { FormikHelpers } from 'formik'
+import { useCallback, useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import * as Yup from 'yup'
+import { ApiError } from '../../../api/client'
+import {
+  createProposal,
+  getProposal,
+  submitProposal,
+  updateProposal,
+} from '../../../api/proposals'
+import { useAuth } from '../../../auth'
+import type { Project, Proposal } from '../../../types/api'
+
+export type ProposalSectionProps = {
+  projectId: number
+  project: Project
+  canEdit: boolean
+  onProjectChanged: () => void
+}
+
+export type ProposalFormValues = {
+  methodology: string
+  expected_results: string
+}
+
+/** Load/save/submit proposal for a project. */
+export function useProposalSection({
+  projectId,
+  project,
+  canEdit,
+  onProjectChanged,
+}: ProposalSectionProps) {
+  const { t } = useTranslation()
+  const { access } = useAuth()
+  const [proposal, setProposal] = useState<Proposal | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [actionError, setActionError] = useState<string | null>(null)
+  const [submitting, setSubmitting] = useState(false)
+  const [showForm, setShowForm] = useState(false)
+
+  const isDraft = project.status === 'DRAFT'
+  const canMutate = canEdit && isDraft
+
+  const reload = useCallback(async () => {
+    if (!access) return
+    setLoading(true)
+    setError(null)
+    try {
+      setProposal(await getProposal(access, projectId))
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : t('errors.loadFailed'))
+    } finally {
+      setLoading(false)
+    }
+  }, [access, projectId, t])
+
+  useEffect(() => {
+    void reload()
+  }, [reload])
+
+  const initialValues: ProposalFormValues = {
+    methodology: proposal?.methodology ?? '',
+    expected_results: proposal?.expected_results ?? '',
+  }
+
+  const validationSchema = Yup.object({
+    methodology: Yup.string(),
+    expected_results: Yup.string(),
+  })
+
+  function openForm() {
+    setActionError(null)
+    setShowForm(true)
+  }
+
+  function closeForm() {
+    setShowForm(false)
+  }
+
+  async function onSave(
+    values: ProposalFormValues,
+    helpers: FormikHelpers<ProposalFormValues>,
+  ) {
+    if (!access || !canMutate) return
+    setActionError(null)
+    const body = {
+      methodology: values.methodology.trim(),
+      expected_results: values.expected_results.trim(),
+    }
+    try {
+      const saved = proposal
+        ? await updateProposal(access, projectId, body)
+        : await createProposal(access, projectId, body)
+      setProposal(saved)
+      setShowForm(false)
+    } catch (err) {
+      setActionError(
+        err instanceof ApiError ? err.message : t('errors.createFailed'),
+      )
+    } finally {
+      helpers.setSubmitting(false)
+    }
+  }
+
+  async function onSubmitProposal() {
+    if (!access || !canMutate || !proposal) return
+    setSubmitting(true)
+    setActionError(null)
+    try {
+      setProposal(await submitProposal(access, projectId))
+      onProjectChanged()
+    } catch (err) {
+      setActionError(
+        err instanceof ApiError ? err.message : t('errors.requestFailed'),
+      )
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  return {
+    t,
+    proposal,
+    loading,
+    error,
+    actionError,
+    canMutate,
+    isDraft,
+    initialValues,
+    validationSchema,
+    onSave,
+    onSubmitProposal,
+    submitting,
+    hasProposal: Boolean(proposal),
+    showForm,
+    openForm,
+    closeForm,
+  }
+}

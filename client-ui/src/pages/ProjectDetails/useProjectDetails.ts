@@ -1,13 +1,23 @@
 import type { FormikHelpers } from 'formik'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import * as Yup from 'yup'
 import { ApiError } from '../../api/client'
-import { createProjectInvitation } from '../../api/invitations'
-import { getProject, listCollaborators } from '../../api/projects'
+import {
+  cancelProjectInvitation,
+  createProjectInvitation,
+  listProjectInvitations,
+} from '../../api/invitations'
+import {
+  completeProject,
+  deleteProject,
+  getProject,
+  listCollaborators,
+} from '../../api/projects'
 import { useAuth } from '../../auth'
 import type {
+  Invitation,
   InvitationRole,
   Project,
   ProjectMembership,
@@ -18,17 +28,44 @@ export type InviteFormValues = {
   role: InvitationRole
 }
 
-/** Project detail shell: metadata, collaborators, owner invite. */
+export type ProjectConfirmKind = 'delete' | 'complete' | 'cancelInvite'
+
+/** Project detail shell: metadata, collaborators, owner invite, complete. */
 export function useProjectDetails() {
   const { t } = useTranslation()
+  const navigate = useNavigate()
   const { id } = useParams<{ id: string }>()
   const { access, user } = useAuth()
   const [project, setProject] = useState<Project | null>(null)
   const [collaborators, setCollaborators] = useState<ProjectMembership[]>([])
+  const [projectInvitations, setProjectInvitations] = useState<Invitation[]>(
+    [],
+  )
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [inviteMessage, setInviteMessage] = useState<string | null>(null)
   const [inviteError, setInviteError] = useState<string | null>(null)
+  const [inviteOpen, setInviteOpen] = useState(false)
+  const [completeError, setCompleteError] = useState<string | null>(null)
+  const [completing, setCompleting] = useState(false)
+  const [deleting, setDeleting] = useState(false)
+  const [deleteError, setDeleteError] = useState<string | null>(null)
+  const [cancellingInviteId, setCancellingInviteId] = useState<number | null>(
+    null,
+  )
+  const [confirmKind, setConfirmKind] = useState<ProjectConfirmKind | null>(
+    null,
+  )
+  const [pendingInvite, setPendingInvite] = useState<Invitation | null>(null)
+
+  const reloadInvitations = useCallback(async () => {
+    if (!access || !id) return
+    try {
+      setProjectInvitations(await listProjectInvitations(access, id))
+    } catch {
+      setProjectInvitations([])
+    }
+  }, [access, id])
 
   const reload = useCallback(async () => {
     if (!access || !id) return
@@ -41,21 +78,55 @@ export function useProjectDetails() {
       ])
       setProject(proj)
       setCollaborators(members)
+      const owner = Boolean(user && proj.owner === user.id)
+      if (owner) {
+        try {
+          setProjectInvitations(await listProjectInvitations(access, id))
+        } catch {
+          setProjectInvitations([])
+        }
+      } else {
+        setProjectInvitations([])
+      }
     } catch (err) {
       setError(err instanceof ApiError ? err.message : t('errors.loadFailed'))
       setProject(null)
       setCollaborators([])
+      setProjectInvitations([])
     } finally {
       setLoading(false)
     }
-  }, [access, id, t])
+  }, [access, id, t, user])
+
+  const refreshProject = useCallback(async () => {
+    if (!access || !id) return
+    try {
+      const [proj, members] = await Promise.all([
+        getProject(access, id),
+        listCollaborators(access, id),
+      ])
+      setProject(proj)
+      setCollaborators(members)
+    } catch {
+      /* keep current view */
+    }
+  }, [access, id])
 
   useEffect(() => {
     void reload()
   }, [reload])
 
-  const isOwner = Boolean(
-    project && user && project.owner === user.id,
+  const isOwner = Boolean(project && user && project.owner === user.id)
+
+  const membership = collaborators.find((m) => user && m.user === user.id)
+  const canEdit = Boolean(
+    isOwner ||
+      membership?.role === 'OWNER' ||
+      membership?.role === 'EDITOR',
+  )
+
+  const canComplete = Boolean(
+    canEdit && project?.status === 'IN_PROGRESS',
   )
 
   const inviteInitial: InviteFormValues = {
@@ -71,6 +142,38 @@ export function useProjectDetails() {
     role: Yup.mixed<InvitationRole>().oneOf(['EDITOR', 'VIEWER']).required(),
   })
 
+  function closeConfirm() {
+    if (completing || deleting || cancellingInviteId != null) return
+    setConfirmKind(null)
+    setPendingInvite(null)
+  }
+
+  function requestDelete() {
+    setDeleteError(null)
+    setConfirmKind('delete')
+  }
+
+  function requestComplete() {
+    setCompleteError(null)
+    setConfirmKind('complete')
+  }
+
+  function requestCancelInvite(invitation: Invitation) {
+    setInviteError(null)
+    setPendingInvite(invitation)
+    setConfirmKind('cancelInvite')
+  }
+
+  function openInvite() {
+    setInviteError(null)
+    setInviteMessage(null)
+    setInviteOpen(true)
+  }
+
+  function closeInvite() {
+    setInviteOpen(false)
+  }
+
   async function onInvite(
     values: InviteFormValues,
     helpers: FormikHelpers<InviteFormValues>,
@@ -85,6 +188,8 @@ export function useProjectDetails() {
       })
       setInviteMessage(t('projects.inviteSent'))
       helpers.resetForm()
+      setInviteOpen(false)
+      await reloadInvitations()
     } catch (err) {
       setInviteError(
         err instanceof ApiError ? err.message : t('errors.inviteFailed'),
@@ -94,18 +199,124 @@ export function useProjectDetails() {
     }
   }
 
+  async function runCancelInvite() {
+    if (!access || !id || !pendingInvite) return
+    setCancellingInviteId(pendingInvite.id)
+    setInviteError(null)
+    try {
+      await cancelProjectInvitation(access, id, pendingInvite.id)
+      setConfirmKind(null)
+      setPendingInvite(null)
+      await reloadInvitations()
+    } catch (err) {
+      setInviteError(
+        err instanceof ApiError ? err.message : t('errors.inviteFailed'),
+      )
+    } finally {
+      setCancellingInviteId(null)
+    }
+  }
+
+  async function runComplete() {
+    if (!access || !id || !canComplete) return
+    setCompleting(true)
+    setCompleteError(null)
+    try {
+      setProject(await completeProject(access, id))
+      setConfirmKind(null)
+    } catch (err) {
+      setCompleteError(
+        err instanceof ApiError ? err.message : t('errors.requestFailed'),
+      )
+    } finally {
+      setCompleting(false)
+    }
+  }
+
+  async function runDelete() {
+    if (!access || !id || !isOwner) return
+    setDeleting(true)
+    setDeleteError(null)
+    try {
+      await deleteProject(access, id)
+      navigate('/projects', { replace: true })
+    } catch (err) {
+      setDeleteError(
+        err instanceof ApiError ? err.message : t('errors.requestFailed'),
+      )
+      setDeleting(false)
+    }
+  }
+
+  async function onConfirmAction() {
+    if (confirmKind === 'delete') await runDelete()
+    else if (confirmKind === 'complete') await runComplete()
+    else if (confirmKind === 'cancelInvite') await runCancelInvite()
+  }
+
+  const confirmBusy =
+    (confirmKind === 'delete' && deleting) ||
+    (confirmKind === 'complete' && completing) ||
+    (confirmKind === 'cancelInvite' && cancellingInviteId != null)
+
+  const confirmDialog =
+    confirmKind === 'delete'
+      ? {
+          title: t('projects.deleteTitle'),
+          message: t('projects.confirmDelete'),
+          confirmLabel: t('projects.delete'),
+          busyLabel: t('projects.deleting'),
+          danger: true,
+        }
+      : confirmKind === 'complete'
+        ? {
+            title: t('projects.completeTitle'),
+            message: t('projects.confirmComplete'),
+            confirmLabel: t('projects.complete'),
+            busyLabel: t('projects.completing'),
+            danger: false,
+          }
+        : confirmKind === 'cancelInvite'
+          ? {
+              title: t('projects.cancelInviteTitle'),
+              message: t('projects.confirmCancelInvite'),
+              confirmLabel: t('projects.cancelInvite'),
+              busyLabel: t('projects.cancellingInvite'),
+              danger: true,
+            }
+          : null
+
   return {
     t,
     id,
     project,
     collaborators,
+    projectInvitations,
     loading,
     error,
     isOwner,
+    canEdit,
+    canComplete,
     inviteInitial,
     inviteSchema,
     onInvite,
+    inviteOpen,
+    openInvite,
+    closeInvite,
+    requestCancelInvite,
     inviteMessage,
     inviteError,
+    requestComplete,
+    completing,
+    completeError,
+    requestDelete,
+    deleting,
+    deleteError,
+    refreshProject,
+    confirmOpen: confirmKind != null,
+    confirmDialog,
+    confirmBusy,
+    onConfirmAction,
+    closeConfirm,
   }
 }

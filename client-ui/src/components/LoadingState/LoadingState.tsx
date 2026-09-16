@@ -3,10 +3,17 @@ import './LoadingState.css'
 
 export function LoadingState(props: LoadingStateProps) {
   const vm = useLoadingState(props)
+  const className = [
+    'rh-loading',
+    vm.compact ? 'rh-loading--compact' : '',
+    vm.overlay ? 'rh-loading--overlay' : '',
+  ]
+    .filter(Boolean)
+    .join(' ')
 
   return (
     <div
-      className={`rh-loading${vm.compact ? ' rh-loading--compact' : ''}`}
+      className={className}
       role="status"
       aria-live="polite"
       aria-busy="true"

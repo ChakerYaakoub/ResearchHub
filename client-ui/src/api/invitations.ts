@@ -10,6 +10,26 @@ export function listMyInvitations(token: string) {
   return apiFetch<Invitation[]>('/invitations/', { token })
 }
 
+export function listProjectInvitations(
+  token: string,
+  projectId: number | string,
+) {
+  return apiFetch<Invitation[]>(`/projects/${projectId}/invitations/`, {
+    token,
+  })
+}
+
+export function cancelProjectInvitation(
+  token: string,
+  projectId: number | string,
+  invitationId: number,
+) {
+  return apiFetch<void>(
+    `/projects/${projectId}/invitations/${invitationId}/`,
+    { method: 'DELETE', token },
+  )
+}
+
 export function acceptInvitation(token: string, inviteToken: string) {
   return apiFetch<Invitation>(`/invitations/${inviteToken}/accept/`, {
     method: 'POST',

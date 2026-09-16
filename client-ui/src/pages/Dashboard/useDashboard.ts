@@ -10,7 +10,6 @@ export type DashboardCard = {
   key: string
   titleKey: string
   value: string | number
-  to?: string
   muted?: boolean
   hintKey?: string
 }
@@ -60,25 +59,21 @@ export function useDashboard() {
       key: 'myProjects',
       titleKey: 'dashboard.myProjects',
       value: projects.length,
-      to: '/projects',
     },
     {
       key: 'pendingInvitations',
       titleKey: 'dashboard.pendingInvitations',
       value: pendingInvites,
-      to: '/invitations',
     },
     {
       key: 'underReview',
       titleKey: 'dashboard.underReview',
       value: underReview,
-      to: '/projects',
     },
     {
       key: 'approved',
       titleKey: 'dashboard.approved',
       value: approved,
-      to: '/projects',
     },
     {
       key: 'experiments',
@@ -86,7 +81,6 @@ export function useDashboard() {
       value: '—',
       muted: true,
       hintKey: 'dashboard.phase11Hint',
-      to: '/projects',
     },
     {
       key: 'publications',
@@ -94,7 +88,6 @@ export function useDashboard() {
       value: '—',
       muted: true,
       hintKey: 'dashboard.phase11Hint',
-      to: '/projects',
     },
   ]
 

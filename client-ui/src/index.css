@@ -51,3 +51,24 @@ a {
   --bs-btn-hover-border-color: var(--rh-accent);
   --bs-btn-hover-color: var(--rh-on-primary);
 }
+
+.btn-outline-danger {
+  --bs-btn-color: var(--rh-danger);
+  --bs-btn-border-color: var(--rh-danger);
+  --bs-btn-hover-bg: var(--rh-danger);
+  --bs-btn-hover-border-color: var(--rh-danger);
+  --bs-btn-hover-color: var(--rh-on-primary);
+  --bs-btn-active-bg: var(--rh-primary-hover);
+  --bs-btn-active-border-color: var(--rh-primary-hover);
+}
+
+.btn-danger {
+  --bs-btn-bg: var(--rh-danger);
+  --bs-btn-border-color: var(--rh-danger);
+  --bs-btn-hover-bg: var(--rh-primary-hover);
+  --bs-btn-hover-border-color: var(--rh-primary-hover);
+  --bs-btn-active-bg: var(--rh-primary-hover);
+  --bs-btn-active-border-color: var(--rh-primary-hover);
+  --bs-btn-color: var(--rh-on-primary);
+  --bs-btn-hover-color: var(--rh-on-primary);
+}

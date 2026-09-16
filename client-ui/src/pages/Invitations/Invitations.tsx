@@ -2,6 +2,7 @@ import { EmptyState } from '../../components/EmptyState'
 import { LoadingState } from '../../components/LoadingState'
 import { PageHeader } from '../../components/PageHeader'
 import { StatusBadge } from '../../components/StatusBadge'
+import { InvitationsSkeleton } from './InvitationsSkeleton'
 import { useInvitations } from './useInvitations'
 
 export function InvitationsPage() {
@@ -14,7 +15,6 @@ export function InvitationsPage() {
         subtitle={vm.t('invitations.subtitle')}
       />
 
-      {vm.loading ? <LoadingState label={vm.t('common.loading')} /> : null}
       {vm.error ? (
         <div className="alert alert-danger" role="alert">
           {vm.error}
@@ -26,8 +26,18 @@ export function InvitationsPage() {
         </div>
       ) : null}
 
+      {vm.loading ? (
+        <div className="position-relative">
+          <LoadingState overlay label={vm.t('common.loading')} />
+          <InvitationsSkeleton />
+        </div>
+      ) : null}
+
       {!vm.loading && !vm.error && vm.pending.length === 0 ? (
-        <EmptyState message={vm.t('invitations.empty')} />
+        <EmptyState
+          title={vm.t('invitations.emptyTitle')}
+          message={vm.t('invitations.empty')}
+        />
       ) : null}
 
       {!vm.loading && vm.pending.length > 0 ? (
