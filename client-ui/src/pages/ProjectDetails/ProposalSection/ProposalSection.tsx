@@ -95,17 +95,14 @@ export function ProposalSection(props: ProposalSectionProps) {
               </>
             ) : null}
           </dl>
-          {vm.canMutate && vm.hasProposal ? (
+          {vm.showContinue && vm.onContinue ? (
             <div className="mt-3">
               <button
                 type="button"
-                className="btn btn-outline-secondary btn-sm"
-                disabled={vm.submitting}
-                onClick={() => void vm.onSubmitProposal()}
+                className="btn btn-primary btn-sm"
+                onClick={vm.onContinue}
               >
-                {vm.submitting
-                  ? vm.t('proposal.submitting')
-                  : vm.t('proposal.submit')}
+                {vm.t('projects.draftPrep.continueExperiments')}
               </button>
             </div>
           ) : null}

@@ -27,6 +27,8 @@ export type ExperimentsSectionProps = {
   canAddPlanned: boolean
   canAddExecuted: boolean
   onProjectChanged: () => void
+  /** Draft prep: Continue to publications. */
+  onContinue?: () => void
 }
 
 export type ExperimentFormValues = {
@@ -67,6 +69,7 @@ export function useExperimentsSection({
   canAddPlanned,
   canAddExecuted,
   onProjectChanged,
+  onContinue,
 }: ExperimentsSectionProps) {
   const { t } = useTranslation()
   const { access } = useAuth()
@@ -256,11 +259,14 @@ export function useExperimentsSection({
     ? t('experiments.emptyExecutedEditable')
     : t('experiments.emptyExecuted')
 
+  const showExecutedGroup = project.status !== 'DRAFT'
+
   return {
     t,
     items,
     plannedItems,
     executedItems,
+    showExecutedGroup,
     phaseHint,
     plannedEmpty,
     executedEmpty,
@@ -290,5 +296,7 @@ export function useExperimentsSection({
     deleting,
     confirmDelete,
     closeDeleteConfirm,
+    onContinue,
+    showContinue: Boolean(onContinue && canAddPlanned),
   }
 }

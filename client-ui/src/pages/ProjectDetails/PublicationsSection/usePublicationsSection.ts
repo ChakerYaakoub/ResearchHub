@@ -18,6 +18,8 @@ export type PublicationsSectionProps = {
   canEdit: boolean
   canAddExisting: boolean
   canAddResulting: boolean
+  /** Draft prep: Continue to submit. */
+  onContinue?: () => void
 }
 
 export type PublicationFormValues = {
@@ -44,6 +46,7 @@ export function usePublicationsSection({
   canEdit,
   canAddExisting,
   canAddResulting,
+  onContinue,
 }: PublicationsSectionProps) {
   const { t } = useTranslation()
   const { access } = useAuth()
@@ -218,11 +221,14 @@ export function usePublicationsSection({
     ? t('publications.emptyResultingEditable')
     : t('publications.emptyResulting')
 
+  const showResultingGroup = project.status !== 'DRAFT'
+
   return {
     t,
     items,
     existingItems,
     resultingItems,
+    showResultingGroup,
     phaseHint,
     existingEmpty,
     resultingEmpty,
@@ -247,5 +253,7 @@ export function usePublicationsSection({
     deleting,
     confirmDelete,
     closeDeleteConfirm,
+    onContinue,
+    showContinue: Boolean(onContinue && canAddExisting),
   }
 }

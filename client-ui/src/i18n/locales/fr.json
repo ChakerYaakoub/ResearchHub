@@ -367,7 +367,29 @@
     "deleting": "Suppression…",
     "deleteTitle": "Supprimer le projet",
     "confirmDelete": "Supprimer définitivement ce projet ? Cette action est irréversible.",
-    "cancelInviteTitle": "Annuler l'invitation"
+    "cancelInviteTitle": "Annuler l'invitation",
+    "draftPrep": {
+      "title": "Préparez votre projet",
+      "intro": "Complétez ces étapes avant de soumettre pour revue scientifique. Après la soumission, vous ne pourrez plus ajouter d'expériences planifiées ni de publications associées en attendant la décision.",
+      "stepProposal": "Proposition",
+      "stepExperiments": "Expériences",
+      "stepPublications": "Publications",
+      "stepSubmit": "Soumettre",
+      "continueExperiments": "Continuer vers les expériences",
+      "continuePublications": "Continuer vers les publications",
+      "continueSubmit": "Continuer vers la soumission",
+      "submitTitle": "Vérifier et soumettre",
+      "checklistTitle": "Vérifiez ce que vous avez préparé, puis soumettez pour revue.",
+      "checklistProposal": "Proposition",
+      "checklistProposalMissing": "Manquante — créez d'abord une proposition",
+      "checklistReady": "Prête",
+      "checklistExperiments": "Expériences planifiées ({{count}})",
+      "checklistPublications": "Publications associées ({{count}})",
+      "checklistRecommended": "Recommandé",
+      "freezeWarning": "Après la soumission, votre projet entre en revue scientifique. Vous ne pourrez plus ajouter ni modifier les expériences planifiées ou les publications associées tant que le projet n'est pas accepté.",
+      "confirmTitle": "Soumettre pour revue ?",
+      "confirmMessage": "Soumettre cette proposition pour revue scientifique ? Vous ne pourrez plus modifier les expériences planifiées ni les publications associées en attendant la décision."
+    }
   },
   "proposal": {
     "title": "Proposition",

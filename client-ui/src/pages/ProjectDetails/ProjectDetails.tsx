@@ -11,10 +11,10 @@ import { ExperimentsSection } from './ExperimentsSection'
 import { ProjectDetailsSkeleton } from './ProjectDetailsSkeleton'
 import { ProposalSection } from './ProposalSection'
 import { PublicationsSection } from './PublicationsSection'
+import { SubmitSection } from './SubmitSection'
 import {
   useProjectDetails,
   type InviteFormValues,
-  type ProjectDetailsSection,
 } from './useProjectDetails'
 import './ProjectDetails.css'
 
@@ -33,16 +33,6 @@ function initialsFromEmail(email: string) {
   }
   return local.slice(0, 2).toUpperCase() || '?'
 }
-
-const SECTIONS: {
-  id: ProjectDetailsSection
-  labelKey: string
-}[] = [
-  { id: 'team', labelKey: 'projects.team' },
-  { id: 'proposal', labelKey: 'proposal.title' },
-  { id: 'experiments', labelKey: 'experiments.title' },
-  { id: 'publications', labelKey: 'publications.title' },
-]
 
 export function ProjectDetailsPage() {
   const vm = useProjectDetails()
@@ -137,12 +127,38 @@ export function ProjectDetailsPage() {
             </dl>
           </section>
 
+          {vm.showDraftPrep ? (
+            <section className="rh-draft-prep mb-3">
+              <h2 className="h6 mb-1">{vm.t('projects.draftPrep.title')}</h2>
+              <p className="small text-muted mb-3">
+                {vm.t('projects.draftPrep.intro')}
+              </p>
+              <ol className="rh-draft-prep-steps list-unstyled d-flex flex-wrap gap-2 mb-0">
+                {vm.draftPrepSteps.map((step, i) => {
+                  const active = vm.activeSection === step.id
+                  return (
+                    <li key={step.id}>
+                      <button
+                        type="button"
+                        className={`btn btn-sm rh-draft-prep-step${active ? ' active' : ''}`}
+                        onClick={() => vm.setActiveSection(step.id)}
+                      >
+                        <span className="rh-draft-prep-num">{i + 1}</span>
+                        {vm.t(step.labelKey)}
+                      </button>
+                    </li>
+                  )
+                })}
+              </ol>
+            </section>
+          ) : null}
+
           <ul
             className="nav nav-tabs rh-project-tabs flex-nowrap overflow-auto mb-3"
             role="tablist"
             aria-label={vm.t('projects.sectionNav')}
           >
-            {SECTIONS.map((tab) => {
+            {vm.navSections.map((tab) => {
               const active = vm.activeSection === tab.id
               return (
                 <li className="nav-item" key={tab.id} role="presentation">
@@ -373,6 +389,9 @@ export function ProjectDetailsPage() {
                   project={vm.project}
                   canEdit={vm.canEdit}
                   onProjectChanged={() => void vm.refreshProject()}
+                  onContinue={
+                    vm.showDraftPrep ? vm.goToExperiments : undefined
+                  }
                 />
               </div>
             ) : null}
@@ -391,6 +410,9 @@ export function ProjectDetailsPage() {
                   canAddPlanned={vm.canAddPlannedExperiment}
                   canAddExecuted={vm.canAddExecutedExperiment}
                   onProjectChanged={() => void vm.refreshProject()}
+                  onContinue={
+                    vm.showDraftPrep ? vm.goToPublications : undefined
+                  }
                 />
               </div>
             ) : null}
@@ -408,6 +430,23 @@ export function ProjectDetailsPage() {
                   canEdit={vm.canEdit}
                   canAddExisting={vm.canAddExistingPublication}
                   canAddResulting={vm.canAddResultingPublication}
+                  onContinue={vm.showDraftPrep ? vm.goToSubmit : undefined}
+                />
+              </div>
+            ) : null}
+
+            {vm.activeSection === 'submit' && vm.showDraftPrep ? (
+              <div
+                className="tab-pane"
+                role="tabpanel"
+                id="project-panel-submit"
+                aria-labelledby="project-tab-submit"
+              >
+                <SubmitSection
+                  projectId={vm.project.id}
+                  project={vm.project}
+                  canEdit={vm.canEdit}
+                  onProjectChanged={() => void vm.refreshProject()}
                 />
               </div>
             ) : null}

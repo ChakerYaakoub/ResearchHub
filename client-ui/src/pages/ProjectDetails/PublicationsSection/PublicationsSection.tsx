@@ -171,15 +171,17 @@ export function PublicationsSection(props: PublicationsSectionProps) {
             onDelete={vm.requestDelete}
             t={vm.t}
           />
-          <KindGroup
-            heading={vm.t('publications.resultingHeading')}
-            emptyMessage={vm.resultingEmpty}
-            items={vm.resultingItems}
-            canMutateItem={vm.canMutateItem}
-            onEdit={vm.openEdit}
-            onDelete={vm.requestDelete}
-            t={vm.t}
-          />
+          {vm.showResultingGroup ? (
+            <KindGroup
+              heading={vm.t('publications.resultingHeading')}
+              emptyMessage={vm.resultingEmpty}
+              items={vm.resultingItems}
+              canMutateItem={vm.canMutateItem}
+              onEdit={vm.openEdit}
+              onDelete={vm.requestDelete}
+              t={vm.t}
+            />
+          ) : null}
         </>
       ) : null}
 
@@ -331,6 +333,18 @@ export function PublicationsSection(props: PublicationsSectionProps) {
         onConfirm={() => void vm.confirmDelete()}
         onClose={vm.closeDeleteConfirm}
       />
+
+      {vm.showContinue && vm.onContinue ? (
+        <div className="mt-3 pt-3 border-top">
+          <button
+            type="button"
+            className="btn btn-primary btn-sm"
+            onClick={vm.onContinue}
+          >
+            {vm.t('projects.draftPrep.continueSubmit')}
+          </button>
+        </div>
+      ) : null}
     </section>
   )
 }

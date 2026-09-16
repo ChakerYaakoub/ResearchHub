@@ -6,7 +6,6 @@ import { ApiError } from '../../../api/client'
 import {
   createProposal,
   getProposal,
-  submitProposal,
   updateProposal,
 } from '../../../api/proposals'
 import { useAuth } from '../../../auth'
@@ -17,6 +16,8 @@ export type ProposalSectionProps = {
   project: Project
   canEdit: boolean
   onProjectChanged: () => void
+  /** Draft prep: show Continue after proposal exists. */
+  onContinue?: () => void
 }
 
 export type ProposalFormValues = {
@@ -24,12 +25,12 @@ export type ProposalFormValues = {
   expected_results: string
 }
 
-/** Load/save/submit proposal for a project. */
+/** Load/save proposal for a project (submit lives on draft Submit step). */
 export function useProposalSection({
   projectId,
   project,
   canEdit,
-  onProjectChanged,
+  onContinue,
 }: ProposalSectionProps) {
   const { t } = useTranslation()
   const { access } = useAuth()
@@ -37,7 +38,6 @@ export function useProposalSection({
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [actionError, setActionError] = useState<string | null>(null)
-  const [submitting, setSubmitting] = useState(false)
   const [showForm, setShowForm] = useState(false)
 
   const isDraft = project.status === 'DRAFT'
@@ -104,22 +104,6 @@ export function useProposalSection({
     }
   }
 
-  async function onSubmitProposal() {
-    if (!access || !canMutate || !proposal) return
-    setSubmitting(true)
-    setActionError(null)
-    try {
-      setProposal(await submitProposal(access, projectId))
-      onProjectChanged()
-    } catch (err) {
-      setActionError(
-        err instanceof ApiError ? err.message : t('errors.requestFailed'),
-      )
-    } finally {
-      setSubmitting(false)
-    }
-  }
-
   return {
     t,
     proposal,
@@ -131,11 +115,11 @@ export function useProposalSection({
     initialValues,
     validationSchema,
     onSave,
-    onSubmitProposal,
-    submitting,
     hasProposal: Boolean(proposal),
     showForm,
     openForm,
     closeForm,
+    onContinue,
+    showContinue: Boolean(onContinue && canMutate && proposal),
   }
 }
