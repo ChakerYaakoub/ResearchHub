@@ -5,7 +5,11 @@ import { useParams } from 'react-router-dom'
 import * as Yup from 'yup'
 import { ApiError } from '../../api/client'
 import { createProjectInvitation } from '../../api/invitations'
-import { getProject, listCollaborators } from '../../api/projects'
+import {
+  completeProject,
+  getProject,
+  listCollaborators,
+} from '../../api/projects'
 import { useAuth } from '../../auth'
 import type {
   InvitationRole,
@@ -18,7 +22,7 @@ export type InviteFormValues = {
   role: InvitationRole
 }
 
-/** Project detail shell: metadata, collaborators, owner invite. */
+/** Project detail shell: metadata, collaborators, owner invite, complete. */
 export function useProjectDetails() {
   const { t } = useTranslation()
   const { id } = useParams<{ id: string }>()
@@ -29,6 +33,8 @@ export function useProjectDetails() {
   const [error, setError] = useState<string | null>(null)
   const [inviteMessage, setInviteMessage] = useState<string | null>(null)
   const [inviteError, setInviteError] = useState<string | null>(null)
+  const [completeError, setCompleteError] = useState<string | null>(null)
+  const [completing, setCompleting] = useState(false)
 
   const reload = useCallback(async () => {
     if (!access || !id) return
@@ -50,12 +56,35 @@ export function useProjectDetails() {
     }
   }, [access, id, t])
 
+  const refreshProject = useCallback(async () => {
+    if (!access || !id) return
+    try {
+      const [proj, members] = await Promise.all([
+        getProject(access, id),
+        listCollaborators(access, id),
+      ])
+      setProject(proj)
+      setCollaborators(members)
+    } catch {
+      /* keep current view; sections show their own errors */
+    }
+  }, [access, id])
+
   useEffect(() => {
     void reload()
   }, [reload])
 
-  const isOwner = Boolean(
-    project && user && project.owner === user.id,
+  const isOwner = Boolean(project && user && project.owner === user.id)
+
+  const membership = collaborators.find((m) => user && m.user === user.id)
+  const canEdit = Boolean(
+    isOwner ||
+      membership?.role === 'OWNER' ||
+      membership?.role === 'EDITOR',
+  )
+
+  const canComplete = Boolean(
+    canEdit && project?.status === 'IN_PROGRESS',
   )
 
   const inviteInitial: InviteFormValues = {
@@ -94,6 +123,22 @@ export function useProjectDetails() {
     }
   }
 
+  async function onComplete() {
+    if (!access || !id || !canComplete) return
+    if (!window.confirm(t('projects.confirmComplete'))) return
+    setCompleting(true)
+    setCompleteError(null)
+    try {
+      setProject(await completeProject(access, id))
+    } catch (err) {
+      setCompleteError(
+        err instanceof ApiError ? err.message : t('errors.requestFailed'),
+      )
+    } finally {
+      setCompleting(false)
+    }
+  }
+
   return {
     t,
     id,
@@ -102,10 +147,16 @@ export function useProjectDetails() {
     loading,
     error,
     isOwner,
+    canEdit,
+    canComplete,
     inviteInitial,
     inviteSchema,
     onInvite,
     inviteMessage,
     inviteError,
+    onComplete,
+    completing,
+    completeError,
+    refreshProject,
   }
 }

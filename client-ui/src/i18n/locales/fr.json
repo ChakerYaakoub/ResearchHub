@@ -16,7 +16,9 @@
     "cancel": "Annuler",
     "create": "Créer",
     "actions": "Actions",
-    "back": "Retour"
+    "back": "Retour",
+    "edit": "Modifier",
+    "delete": "Supprimer"
   },
   "validation": {
     "emailRequired": "L'e-mail est obligatoire.",
@@ -197,7 +199,10 @@
     "PENDING": "En attente",
     "ACCEPTED": "Acceptée",
     "DECLINED": "Refusée",
-    "EXPIRED": "Expirée"
+    "EXPIRED": "Expirée",
+    "PLANNED": "Planifiée",
+    "SCHEDULED": "Programmée",
+    "CANCELLED": "Annulée"
   },
   "dashboard": {
     "title": "Tableau de bord",
@@ -240,7 +245,51 @@
     "sectionPublications": "Publications",
     "sectionComingSoon": "Disponible dans la prochaine phase.",
     "titleRequired": "Le titre est obligatoire.",
-    "creating": "Création…"
+    "creating": "Création…",
+    "complete": "Marquer comme terminé",
+    "completing": "Finalisation…",
+    "confirmComplete": "Marquer ce projet comme terminé ?"
+  },
+  "proposal": {
+    "title": "Proposition",
+    "empty": "Aucune proposition pour le moment.",
+    "methodology": "Méthodologie",
+    "expectedResults": "Résultats attendus",
+    "create": "Créer la proposition",
+    "save": "Enregistrer la proposition",
+    "submit": "Soumettre pour revue",
+    "submitting": "Soumission…",
+    "submittedAt": "Soumise le",
+    "reviewedAt": "Revue le",
+    "reviewComment": "Commentaire de revue"
+  },
+  "experiments": {
+    "title": "Expériences",
+    "empty": "Aucune expérience pour le moment.",
+    "add": "Ajouter une expérience",
+    "edit": "Modifier l'expérience",
+    "instrument": "Instrument",
+    "scheduledDate": "Date prévue",
+    "status": "Statut",
+    "notes": "Notes",
+    "instrumentRequired": "L'instrument est obligatoire.",
+    "dateRequired": "La date prévue est obligatoire.",
+    "confirmDelete": "Supprimer cette expérience ?"
+  },
+  "publications": {
+    "title": "Publications",
+    "empty": "Aucune publication pour le moment.",
+    "add": "Ajouter une publication",
+    "edit": "Modifier la publication",
+    "fieldTitle": "Titre",
+    "authors": "Auteurs",
+    "journal": "Journal",
+    "doi": "DOI",
+    "date": "Date de publication",
+    "url": "URL",
+    "titleRequired": "Le titre est obligatoire.",
+    "authorsRequired": "Les auteurs sont obligatoires.",
+    "confirmDelete": "Supprimer cette publication ?"
   },
   "invitations": {
     "title": "Invitations",

@@ -16,7 +16,9 @@
     "cancel": "Cancel",
     "create": "Create",
     "actions": "Actions",
-    "back": "Back"
+    "back": "Back",
+    "edit": "Edit",
+    "delete": "Delete"
   },
   "validation": {
     "emailRequired": "Email is required.",
@@ -197,7 +199,10 @@
     "PENDING": "Pending",
     "ACCEPTED": "Accepted",
     "DECLINED": "Declined",
-    "EXPIRED": "Expired"
+    "EXPIRED": "Expired",
+    "PLANNED": "Planned",
+    "SCHEDULED": "Scheduled",
+    "CANCELLED": "Cancelled"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -240,7 +245,51 @@
     "sectionPublications": "Publications",
     "sectionComingSoon": "Available in the next phase.",
     "titleRequired": "Title is required.",
-    "creating": "Creating…"
+    "creating": "Creating…",
+    "complete": "Mark complete",
+    "completing": "Completing…",
+    "confirmComplete": "Mark this project as completed?"
+  },
+  "proposal": {
+    "title": "Proposal",
+    "empty": "No proposal yet.",
+    "methodology": "Methodology",
+    "expectedResults": "Expected results",
+    "create": "Create proposal",
+    "save": "Save proposal",
+    "submit": "Submit for review",
+    "submitting": "Submitting…",
+    "submittedAt": "Submitted",
+    "reviewedAt": "Reviewed",
+    "reviewComment": "Review comment"
+  },
+  "experiments": {
+    "title": "Experiments",
+    "empty": "No experiments yet.",
+    "add": "Add experiment",
+    "edit": "Edit experiment",
+    "instrument": "Instrument",
+    "scheduledDate": "Scheduled date",
+    "status": "Status",
+    "notes": "Notes",
+    "instrumentRequired": "Instrument is required.",
+    "dateRequired": "Scheduled date is required.",
+    "confirmDelete": "Delete this experiment?"
+  },
+  "publications": {
+    "title": "Publications",
+    "empty": "No publications yet.",
+    "add": "Add publication",
+    "edit": "Edit publication",
+    "fieldTitle": "Title",
+    "authors": "Authors",
+    "journal": "Journal",
+    "doi": "DOI",
+    "date": "Publication date",
+    "url": "URL",
+    "titleRequired": "Title is required.",
+    "authorsRequired": "Authors are required.",
+    "confirmDelete": "Delete this publication?"
   },
   "invitations": {
     "title": "Invitations",
