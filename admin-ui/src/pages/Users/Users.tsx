@@ -1,3 +1,4 @@
+import { Popup } from '../../components/Popup'
 import { EmptyState } from '../../components/EmptyState'
 import { LoadingState } from '../../components/LoadingState'
 import { StatusBadge } from '../../components/StatusBadge'
@@ -6,9 +7,23 @@ import '../../styles/adminLists.css'
 
 export function UsersPage() {
   const vm = useUsers()
+  const { formik } = vm
 
   return (
     <div className="container-fluid px-3 px-md-4 py-4 rh-admin-panel">
+      <div className="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-3">
+        <p className="text-muted small mb-0" style={{ maxWidth: '36rem' }}>
+          {vm.copy.usersSubtitle}
+        </p>
+        <button
+          type="button"
+          className="btn btn-primary btn-sm"
+          onClick={vm.openCreate}
+        >
+          {vm.copy.createAdmin}
+        </button>
+      </div>
+
       {vm.error ? (
         <div className="alert alert-danger" role="alert">
           {vm.error}
@@ -17,6 +32,11 @@ export function UsersPage() {
       {vm.actionError ? (
         <div className="alert alert-danger" role="alert">
           {vm.actionError}
+        </div>
+      ) : null}
+      {vm.success ? (
+        <div className="alert alert-success" role="alert">
+          {vm.success}
         </div>
       ) : null}
 
@@ -54,44 +74,20 @@ export function UsersPage() {
                       </td>
                       <td>{new Date(u.date_joined).toLocaleDateString()}</td>
                       <td>
-                        <div className="d-flex flex-wrap gap-1">
-                          {!isSelf && u.role !== 'ADMIN' ? (
-                            <button
-                              type="button"
-                              className="btn btn-outline-danger btn-sm"
-                              disabled={busy}
-                              onClick={() => void vm.setRole(u.id, 'ADMIN')}
-                            >
-                              {vm.copy.makeAdmin}
-                            </button>
-                          ) : null}
-                          {!isSelf && u.role !== 'RESEARCHER' ? (
-                            <button
-                              type="button"
-                              className="btn btn-outline-primary btn-sm"
-                              disabled={busy}
-                              onClick={() =>
-                                void vm.setRole(u.id, 'RESEARCHER')
-                              }
-                            >
-                              {vm.copy.makeResearcher}
-                            </button>
-                          ) : null}
-                          {!isSelf ? (
-                            <button
-                              type="button"
-                              className="btn btn-outline-secondary btn-sm"
-                              disabled={busy}
-                              onClick={() =>
-                                void vm.setActive(u.id, !u.is_active)
-                              }
-                            >
-                              {u.is_active
-                                ? vm.copy.deactivate
-                                : vm.copy.activate}
-                            </button>
-                          ) : null}
-                        </div>
+                        {!isSelf ? (
+                          <button
+                            type="button"
+                            className="btn btn-outline-secondary btn-sm"
+                            disabled={busy}
+                            onClick={() =>
+                              void vm.setActive(u.id, !u.is_active)
+                            }
+                          >
+                            {u.is_active
+                              ? vm.copy.deactivate
+                              : vm.copy.activate}
+                          </button>
+                        ) : null}
                       </td>
                     </tr>
                   )
@@ -115,35 +111,14 @@ export function UsersPage() {
                     {u.is_active ? vm.copy.active : vm.copy.inactive}
                   </p>
                   {!isSelf ? (
-                    <div className="d-flex flex-wrap gap-1">
-                      {u.role !== 'ADMIN' ? (
-                        <button
-                          type="button"
-                          className="btn btn-outline-danger btn-sm"
-                          disabled={busy}
-                          onClick={() => void vm.setRole(u.id, 'ADMIN')}
-                        >
-                          {vm.copy.makeAdmin}
-                        </button>
-                      ) : (
-                        <button
-                          type="button"
-                          className="btn btn-outline-primary btn-sm"
-                          disabled={busy}
-                          onClick={() => void vm.setRole(u.id, 'RESEARCHER')}
-                        >
-                          {vm.copy.makeResearcher}
-                        </button>
-                      )}
-                      <button
-                        type="button"
-                        className="btn btn-outline-secondary btn-sm"
-                        disabled={busy}
-                        onClick={() => void vm.setActive(u.id, !u.is_active)}
-                      >
-                        {u.is_active ? vm.copy.deactivate : vm.copy.activate}
-                      </button>
-                    </div>
+                    <button
+                      type="button"
+                      className="btn btn-outline-secondary btn-sm"
+                      disabled={busy}
+                      onClick={() => void vm.setActive(u.id, !u.is_active)}
+                    >
+                      {u.is_active ? vm.copy.deactivate : vm.copy.activate}
+                    </button>
                   ) : null}
                 </article>
               )
@@ -151,6 +126,120 @@ export function UsersPage() {
           </div>
         </>
       )}
+
+      <Popup
+        open={vm.createOpen}
+        title={vm.copy.createAdminTitle}
+        onClose={vm.closeCreate}
+        size="sm"
+      >
+        <form onSubmit={formik.handleSubmit} noValidate>
+          <div className="mb-3">
+            <label className="form-label" htmlFor="admin_email">
+              {vm.copy.email}
+            </label>
+            <input
+              id="admin_email"
+              name="email"
+              type="email"
+              className={`form-control${
+                formik.touched.email && formik.errors.email ? ' is-invalid' : ''
+              }`}
+              value={formik.values.email}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              disabled={vm.creating}
+              autoComplete="off"
+            />
+            {formik.touched.email && formik.errors.email ? (
+              <div className="invalid-feedback">{formik.errors.email}</div>
+            ) : null}
+          </div>
+          <div className="mb-3">
+            <label className="form-label" htmlFor="admin_username">
+              {vm.copy.usernameOptional}
+            </label>
+            <input
+              id="admin_username"
+              name="username"
+              type="text"
+              className="form-control"
+              value={formik.values.username}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              disabled={vm.creating}
+              autoComplete="off"
+            />
+          </div>
+          <div className="mb-3">
+            <label className="form-label" htmlFor="admin_password">
+              {vm.copy.password}
+            </label>
+            <input
+              id="admin_password"
+              name="password"
+              type="password"
+              className={`form-control${
+                formik.touched.password && formik.errors.password
+                  ? ' is-invalid'
+                  : ''
+              }`}
+              value={formik.values.password}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              disabled={vm.creating}
+              autoComplete="new-password"
+            />
+            {formik.touched.password && formik.errors.password ? (
+              <div className="invalid-feedback">{formik.errors.password}</div>
+            ) : null}
+          </div>
+          <div className="mb-3">
+            <label className="form-label" htmlFor="admin_password_confirm">
+              {vm.copy.passwordConfirm}
+            </label>
+            <input
+              id="admin_password_confirm"
+              name="passwordConfirm"
+              type="password"
+              className={`form-control${
+                formik.touched.passwordConfirm && formik.errors.passwordConfirm
+                  ? ' is-invalid'
+                  : ''
+              }`}
+              value={formik.values.passwordConfirm}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              disabled={vm.creating}
+              autoComplete="new-password"
+            />
+            {formik.touched.passwordConfirm && formik.errors.passwordConfirm ? (
+              <div className="invalid-feedback">
+                {formik.errors.passwordConfirm}
+              </div>
+            ) : null}
+          </div>
+          <div className="d-flex flex-wrap justify-content-end gap-2">
+            <button
+              type="button"
+              className="btn btn-outline-secondary btn-sm"
+              disabled={vm.creating}
+              onClick={vm.closeCreate}
+            >
+              {vm.copy.cancel}
+            </button>
+            <button
+              type="submit"
+              className="btn btn-primary btn-sm"
+              disabled={vm.creating}
+            >
+              {vm.creating
+                ? vm.copy.creatingAdmin
+                : vm.copy.createAdminSubmit}
+            </button>
+          </div>
+        </form>
+      </Popup>
     </div>
   )
 }

@@ -15,6 +15,7 @@ from publications.models import Publication
 from users.models import User
 
 from .admin_serializers import (
+    AdminCreateAdminSerializer,
     AdminExperimentSerializer,
     AdminInvitationSerializer,
     AdminProjectDetailSerializer,
@@ -31,7 +32,7 @@ _ADMIN_PERMS = [IsAuthenticated, IsAdminUiOrigin, IsPlatformAdmin]
 
 
 class AdminUserListView(APIView):
-    """GET `/api/admin/users/`."""
+    """GET `/api/admin/users/` — list; POST create platform ADMIN."""
 
     permission_classes = _ADMIN_PERMS
 
@@ -39,9 +40,18 @@ class AdminUserListView(APIView):
         qs = User.objects.order_by("email")
         return Response(AdminUserSerializer(qs, many=True).data)
 
+    def post(self, request):
+        ser = AdminCreateAdminSerializer(data=request.data)
+        ser.is_valid(raise_exception=True)
+        user = ser.save()
+        return Response(
+            AdminUserSerializer(user).data,
+            status=status.HTTP_201_CREATED,
+        )
+
 
 class AdminUserDetailView(APIView):
-    """PATCH `/api/admin/users/{id}/` — role / is_active (not self)."""
+    """PATCH `/api/admin/users/{id}/` — is_active only (not self)."""
 
     permission_classes = _ADMIN_PERMS
 
@@ -49,17 +59,13 @@ class AdminUserDetailView(APIView):
         target = get_object_or_404(User, pk=user_id)
         if target.pk == request.user.pk:
             return Response(
-                {"detail": "You cannot change your own role or active status."},
+                {"detail": "You cannot change your own active status."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         ser = AdminUserPatchSerializer(data=request.data)
         ser.is_valid(raise_exception=True)
-        data = ser.validated_data
-        if "role" in data:
-            target.role = data["role"]
-        if "is_active" in data:
-            target.is_active = data["is_active"]
-        target.save()
+        target.is_active = ser.validated_data["is_active"]
+        target.save(update_fields=["is_active"])
         return Response(AdminUserSerializer(target).data)
 
 

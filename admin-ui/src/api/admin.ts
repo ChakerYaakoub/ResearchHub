@@ -95,10 +95,21 @@ export function listUsers(token: string) {
   return apiFetch<AdminUser[]>('/admin/users/', { token })
 }
 
+export function createAdmin(
+  token: string,
+  body: { email: string; password: string; username?: string },
+) {
+  return apiFetch<AdminUser>('/admin/users/', {
+    method: 'POST',
+    token,
+    body: JSON.stringify(body),
+  })
+}
+
 export function patchUser(
   token: string,
   id: number,
-  body: { role?: 'ADMIN' | 'RESEARCHER'; is_active?: boolean },
+  body: { is_active: boolean },
 ) {
   return apiFetch<AdminUser>(`/admin/users/${id}/`, {
     method: 'PATCH',

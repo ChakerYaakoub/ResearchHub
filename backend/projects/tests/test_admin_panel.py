@@ -40,26 +40,62 @@ class AdminPanelApiTests(TestCase):
         no_origin = auth_client(self.admin).get("/api/admin/users/")
         self.assertEqual(no_origin.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_patch_user_role_and_active(self):
+    def test_patch_user_active_only_no_role_flip(self):
         patched = self.admin_api.patch(
             f"/api/admin/users/{self.other.id}/",
-            {"role": GlobalRole.ADMIN, "is_active": False},
+            {"is_active": False},
             format="json",
         )
         self.assertEqual(patched.status_code, status.HTTP_200_OK)
-        self.assertEqual(patched.data["role"], GlobalRole.ADMIN)
         self.assertFalse(patched.data["is_active"])
         self.other.refresh_from_db()
-        self.assertEqual(self.other.role, GlobalRole.ADMIN)
+        self.assertEqual(self.other.role, GlobalRole.RESEARCHER)
         self.assertFalse(self.other.is_active)
+
+        # Role changes via PATCH are ignored / rejected (serializer has no role).
+        with_role = self.admin_api.patch(
+            f"/api/admin/users/{self.other.id}/",
+            {"role": GlobalRole.ADMIN, "is_active": True},
+            format="json",
+        )
+        # Extra fields ignored by default DRF Serializer → only is_active applied if present
+        # Our serializer requires is_active only; role is not a field so ignored.
+        self.assertEqual(with_role.status_code, status.HTTP_200_OK)
+        self.other.refresh_from_db()
+        self.assertEqual(self.other.role, GlobalRole.RESEARCHER)
+        self.assertTrue(self.other.is_active)
 
     def test_cannot_patch_self(self):
         response = self.admin_api.patch(
             f"/api/admin/users/{self.admin.id}/",
-            {"role": GlobalRole.RESEARCHER},
+            {"is_active": False},
             format="json",
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_create_admin(self):
+        created = self.admin_api.post(
+            "/api/admin/users/",
+            {
+                "email": "newadmin@example.com",
+                "password": DEFAULT_PASSWORD,
+                "username": "newadmin",
+            },
+            format="json",
+        )
+        self.assertEqual(created.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(created.data["role"], GlobalRole.ADMIN)
+        self.assertEqual(created.data["email"], "newadmin@example.com")
+        user = User.objects.get(email="newadmin@example.com")
+        self.assertEqual(user.role, GlobalRole.ADMIN)
+        self.assertTrue(user.check_password(DEFAULT_PASSWORD))
+
+        denied = admin_client(self.owner).post(
+            "/api/admin/users/",
+            {"email": "x@example.com", "password": DEFAULT_PASSWORD},
+            format="json",
+        )
+        self.assertEqual(denied.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_list_and_detail_projects(self):
         listed = self.admin_api.get("/api/admin/projects/")
