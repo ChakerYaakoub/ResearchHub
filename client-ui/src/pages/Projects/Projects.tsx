@@ -3,6 +3,7 @@ import { EmptyState } from '../../components/EmptyState'
 import { LoadingState } from '../../components/LoadingState'
 import { PageHeader } from '../../components/PageHeader'
 import { StatusBadge } from '../../components/StatusBadge'
+import { ProjectsSkeleton } from './ProjectsSkeleton'
 import { useProjects } from './useProjects'
 
 export function ProjectsPage() {
@@ -20,15 +21,29 @@ export function ProjectsPage() {
         }
       />
 
-      {vm.loading ? <LoadingState label={vm.t('common.loading')} /> : null}
       {vm.error ? (
         <div className="alert alert-danger" role="alert">
           {vm.error}
         </div>
       ) : null}
 
+      {vm.loading ? (
+        <div className="position-relative">
+          <LoadingState overlay label={vm.t('common.loading')} />
+          <ProjectsSkeleton />
+        </div>
+      ) : null}
+
       {!vm.loading && !vm.error && vm.projects.length === 0 ? (
-        <EmptyState message={vm.t('projects.empty')} />
+        <EmptyState
+          title={vm.t('projects.emptyTitle')}
+          message={vm.t('projects.empty')}
+          action={
+            <Link className="btn btn-primary btn-sm" to="/projects/new">
+              {vm.t('projects.createCta')}
+            </Link>
+          }
+        />
       ) : null}
 
       {!vm.loading && vm.projects.length > 0 ? (

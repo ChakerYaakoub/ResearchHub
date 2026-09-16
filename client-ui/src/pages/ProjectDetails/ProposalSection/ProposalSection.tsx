@@ -2,6 +2,7 @@ import { Form, Formik } from 'formik'
 import { EmptyState } from '../../../components/EmptyState'
 import { LoadingState } from '../../../components/LoadingState'
 import { StatusBadge } from '../../../components/StatusBadge'
+import { ProposalSectionSkeleton } from './ProposalSectionSkeleton'
 import {
   useProposalSection,
   type ProposalFormValues,
@@ -24,7 +25,10 @@ export function ProposalSection(props: ProposalSectionProps) {
       </div>
 
       {vm.loading ? (
-        <LoadingState label={vm.t('common.loading')} compact />
+        <div className="position-relative py-2">
+          <LoadingState overlay compact label={vm.t('common.loading')} />
+          <ProposalSectionSkeleton />
+        </div>
       ) : null}
       {vm.error ? (
         <div className="alert alert-danger py-2" role="alert">
@@ -38,7 +42,7 @@ export function ProposalSection(props: ProposalSectionProps) {
       ) : null}
 
       {!vm.loading && !vm.error && !vm.proposal && !vm.canMutate ? (
-        <EmptyState message={vm.t('proposal.empty')} />
+        <EmptyState compact message={vm.t('proposal.empty')} />
       ) : null}
 
       {!vm.loading && !vm.error && (vm.proposal || vm.canMutate) ? (

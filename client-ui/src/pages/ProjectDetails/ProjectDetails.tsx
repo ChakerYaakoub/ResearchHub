@@ -6,6 +6,7 @@ import { PageHeader } from '../../components/PageHeader'
 import { StatusBadge } from '../../components/StatusBadge'
 import { TextInput } from '../../components/form/TextInput'
 import { ExperimentsSection } from './ExperimentsSection'
+import { ProjectDetailsSkeleton } from './ProjectDetailsSkeleton'
 import { ProposalSection } from './ProposalSection'
 import { PublicationsSection } from './PublicationsSection'
 import { useProjectDetails, type InviteFormValues } from './useProjectDetails'
@@ -38,7 +39,6 @@ export function ProjectDetailsPage() {
         }
       />
 
-      {vm.loading ? <LoadingState label={vm.t('common.loading')} /> : null}
       {vm.error ? (
         <div className="alert alert-danger" role="alert">
           {vm.error}
@@ -47,6 +47,13 @@ export function ProjectDetailsPage() {
       {vm.completeError ? (
         <div className="alert alert-danger" role="alert">
           {vm.completeError}
+        </div>
+      ) : null}
+
+      {vm.loading ? (
+        <div className="position-relative">
+          <LoadingState overlay label={vm.t('common.loading')} />
+          <ProjectDetailsSkeleton />
         </div>
       ) : null}
 
@@ -88,7 +95,11 @@ export function ProjectDetailsPage() {
 
           <h2 className="h5">{vm.t('projects.collaborators')}</h2>
           {vm.collaborators.length === 0 ? (
-            <EmptyState message={vm.t('projects.collaboratorsEmpty')} />
+            <EmptyState
+              compact
+              className="mb-4"
+              message={vm.t('projects.collaboratorsEmpty')}
+            />
           ) : (
             <ul className="list-group mb-4">
               {vm.collaborators.map((m) => (
@@ -108,6 +119,7 @@ export function ProjectDetailsPage() {
           {vm.isOwner ? (
             <div className="border rounded p-3 mb-4 bg-white">
               <h3 className="h6">{vm.t('projects.inviteTitle')}</h3>
+              <p className="small text-muted">{vm.t('projects.inviteHint')}</p>
               {vm.inviteMessage ? (
                 <div className="alert alert-success py-2" role="status">
                   {vm.inviteMessage}
@@ -161,6 +173,52 @@ export function ProjectDetailsPage() {
                   </Form>
                 )}
               </Formik>
+
+              <h4 className="h6 mt-4 mb-2">
+                {vm.t('projects.sentInvitations')}
+              </h4>
+              {vm.projectInvitations.length === 0 ? (
+                <EmptyState
+                  compact
+                  className="mt-1"
+                  message={vm.t('projects.sentInvitationsEmpty')}
+                />
+              ) : (
+                <ul className="list-group">
+                  {vm.projectInvitations.map((inv) => (
+                    <li
+                      key={inv.id}
+                      className="list-group-item d-flex flex-column flex-sm-row align-items-sm-center justify-content-sm-between gap-2"
+                    >
+                      <div>
+                        <div className="text-break fw-semibold">{inv.email}</div>
+                        <div className="small text-muted">
+                          {inv.role} · {vm.t(`status.${inv.status}`)} ·{' '}
+                          {vm.t('invitations.expires')}:{' '}
+                          {new Date(inv.expires_at).toLocaleDateString()}
+                        </div>
+                      </div>
+                      {inv.status === 'PENDING' ? (
+                        <button
+                          type="button"
+                          className="btn btn-outline-secondary btn-sm align-self-start"
+                          disabled={vm.cancellingInviteId === inv.id}
+                          onClick={() => void vm.onCancelInvite(inv)}
+                        >
+                          {vm.cancellingInviteId === inv.id
+                            ? vm.t('projects.cancellingInvite')
+                            : vm.t('projects.cancelInvite')}
+                        </button>
+                      ) : (
+                        <StatusBadge
+                          status={inv.status}
+                          label={vm.t(`status.${inv.status}`)}
+                        />
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
           ) : null}
 

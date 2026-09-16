@@ -16,6 +16,24 @@
   justify-content: flex-start;
 }
 
+.rh-loading--overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  min-height: 0;
+  padding: 1rem;
+  margin: 0;
+  background: color-mix(in srgb, var(--rh-surface-muted) 55%, transparent);
+  backdrop-filter: blur(1px);
+  pointer-events: none;
+}
+
+.rh-loading--overlay.rh-loading--compact {
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
 .rh-loading-spinner {
   width: 2.25rem;
   height: 2.25rem;
@@ -31,9 +49,21 @@
   border-width: 2px;
 }
 
+.rh-loading--overlay .rh-loading-spinner {
+  width: 2rem;
+  height: 2rem;
+  border-width: 3px;
+}
+
 .rh-loading-label {
   font-size: 0.95rem;
   font-weight: 500;
+}
+
+.rh-loading--overlay .rh-loading-label {
+  padding: 0.25rem 0.65rem;
+  border-radius: 0.35rem;
+  background: color-mix(in srgb, var(--rh-surface) 88%, transparent);
 }
 
 @keyframes rh-spin {

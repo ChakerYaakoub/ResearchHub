@@ -2,6 +2,7 @@ import { Form, Formik } from 'formik'
 import { EmptyState } from '../../../components/EmptyState'
 import { LoadingState } from '../../../components/LoadingState'
 import { StatusBadge } from '../../../components/StatusBadge'
+import { ExperimentsSectionSkeleton } from './ExperimentsSectionSkeleton'
 import {
   useExperimentsSection,
   type ExperimentFormValues,
@@ -27,7 +28,10 @@ export function ExperimentsSection(props: ExperimentsSectionProps) {
       </div>
 
       {vm.loading ? (
-        <LoadingState label={vm.t('common.loading')} compact />
+        <div className="position-relative py-2">
+          <LoadingState overlay compact label={vm.t('common.loading')} />
+          <ExperimentsSectionSkeleton />
+        </div>
       ) : null}
       {vm.error ? (
         <div className="alert alert-danger py-2" role="alert">
@@ -153,7 +157,7 @@ export function ExperimentsSection(props: ExperimentsSectionProps) {
       ) : null}
 
       {!vm.loading && !vm.error && vm.items.length === 0 ? (
-        <EmptyState message={vm.t('experiments.empty')} />
+        <EmptyState compact message={vm.t('experiments.empty')} />
       ) : null}
 
       {!vm.loading && vm.items.length > 0 ? (

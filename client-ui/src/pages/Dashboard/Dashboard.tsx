@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { LoadingState } from '../../components/LoadingState'
+import { DashboardSkeleton } from './DashboardSkeleton'
 import { useDashboard } from './useDashboard'
 import './Dashboard.css'
 
@@ -30,26 +31,17 @@ export function DashboardPage() {
       ) : null}
 
       {vm.loading ? (
-        <>
-          <LoadingState label={vm.t('common.loading')} />
-          <div className="row g-3 rh-dash-cards" aria-hidden="true">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="col-12 col-md-6 col-lg-4">
-                <div className="rh-dash-card rh-dash-card--skeleton">
-                  <div className="rh-skel rh-skel-line rh-skel-line--sm" />
-                  <div className="rh-skel rh-skel-line rh-skel-line--lg mt-3" />
-                </div>
-              </div>
-            ))}
-          </div>
-        </>
+        <div className="position-relative">
+          <LoadingState overlay label={vm.t('common.loading')} />
+          <DashboardSkeleton />
+        </div>
       ) : null}
 
       {!vm.loading && !vm.error ? (
         <div className="row g-3 rh-dash-cards">
-          {vm.cards.map((card) => {
-            const body = (
-              <>
+          {vm.cards.map((card) => (
+            <div key={card.key} className="col-12 col-md-6 col-lg-4">
+              <div className={`rh-dash-card${card.muted ? ' is-muted' : ''}`}>
                 <div className="rh-dash-card-label">{vm.t(card.titleKey)}</div>
                 <div
                   className={`rh-dash-card-value${card.muted ? ' is-muted' : ''}`}
@@ -59,27 +51,9 @@ export function DashboardPage() {
                 {card.hintKey ? (
                   <div className="rh-dash-card-hint">{vm.t(card.hintKey)}</div>
                 ) : null}
-              </>
-            )
-            return (
-              <div key={card.key} className="col-12 col-md-6 col-lg-4">
-                {card.to ? (
-                  <Link
-                    to={card.to}
-                    className={`rh-dash-card${card.muted ? ' is-muted' : ''}`}
-                  >
-                    {body}
-                  </Link>
-                ) : (
-                  <div
-                    className={`rh-dash-card${card.muted ? ' is-muted' : ''}`}
-                  >
-                    {body}
-                  </div>
-                )}
               </div>
-            )
-          })}
+            </div>
+          ))}
         </div>
       ) : null}
     </div>

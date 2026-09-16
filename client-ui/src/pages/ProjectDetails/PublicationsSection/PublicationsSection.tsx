@@ -1,6 +1,7 @@
 import { Form, Formik } from 'formik'
 import { EmptyState } from '../../../components/EmptyState'
 import { LoadingState } from '../../../components/LoadingState'
+import { PublicationsSectionSkeleton } from './PublicationsSectionSkeleton'
 import {
   usePublicationsSection,
   type PublicationFormValues,
@@ -26,7 +27,10 @@ export function PublicationsSection(props: PublicationsSectionProps) {
       </div>
 
       {vm.loading ? (
-        <LoadingState label={vm.t('common.loading')} compact />
+        <div className="position-relative py-2">
+          <LoadingState overlay compact label={vm.t('common.loading')} />
+          <PublicationsSectionSkeleton />
+        </div>
       ) : null}
       {vm.error ? (
         <div className="alert alert-danger py-2" role="alert">
@@ -172,7 +176,7 @@ export function PublicationsSection(props: PublicationsSectionProps) {
       ) : null}
 
       {!vm.loading && !vm.error && vm.items.length === 0 ? (
-        <EmptyState message={vm.t('publications.empty')} />
+        <EmptyState compact message={vm.t('publications.empty')} />
       ) : null}
 
       {!vm.loading && vm.items.length > 0 ? (
