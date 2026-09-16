@@ -11,7 +11,11 @@ import { ExperimentsSection } from './ExperimentsSection'
 import { ProjectDetailsSkeleton } from './ProjectDetailsSkeleton'
 import { ProposalSection } from './ProposalSection'
 import { PublicationsSection } from './PublicationsSection'
-import { useProjectDetails, type InviteFormValues } from './useProjectDetails'
+import {
+  useProjectDetails,
+  type InviteFormValues,
+  type ProjectDetailsSection,
+} from './useProjectDetails'
 import './ProjectDetails.css'
 
 function roleClass(role: string) {
@@ -29,6 +33,16 @@ function initialsFromEmail(email: string) {
   }
   return local.slice(0, 2).toUpperCase() || '?'
 }
+
+const SECTIONS: {
+  id: ProjectDetailsSection
+  labelKey: string
+}[] = [
+  { id: 'team', labelKey: 'projects.team' },
+  { id: 'proposal', labelKey: 'proposal.title' },
+  { id: 'experiments', labelKey: 'experiments.title' },
+  { id: 'publications', labelKey: 'publications.title' },
+]
 
 export function ProjectDetailsPage() {
   const vm = useProjectDetails()
@@ -123,187 +137,281 @@ export function ProjectDetailsPage() {
             </dl>
           </section>
 
-          <section className="rh-team">
-            <h2 className="rh-team-title">{vm.t('projects.team')}</h2>
-
-            <div className="rh-team-block">
-              <h3 className="rh-team-block-title">
-                {vm.t('projects.collaborators')}
-              </h3>
-              {vm.collaborators.length === 0 ? (
-                <EmptyState
-                  compact
-                  message={vm.t('projects.collaboratorsEmpty')}
-                />
-              ) : (
-                <ul className="rh-team-list">
-                  {vm.collaborators.map((m) => (
-                    <li key={m.id} className="rh-team-row">
-                      <div className="rh-team-row-main">
-                        <span className="rh-team-avatar" aria-hidden="true">
-                          {initialsFromEmail(m.user_email)}
-                        </span>
-                        <span className="rh-team-email">{m.user_email}</span>
-                      </div>
-                      <span className={roleClass(m.role)}>{m.role}</span>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-
-            {vm.isOwner ? (
-              <>
-                <div className="rh-team-block">
-                  <div className="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
-                    <h3 className="rh-team-block-title mb-0">
-                      {vm.t('projects.sentInvitations')}
-                    </h3>
-                    <button
-                      type="button"
-                      className="btn btn-primary btn-sm"
-                      onClick={vm.openInvite}
-                    >
-                      {vm.t('projects.inviteTitle')}
-                    </button>
-                  </div>
-                  {vm.inviteMessage ? (
-                    <div className="alert alert-success py-2" role="status">
-                      {vm.inviteMessage}
-                    </div>
-                  ) : null}
-                  {vm.projectInvitations.length === 0 ? (
-                    <EmptyState
-                      compact
-                      message={vm.t('projects.sentInvitationsEmpty')}
-                    />
-                  ) : (
-                    <ul className="rh-team-list">
-                      {vm.projectInvitations.map((inv) => (
-                        <li key={inv.id} className="rh-team-row">
-                          <div className="rh-team-row-main">
-                            <span className="rh-team-avatar" aria-hidden="true">
-                              {initialsFromEmail(inv.email)}
-                            </span>
-                            <div className="min-w-0">
-                              <div className="rh-team-email">{inv.email}</div>
-                              <div className="rh-team-meta">
-                                {vm.t(`status.${inv.status}`)} ·{' '}
-                                {vm.t('invitations.expires')}:{' '}
-                                {new Date(inv.expires_at).toLocaleDateString()}
-                              </div>
-                            </div>
-                          </div>
-                          <div className="d-flex flex-wrap align-items-center gap-2">
-                            <span className={roleClass(inv.role)}>{inv.role}</span>
-                            {inv.status === 'PENDING' ? (
-                              <button
-                                type="button"
-                                className="btn btn-outline-secondary btn-sm"
-                                onClick={() => vm.requestCancelInvite(inv)}
-                              >
-                                {vm.t('projects.cancelInvite')}
-                              </button>
-                            ) : (
-                              <StatusBadge
-                                status={inv.status}
-                                label={vm.t(`status.${inv.status}`)}
-                              />
-                            )}
-                          </div>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-
-                <Popup
-                  open={vm.inviteOpen}
-                  onClose={vm.closeInvite}
-                  title={vm.t('projects.inviteTitle')}
-                  size="sm"
-                >
-                  <p className="rh-team-hint">{vm.t('projects.inviteHint')}</p>
-                  {vm.inviteError ? (
-                    <div className="alert alert-danger py-2" role="alert">
-                      {vm.inviteError}
-                    </div>
-                  ) : null}
-                  <Formik<InviteFormValues>
-                    initialValues={vm.inviteInitial}
-                    validationSchema={vm.inviteSchema}
-                    onSubmit={vm.onInvite}
+          <ul
+            className="nav nav-tabs rh-project-tabs flex-nowrap overflow-auto mb-3"
+            role="tablist"
+            aria-label={vm.t('projects.sectionNav')}
+          >
+            {SECTIONS.map((tab) => {
+              const active = vm.activeSection === tab.id
+              return (
+                <li className="nav-item" key={tab.id} role="presentation">
+                  <button
+                    type="button"
+                    className={`nav-link text-nowrap${active ? ' active' : ''}`}
+                    role="tab"
+                    id={`project-tab-${tab.id}`}
+                    aria-selected={active}
+                    aria-controls={`project-panel-${tab.id}`}
+                    tabIndex={active ? 0 : -1}
+                    onClick={() => vm.setActiveSection(tab.id)}
                   >
-                    {({ isSubmitting, values, handleChange, handleBlur }) => (
-                      <Form noValidate>
-                        <TextInput
-                          name="email"
-                          label={vm.t('projects.inviteEmail')}
-                          type="email"
-                          autoComplete="email"
-                        />
-                        <div className="mb-3">
-                          <label className="form-label" htmlFor="role">
-                            {vm.t('projects.inviteRole')}
-                          </label>
-                          <select
-                            id="role"
-                            name="role"
-                            className="form-select"
-                            value={values.role}
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                          >
-                            <option value="EDITOR">
-                              {vm.t('projects.roleEditor')}
-                            </option>
-                            <option value="VIEWER">
-                              {vm.t('projects.roleViewer')}
-                            </option>
-                          </select>
-                        </div>
-                        <div className="d-flex flex-wrap justify-content-end gap-2">
+                    {vm.t(tab.labelKey)}
+                  </button>
+                </li>
+              )
+            })}
+          </ul>
+
+          <div className="rh-project-tab-panels">
+            {vm.activeSection === 'team' ? (
+              <div
+                className="tab-pane"
+                role="tabpanel"
+                id="project-panel-team"
+                aria-labelledby="project-tab-team"
+              >
+                <section className="rh-team">
+                  <div className="rh-team-block">
+                    <h3 className="rh-team-block-title">
+                      {vm.t('projects.collaborators')}
+                    </h3>
+                    {vm.collaborators.length === 0 ? (
+                      <EmptyState
+                        compact
+                        message={vm.t('projects.collaboratorsEmpty')}
+                      />
+                    ) : (
+                      <ul className="rh-team-list">
+                        {vm.collaborators.map((m) => (
+                          <li key={m.id} className="rh-team-row">
+                            <div className="rh-team-row-main">
+                              <span
+                                className="rh-team-avatar"
+                                aria-hidden="true"
+                              >
+                                {initialsFromEmail(m.user_email)}
+                              </span>
+                              <span className="rh-team-email">
+                                {m.user_email}
+                              </span>
+                            </div>
+                            <span className={roleClass(m.role)}>{m.role}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+
+                  {vm.isOwner ? (
+                    <>
+                      <div className="rh-team-block">
+                        <div className="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
+                          <h3 className="rh-team-block-title mb-0">
+                            {vm.t('projects.sentInvitations')}
+                          </h3>
                           <button
                             type="button"
-                            className="btn btn-outline-secondary btn-sm"
-                            disabled={isSubmitting}
-                            onClick={vm.closeInvite}
-                          >
-                            {vm.t('common.cancel')}
-                          </button>
-                          <button
-                            type="submit"
                             className="btn btn-primary btn-sm"
-                            disabled={isSubmitting}
+                            onClick={vm.openInvite}
                           >
-                            {vm.t('projects.inviteSubmit')}
+                            {vm.t('projects.inviteTitle')}
                           </button>
                         </div>
-                      </Form>
-                    )}
-                  </Formik>
-                </Popup>
-              </>
-            ) : null}
-          </section>
+                        {vm.inviteMessage ? (
+                          <div
+                            className="alert alert-success py-2"
+                            role="status"
+                          >
+                            {vm.inviteMessage}
+                          </div>
+                        ) : null}
+                        {vm.projectInvitations.length === 0 ? (
+                          <EmptyState
+                            compact
+                            message={vm.t('projects.sentInvitationsEmpty')}
+                          />
+                        ) : (
+                          <ul className="rh-team-list">
+                            {vm.projectInvitations.map((inv) => (
+                              <li key={inv.id} className="rh-team-row">
+                                <div className="rh-team-row-main">
+                                  <span
+                                    className="rh-team-avatar"
+                                    aria-hidden="true"
+                                  >
+                                    {initialsFromEmail(inv.email)}
+                                  </span>
+                                  <div className="min-w-0">
+                                    <div className="rh-team-email">
+                                      {inv.email}
+                                    </div>
+                                    <div className="rh-team-meta">
+                                      {vm.t(`status.${inv.status}`)} ·{' '}
+                                      {vm.t('invitations.expires')}:{' '}
+                                      {new Date(
+                                        inv.expires_at,
+                                      ).toLocaleDateString()}
+                                    </div>
+                                  </div>
+                                </div>
+                                <div className="d-flex flex-wrap align-items-center gap-2">
+                                  <span className={roleClass(inv.role)}>
+                                    {inv.role}
+                                  </span>
+                                  {inv.status === 'PENDING' ? (
+                                    <button
+                                      type="button"
+                                      className="btn btn-outline-secondary btn-sm"
+                                      onClick={() =>
+                                        vm.requestCancelInvite(inv)
+                                      }
+                                    >
+                                      {vm.t('projects.cancelInvite')}
+                                    </button>
+                                  ) : (
+                                    <StatusBadge
+                                      status={inv.status}
+                                      label={vm.t(`status.${inv.status}`)}
+                                    />
+                                  )}
+                                </div>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
 
-          <ProposalSection
-            projectId={vm.project.id}
-            project={vm.project}
-            canEdit={vm.canEdit}
-            onProjectChanged={() => void vm.refreshProject()}
-          />
-          <ExperimentsSection
-            projectId={vm.project.id}
-            project={vm.project}
-            canEdit={vm.canEdit}
-            onProjectChanged={() => void vm.refreshProject()}
-          />
-          <PublicationsSection
-            projectId={vm.project.id}
-            project={vm.project}
-            canEdit={vm.canEdit}
-          />
+                      <Popup
+                        open={vm.inviteOpen}
+                        onClose={vm.closeInvite}
+                        title={vm.t('projects.inviteTitle')}
+                        size="sm"
+                      >
+                        <p className="rh-team-hint">
+                          {vm.t('projects.inviteHint')}
+                        </p>
+                        {vm.inviteError ? (
+                          <div className="alert alert-danger py-2" role="alert">
+                            {vm.inviteError}
+                          </div>
+                        ) : null}
+                        <Formik<InviteFormValues>
+                          initialValues={vm.inviteInitial}
+                          validationSchema={vm.inviteSchema}
+                          onSubmit={vm.onInvite}
+                        >
+                          {({
+                            isSubmitting,
+                            values,
+                            handleChange,
+                            handleBlur,
+                          }) => (
+                            <Form noValidate>
+                              <TextInput
+                                name="email"
+                                label={vm.t('projects.inviteEmail')}
+                                type="email"
+                                autoComplete="email"
+                              />
+                              <div className="mb-3">
+                                <label className="form-label" htmlFor="role">
+                                  {vm.t('projects.inviteRole')}
+                                </label>
+                                <select
+                                  id="role"
+                                  name="role"
+                                  className="form-select"
+                                  value={values.role}
+                                  onChange={handleChange}
+                                  onBlur={handleBlur}
+                                >
+                                  <option value="EDITOR">
+                                    {vm.t('projects.roleEditor')}
+                                  </option>
+                                  <option value="VIEWER">
+                                    {vm.t('projects.roleViewer')}
+                                  </option>
+                                </select>
+                              </div>
+                              <div className="d-flex flex-wrap justify-content-end gap-2">
+                                <button
+                                  type="button"
+                                  className="btn btn-outline-secondary btn-sm"
+                                  disabled={isSubmitting}
+                                  onClick={vm.closeInvite}
+                                >
+                                  {vm.t('common.cancel')}
+                                </button>
+                                <button
+                                  type="submit"
+                                  className="btn btn-primary btn-sm"
+                                  disabled={isSubmitting}
+                                >
+                                  {vm.t('projects.inviteSubmit')}
+                                </button>
+                              </div>
+                            </Form>
+                          )}
+                        </Formik>
+                      </Popup>
+                    </>
+                  ) : null}
+                </section>
+              </div>
+            ) : null}
+
+            {vm.activeSection === 'proposal' ? (
+              <div
+                className="tab-pane"
+                role="tabpanel"
+                id="project-panel-proposal"
+                aria-labelledby="project-tab-proposal"
+              >
+                <ProposalSection
+                  projectId={vm.project.id}
+                  project={vm.project}
+                  canEdit={vm.canEdit}
+                  onProjectChanged={() => void vm.refreshProject()}
+                />
+              </div>
+            ) : null}
+
+            {vm.activeSection === 'experiments' ? (
+              <div
+                className="tab-pane"
+                role="tabpanel"
+                id="project-panel-experiments"
+                aria-labelledby="project-tab-experiments"
+              >
+                <ExperimentsSection
+                  projectId={vm.project.id}
+                  project={vm.project}
+                  canEdit={vm.canEdit}
+                  canAddPlanned={vm.canAddPlannedExperiment}
+                  canAddExecuted={vm.canAddExecutedExperiment}
+                  onProjectChanged={() => void vm.refreshProject()}
+                />
+              </div>
+            ) : null}
+
+            {vm.activeSection === 'publications' ? (
+              <div
+                className="tab-pane"
+                role="tabpanel"
+                id="project-panel-publications"
+                aria-labelledby="project-tab-publications"
+              >
+                <PublicationsSection
+                  projectId={vm.project.id}
+                  project={vm.project}
+                  canEdit={vm.canEdit}
+                  canAddExisting={vm.canAddExistingPublication}
+                  canAddResulting={vm.canAddResultingPublication}
+                />
+              </div>
+            ) : null}
+          </div>
         </>
       ) : null}
 

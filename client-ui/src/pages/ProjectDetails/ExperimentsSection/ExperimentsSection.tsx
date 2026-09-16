@@ -1,9 +1,9 @@
 import { Form, Formik } from 'formik'
 import { ConfirmDialog } from '../../../components/ConfirmDialog'
-import { EmptyState } from '../../../components/EmptyState'
 import { LoadingState } from '../../../components/LoadingState'
 import { Popup } from '../../../components/Popup'
 import { StatusBadge } from '../../../components/StatusBadge'
+import type { Experiment } from '../../../types/api'
 import { ExperimentsSectionSkeleton } from './ExperimentsSectionSkeleton'
 import {
   useExperimentsSection,
@@ -11,23 +11,133 @@ import {
   type ExperimentsSectionProps,
 } from './useExperimentsSection'
 
+function ExperimentRow({
+  exp,
+  canMutate,
+  onEdit,
+  onDelete,
+  t,
+}: {
+  exp: Experiment
+  canMutate: boolean
+  onEdit: () => void
+  onDelete: () => void
+  t: (key: string) => string
+}) {
+  const kindClass =
+    exp.kind === 'EXECUTED' ? 'text-bg-primary' : 'text-bg-secondary'
+
+  return (
+    <li className="list-group-item d-flex flex-column flex-md-row justify-content-md-between gap-2">
+      <div>
+        <div className="d-flex flex-wrap align-items-center gap-2 mb-1">
+          <span className="fw-semibold">{exp.instrument}</span>
+          <span className={`badge ${kindClass}`}>
+            {t(`experiments.kind.${exp.kind}`)}
+          </span>
+        </div>
+        <div className="small text-muted">
+          {new Date(exp.scheduled_date).toLocaleString()}
+        </div>
+        {exp.notes ? <div className="small mt-1">{exp.notes}</div> : null}
+      </div>
+      <div className="d-flex flex-wrap align-items-start gap-2">
+        <StatusBadge status={exp.status} label={t(`status.${exp.status}`)} />
+        {canMutate ? (
+          <>
+            <button
+              type="button"
+              className="btn btn-outline-secondary btn-sm"
+              onClick={onEdit}
+            >
+              {t('common.edit')}
+            </button>
+            <button
+              type="button"
+              className="btn btn-outline-danger btn-sm"
+              onClick={onDelete}
+            >
+              {t('common.delete')}
+            </button>
+          </>
+        ) : null}
+      </div>
+    </li>
+  )
+}
+
+function KindGroup({
+  heading,
+  emptyMessage,
+  items,
+  canMutateItem,
+  onEdit,
+  onDelete,
+  t,
+}: {
+  heading: string
+  emptyMessage: string
+  items: Experiment[]
+  canMutateItem: (exp: Experiment) => boolean
+  onEdit: (id: number) => void
+  onDelete: (id: number) => void
+  t: (key: string) => string
+}) {
+  return (
+    <div className="mb-3">
+      <h3 className="h6 text-muted mb-2">{heading}</h3>
+      {items.length === 0 ? (
+        <p className="small text-muted mb-0">{emptyMessage}</p>
+      ) : (
+        <ul className="list-group">
+          {items.map((exp) => (
+            <ExperimentRow
+              key={exp.id}
+              exp={exp}
+              canMutate={canMutateItem(exp)}
+              onEdit={() => onEdit(exp.id)}
+              onDelete={() => onDelete(exp.id)}
+              t={t}
+            />
+          ))}
+        </ul>
+      )}
+    </div>
+  )
+}
+
 export function ExperimentsSection(props: ExperimentsSectionProps) {
   const vm = useExperimentsSection(props)
 
   return (
     <section className="border rounded p-3 mb-4 bg-white">
-      <div className="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+      <div className="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
         <h2 className="h5 mb-0">{vm.t('experiments.title')}</h2>
-        {vm.canEdit ? (
-          <button
-            type="button"
-            className="btn btn-primary btn-sm"
-            onClick={vm.openCreate}
-          >
-            {vm.t('experiments.add')}
-          </button>
-        ) : null}
+        <div className="d-flex flex-wrap gap-2">
+          {vm.canAddPlanned ? (
+            <button
+              type="button"
+              className="btn btn-outline-primary btn-sm"
+              onClick={() => vm.openCreate('PLANNED')}
+            >
+              {vm.t('experiments.addPlanned')}
+            </button>
+          ) : null}
+          {vm.canAddExecuted ? (
+            <button
+              type="button"
+              className="btn btn-primary btn-sm"
+              onClick={() => vm.openCreate('EXECUTED')}
+            >
+              {vm.t('experiments.addExecuted')}
+            </button>
+          ) : null}
+        </div>
       </div>
+
+      {vm.phaseHint ? (
+        <p className="small text-muted mb-3">{vm.phaseHint}</p>
+      ) : null}
 
       {vm.loading ? (
         <div className="position-relative py-2">
@@ -46,61 +156,33 @@ export function ExperimentsSection(props: ExperimentsSectionProps) {
         </div>
       ) : null}
 
-      {!vm.loading && !vm.error && vm.items.length === 0 ? (
-        <EmptyState compact message={vm.t('experiments.empty')} />
-      ) : null}
-
-      {!vm.loading && vm.items.length > 0 ? (
-        <ul className="list-group">
-          {vm.items.map((exp) => (
-            <li
-              key={exp.id}
-              className="list-group-item d-flex flex-column flex-md-row justify-content-md-between gap-2"
-            >
-              <div>
-                <div className="fw-semibold">{exp.instrument}</div>
-                <div className="small text-muted">
-                  {new Date(exp.scheduled_date).toLocaleString()}
-                </div>
-                {exp.notes ? (
-                  <div className="small mt-1">{exp.notes}</div>
-                ) : null}
-              </div>
-              <div className="d-flex flex-wrap align-items-start gap-2">
-                <StatusBadge
-                  status={exp.status}
-                  label={vm.t(`status.${exp.status}`)}
-                />
-                {vm.canEdit ? (
-                  <>
-                    <button
-                      type="button"
-                      className="btn btn-outline-secondary btn-sm"
-                      onClick={() => vm.openEdit(exp.id)}
-                    >
-                      {vm.t('common.edit')}
-                    </button>
-                    <button
-                      type="button"
-                      className="btn btn-outline-danger btn-sm"
-                      onClick={() => vm.requestDelete(exp.id)}
-                    >
-                      {vm.t('common.delete')}
-                    </button>
-                  </>
-                ) : null}
-              </div>
-            </li>
-          ))}
-        </ul>
+      {!vm.loading && !vm.error ? (
+        <>
+          <KindGroup
+            heading={vm.t('experiments.plannedHeading')}
+            emptyMessage={vm.plannedEmpty}
+            items={vm.plannedItems}
+            canMutateItem={vm.canMutateItem}
+            onEdit={vm.openEdit}
+            onDelete={vm.requestDelete}
+            t={vm.t}
+          />
+          <KindGroup
+            heading={vm.t('experiments.executedHeading')}
+            emptyMessage={vm.executedEmpty}
+            items={vm.executedItems}
+            canMutateItem={vm.canMutateItem}
+            onEdit={vm.openEdit}
+            onDelete={vm.requestDelete}
+            t={vm.t}
+          />
+        </>
       ) : null}
 
       <Popup
-        open={vm.showForm && vm.canEdit}
+        open={vm.showForm && vm.formKind != null}
         onClose={vm.closeForm}
-        title={
-          vm.editingId ? vm.t('experiments.edit') : vm.t('experiments.add')
-        }
+        title={vm.formTitle}
         size="md"
       >
         {vm.actionError ? (

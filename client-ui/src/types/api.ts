@@ -81,6 +81,8 @@ export type ProposalInput = {
   expected_results?: string
 }
 
+export type ExperimentKind = 'PLANNED' | 'EXECUTED'
+
 export type ExperimentStatus =
   | 'PLANNED'
   | 'SCHEDULED'
@@ -90,6 +92,7 @@ export type ExperimentStatus =
 export type Experiment = {
   id: number
   project: number
+  kind: ExperimentKind
   instrument: string
   scheduled_date: string
   status: ExperimentStatus
@@ -97,15 +100,19 @@ export type Experiment = {
 }
 
 export type ExperimentInput = {
+  kind?: ExperimentKind
   instrument: string
   scheduled_date: string
   status?: ExperimentStatus
   notes?: string
 }
 
+export type PublicationKind = 'EXISTING' | 'RESULTING'
+
 export type Publication = {
   id: number
   project: number
+  kind: PublicationKind
   title: string
   authors: string
   journal: string
@@ -115,6 +122,7 @@ export type Publication = {
 }
 
 export type PublicationInput = {
+  kind?: PublicationKind
   title: string
   authors: string
   journal?: string

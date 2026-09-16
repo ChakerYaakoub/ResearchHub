@@ -1,8 +1,8 @@
 import { Form, Formik } from 'formik'
 import { ConfirmDialog } from '../../../components/ConfirmDialog'
-import { EmptyState } from '../../../components/EmptyState'
 import { LoadingState } from '../../../components/LoadingState'
 import { Popup } from '../../../components/Popup'
+import type { Publication } from '../../../types/api'
 import { PublicationsSectionSkeleton } from './PublicationsSectionSkeleton'
 import {
   usePublicationsSection,
@@ -10,23 +10,138 @@ import {
   type PublicationsSectionProps,
 } from './usePublicationsSection'
 
+function PublicationRow({
+  pub,
+  canMutate,
+  onEdit,
+  onDelete,
+  t,
+}: {
+  pub: Publication
+  canMutate: boolean
+  onEdit: () => void
+  onDelete: () => void
+  t: (key: string) => string
+}) {
+  const kindClass =
+    pub.kind === 'RESULTING' ? 'text-bg-primary' : 'text-bg-secondary'
+
+  return (
+    <li className="list-group-item d-flex flex-column flex-md-row justify-content-md-between gap-2">
+      <div>
+        <div className="d-flex flex-wrap align-items-center gap-2 mb-1">
+          <span className="fw-semibold">{pub.title}</span>
+          <span className={`badge ${kindClass}`}>
+            {t(`publications.kind.${pub.kind}`)}
+          </span>
+        </div>
+        <div className="small text-muted">{pub.authors}</div>
+        {pub.journal ? <div className="small">{pub.journal}</div> : null}
+        {pub.url ? (
+          <a
+            className="small"
+            href={pub.url}
+            target="_blank"
+            rel="noreferrer"
+          >
+            {pub.url}
+          </a>
+        ) : null}
+      </div>
+      {canMutate ? (
+        <div className="d-flex flex-wrap align-items-start gap-2">
+          <button
+            type="button"
+            className="btn btn-outline-secondary btn-sm"
+            onClick={onEdit}
+          >
+            {t('common.edit')}
+          </button>
+          <button
+            type="button"
+            className="btn btn-outline-danger btn-sm"
+            onClick={onDelete}
+          >
+            {t('common.delete')}
+          </button>
+        </div>
+      ) : null}
+    </li>
+  )
+}
+
+function KindGroup({
+  heading,
+  emptyMessage,
+  items,
+  canMutateItem,
+  onEdit,
+  onDelete,
+  t,
+}: {
+  heading: string
+  emptyMessage: string
+  items: Publication[]
+  canMutateItem: (pub: Publication) => boolean
+  onEdit: (id: number) => void
+  onDelete: (id: number) => void
+  t: (key: string) => string
+}) {
+  return (
+    <div className="mb-3">
+      <h3 className="h6 text-muted mb-2">{heading}</h3>
+      {items.length === 0 ? (
+        <p className="small text-muted mb-0">{emptyMessage}</p>
+      ) : (
+        <ul className="list-group">
+          {items.map((pub) => (
+            <PublicationRow
+              key={pub.id}
+              pub={pub}
+              canMutate={canMutateItem(pub)}
+              onEdit={() => onEdit(pub.id)}
+              onDelete={() => onDelete(pub.id)}
+              t={t}
+            />
+          ))}
+        </ul>
+      )}
+    </div>
+  )
+}
+
 export function PublicationsSection(props: PublicationsSectionProps) {
   const vm = usePublicationsSection(props)
 
   return (
     <section className="border rounded p-3 mb-4 bg-white">
-      <div className="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+      <div className="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
         <h2 className="h5 mb-0">{vm.t('publications.title')}</h2>
-        {vm.canEdit ? (
-          <button
-            type="button"
-            className="btn btn-primary btn-sm"
-            onClick={vm.openCreate}
-          >
-            {vm.t('publications.add')}
-          </button>
-        ) : null}
+        <div className="d-flex flex-wrap gap-2">
+          {vm.canAddExisting ? (
+            <button
+              type="button"
+              className="btn btn-outline-primary btn-sm"
+              onClick={() => vm.openCreate('EXISTING')}
+            >
+              {vm.t('publications.addExisting')}
+            </button>
+          ) : null}
+          {vm.canAddResulting ? (
+            <button
+              type="button"
+              className="btn btn-primary btn-sm"
+              onClick={() => vm.openCreate('RESULTING')}
+            >
+              {vm.t('publications.addResulting')}
+            </button>
+          ) : null}
+        </div>
       </div>
+
+      {vm.phaseHint ? (
+        <p className="small text-muted mb-3">{vm.phaseHint}</p>
+      ) : null}
 
       {vm.loading ? (
         <div className="position-relative py-2">
@@ -45,65 +160,33 @@ export function PublicationsSection(props: PublicationsSectionProps) {
         </div>
       ) : null}
 
-      {!vm.loading && !vm.error && vm.items.length === 0 ? (
-        <EmptyState compact message={vm.t('publications.empty')} />
-      ) : null}
-
-      {!vm.loading && vm.items.length > 0 ? (
-        <ul className="list-group">
-          {vm.items.map((pub) => (
-            <li
-              key={pub.id}
-              className="list-group-item d-flex flex-column flex-md-row justify-content-md-between gap-2"
-            >
-              <div>
-                <div className="fw-semibold">{pub.title}</div>
-                <div className="small text-muted">{pub.authors}</div>
-                {pub.journal ? (
-                  <div className="small">{pub.journal}</div>
-                ) : null}
-                {pub.url ? (
-                  <a
-                    className="small"
-                    href={pub.url}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    {pub.url}
-                  </a>
-                ) : null}
-              </div>
-              {vm.canEdit ? (
-                <div className="d-flex flex-wrap align-items-start gap-2">
-                  <button
-                    type="button"
-                    className="btn btn-outline-secondary btn-sm"
-                    onClick={() => vm.openEdit(pub.id)}
-                  >
-                    {vm.t('common.edit')}
-                  </button>
-                  <button
-                    type="button"
-                    className="btn btn-outline-danger btn-sm"
-                    onClick={() => vm.requestDelete(pub.id)}
-                  >
-                    {vm.t('common.delete')}
-                  </button>
-                </div>
-              ) : null}
-            </li>
-          ))}
-        </ul>
+      {!vm.loading && !vm.error ? (
+        <>
+          <KindGroup
+            heading={vm.t('publications.existingHeading')}
+            emptyMessage={vm.existingEmpty}
+            items={vm.existingItems}
+            canMutateItem={vm.canMutateItem}
+            onEdit={vm.openEdit}
+            onDelete={vm.requestDelete}
+            t={vm.t}
+          />
+          <KindGroup
+            heading={vm.t('publications.resultingHeading')}
+            emptyMessage={vm.resultingEmpty}
+            items={vm.resultingItems}
+            canMutateItem={vm.canMutateItem}
+            onEdit={vm.openEdit}
+            onDelete={vm.requestDelete}
+            t={vm.t}
+          />
+        </>
       ) : null}
 
       <Popup
-        open={vm.showForm && vm.canEdit}
+        open={vm.showForm && vm.formKind != null}
         onClose={vm.closeForm}
-        title={
-          vm.editingId
-            ? vm.t('publications.edit')
-            : vm.t('publications.add')
-        }
+        title={vm.formTitle}
         size="md"
       >
         {vm.actionError ? (

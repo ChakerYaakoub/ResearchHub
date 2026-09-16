@@ -11,6 +11,7 @@ class PublicationSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "project",
+            "kind",
             "title",
             "authors",
             "journal",

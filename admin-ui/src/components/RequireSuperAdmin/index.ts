@@ -1,0 +1,1 @@
+export { RequireSuperAdmin } from './RequireSuperAdmin'

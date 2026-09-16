@@ -10,12 +10,14 @@ import {
   updatePublication,
 } from '../../../api/publications'
 import { useAuth } from '../../../auth'
-import type { Project, Publication } from '../../../types/api'
+import type { Project, Publication, PublicationKind } from '../../../types/api'
 
 export type PublicationsSectionProps = {
   projectId: number
   project: Project
   canEdit: boolean
+  canAddExisting: boolean
+  canAddResulting: boolean
 }
 
 export type PublicationFormValues = {
@@ -27,10 +29,21 @@ export type PublicationFormValues = {
   url: string
 }
 
-/** Publications list + create/edit/delete. */
+function canMutateKind(
+  status: Project['status'],
+  kind: PublicationKind,
+): boolean {
+  if (kind === 'EXISTING') return status === 'DRAFT'
+  return status === 'IN_PROGRESS' || status === 'COMPLETED'
+}
+
+/** Publications list + create/edit/delete (existing vs resulting). */
 export function usePublicationsSection({
   projectId,
+  project,
   canEdit,
+  canAddExisting,
+  canAddResulting,
 }: PublicationsSectionProps) {
   const { t } = useTranslation()
   const { access } = useAuth()
@@ -39,6 +52,7 @@ export function usePublicationsSection({
   const [error, setError] = useState<string | null>(null)
   const [actionError, setActionError] = useState<string | null>(null)
   const [editingId, setEditingId] = useState<number | null>(null)
+  const [createKind, setCreateKind] = useState<PublicationKind | null>(null)
   const [showForm, setShowForm] = useState(false)
   const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null)
   const [deleting, setDeleting] = useState(false)
@@ -70,6 +84,9 @@ export function usePublicationsSection({
   }
 
   const editing = items.find((p) => p.id === editingId) ?? null
+  const formKind: PublicationKind | null = editing
+    ? editing.kind
+    : createKind
 
   const initialValues: PublicationFormValues = editing
     ? {
@@ -93,14 +110,16 @@ export function usePublicationsSection({
     url: Yup.string(),
   })
 
-  function openCreate() {
+  function openCreate(kind: PublicationKind) {
     setEditingId(null)
+    setCreateKind(kind)
     setShowForm(true)
     setActionError(null)
   }
 
   function openEdit(id: number) {
     setEditingId(id)
+    setCreateKind(null)
     setShowForm(true)
     setActionError(null)
   }
@@ -108,15 +127,21 @@ export function usePublicationsSection({
   function closeForm() {
     setShowForm(false)
     setEditingId(null)
+    setCreateKind(null)
+  }
+
+  function canMutateItem(pub: Publication) {
+    return canEdit && canMutateKind(project.status, pub.kind)
   }
 
   async function onSave(
     values: PublicationFormValues,
     helpers: FormikHelpers<PublicationFormValues>,
   ) {
-    if (!access || !canEdit) return
+    if (!access || !canEdit || !formKind) return
     setActionError(null)
     const body = {
+      kind: formKind,
       title: values.title.trim(),
       authors: values.authors.trim(),
       journal: values.journal.trim(),
@@ -169,15 +194,48 @@ export function usePublicationsSection({
     }
   }
 
+  const formTitle = editingId
+    ? t('publications.edit')
+    : createKind === 'RESULTING'
+      ? t('publications.addResulting')
+      : t('publications.addExisting')
+
+  const existingItems = items.filter((p) => p.kind === 'EXISTING')
+  const resultingItems = items.filter((p) => p.kind === 'RESULTING')
+
+  const phaseHint = canAddExisting
+    ? t('publications.hintExisting')
+    : canAddResulting
+      ? t('publications.hintResulting')
+      : canEdit
+        ? t('publications.hintNoAdd')
+        : null
+
+  const existingEmpty = canAddExisting
+    ? t('publications.emptyExistingEditable')
+    : t('publications.emptyExisting')
+  const resultingEmpty = canAddResulting
+    ? t('publications.emptyResultingEditable')
+    : t('publications.emptyResulting')
+
   return {
     t,
     items,
+    existingItems,
+    resultingItems,
+    phaseHint,
+    existingEmpty,
+    resultingEmpty,
     loading,
     error,
     actionError,
-    canEdit,
+    canAddExisting,
+    canAddResulting,
+    canMutateItem,
     showForm,
     editingId,
+    formKind,
+    formTitle,
     initialValues,
     validationSchema,
     openCreate,

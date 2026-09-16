@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../auth'
 import { copy } from '../../copy'
 
-export const SIDEBAR_LINKS = [
+const BASE_LINKS = [
   { to: '/', label: copy.dashboard },
   { to: '/users', label: copy.users },
   { to: '/projects', label: copy.projects },
@@ -14,6 +14,7 @@ export const SIDEBAR_LINKS = [
 ] as const
 
 function titleForPath(pathname: string): string {
+  if (pathname.startsWith('/admins')) return copy.admins
   if (pathname.startsWith('/users')) return copy.users
   if (pathname.startsWith('/projects')) return copy.projects
   if (pathname.startsWith('/proposals')) return copy.proposals
@@ -27,7 +28,7 @@ function titleForPath(pathname: string): string {
 export function useDashboardLayout() {
   const location = useLocation()
   const navigate = useNavigate()
-  const { user, logout } = useAuth()
+  const { user, logout, isSuperAdmin } = useAuth()
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   useEffect(() => {
@@ -48,6 +49,16 @@ export function useDashboardLayout() {
     navigate('/login', { replace: true })
   }
 
+  const links = useMemo(() => {
+    if (!isSuperAdmin) return [...BASE_LINKS]
+    return [
+      BASE_LINKS[0],
+      BASE_LINKS[1],
+      { to: '/admins', label: copy.admins },
+      ...BASE_LINKS.slice(2),
+    ]
+  }, [isSuperAdmin])
+
   return {
     copy,
     user,
@@ -56,7 +67,7 @@ export function useDashboardLayout() {
     toggleSidebar,
     onLogout,
     activePath: location.pathname,
-    links: SIDEBAR_LINKS,
+    links,
     pageTitle: titleForPath(location.pathname),
   }
 }

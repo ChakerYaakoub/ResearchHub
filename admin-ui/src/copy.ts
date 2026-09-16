@@ -2,7 +2,8 @@
 export const copy = {
   brand: 'ResearchHub Admin',
   dashboard: 'Dashboard',
-  users: 'Users',
+  users: 'Researchers',
+  admins: 'Admins',
   projects: 'Projects',
   proposals: 'Proposals',
   experiments: 'Experiments',
@@ -69,9 +70,11 @@ export const copy = {
   createAdminSubmit: 'Create admin',
   creatingAdmin: 'Creating…',
   createAdminSuccess: 'Admin account created.',
-  usersEmpty: 'No users found.',
-  usersSubtitle:
-    'Researchers register themselves. Only a super admin can create admin accounts.',
+  usersEmpty: 'No researchers found.',
+  usersSubtitle: 'Researcher accounts only. Activate or deactivate as needed.',
+  adminsEmpty: 'No admin accounts found.',
+  adminsSubtitle:
+    'Platform admins and super admins. Only you can create new admin accounts here.',
   projectsEmpty: 'No projects found.',
   proposalsEmpty: 'No proposals match.',
   experimentsEmpty: 'No experiments found.',

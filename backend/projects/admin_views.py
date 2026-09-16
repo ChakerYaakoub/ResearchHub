@@ -12,7 +12,7 @@ from invitations.models import Invitation, InvitationStatus
 from invitations.services import InvitationError, cancel_invitation
 from proposals.models import Proposal, ProposalStatus
 from publications.models import Publication
-from users.models import User
+from users.models import GlobalRole, User
 
 from .admin_serializers import (
     AdminCreateAdminSerializer,
@@ -27,13 +27,14 @@ from .admin_serializers import (
 )
 from .models import ResearchProject
 from .permissions import IsAdminUiOrigin, IsPlatformAdmin, IsSuperAdmin
+from .selectors import is_super_admin
 
 _ADMIN_PERMS = [IsAuthenticated, IsAdminUiOrigin, IsPlatformAdmin]
 _SUPER_ADMIN_PERMS = [IsAuthenticated, IsAdminUiOrigin, IsSuperAdmin]
 
 
 class AdminUserListView(APIView):
-    """GET list (admins); POST create ADMIN (super admin only)."""
+    """GET researchers (default); POST create ADMIN (super admin only)."""
 
     def get_permissions(self):
         if self.request.method == "POST":
@@ -41,7 +42,14 @@ class AdminUserListView(APIView):
         return [perm() for perm in _ADMIN_PERMS]
 
     def get(self, request):
-        qs = User.objects.order_by("email")
+        # Default / ?role=RESEARCHER → researchers only (Users page).
+        role = (request.query_params.get("role") or GlobalRole.RESEARCHER).strip().upper()
+        if role != GlobalRole.RESEARCHER:
+            return Response(
+                {"detail": "Use GET /api/admin/admins/ for admin accounts."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        qs = User.objects.filter(role=GlobalRole.RESEARCHER).order_by("email")
         return Response(AdminUserSerializer(qs, many=True).data)
 
     def post(self, request):
@@ -52,6 +60,18 @@ class AdminUserListView(APIView):
             AdminUserSerializer(user).data,
             status=status.HTTP_201_CREATED,
         )
+
+
+class AdminAdminListView(APIView):
+    """GET `/api/admin/admins/` — SUPER_ADMIN only; ADMIN + SUPER_ADMIN accounts."""
+
+    permission_classes = _SUPER_ADMIN_PERMS
+
+    def get(self, request):
+        qs = User.objects.filter(
+            role__in=(GlobalRole.ADMIN, GlobalRole.SUPER_ADMIN)
+        ).order_by("email")
+        return Response(AdminUserSerializer(qs, many=True).data)
 
 
 class AdminUserDetailView(APIView):
@@ -66,6 +86,13 @@ class AdminUserDetailView(APIView):
                 {"detail": "You cannot change your own active status."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+        # Only SUPER_ADMIN may activate/deactivate ADMIN or SUPER_ADMIN accounts.
+        if target.role in (GlobalRole.ADMIN, GlobalRole.SUPER_ADMIN):
+            if not is_super_admin(request.user):
+                return Response(
+                    {"detail": "Only a super admin can change admin accounts."},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
         ser = AdminUserPatchSerializer(data=request.data)
         ser.is_valid(raise_exception=True)
         target.is_active = ser.validated_data["is_active"]

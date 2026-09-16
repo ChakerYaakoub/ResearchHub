@@ -7,7 +7,9 @@ from rest_framework.views import APIView
 
 from projects.permissions import IsProjectMemberReadEditorWrite
 from projects.selectors import get_visible_project, get_visible_publication
+from projects.services import WorkflowError, assert_can_mutate_publications
 
+from .models import PublicationKind
 from .serializers import PublicationSerializer
 
 
@@ -27,6 +29,14 @@ class ProjectPublicationListCreateView(APIView):
         self.check_object_permissions(request, project)
         serializer = PublicationSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        kind = serializer.validated_data.get("kind", PublicationKind.EXISTING)
+        try:
+            assert_can_mutate_publications(project, kind)
+        except WorkflowError as exc:
+            return Response(
+                {"detail": exc.detail},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         publication = serializer.save(project=project)
         return Response(PublicationSerializer(publication).data, status=status.HTTP_201_CREATED)
 
@@ -46,6 +56,14 @@ class PublicationDetailView(APIView):
         self.check_object_permissions(request, publication)
         serializer = PublicationSerializer(publication, data=request.data)
         serializer.is_valid(raise_exception=True)
+        kind = serializer.validated_data.get("kind", publication.kind)
+        try:
+            assert_can_mutate_publications(publication.project, kind)
+        except WorkflowError as exc:
+            return Response(
+                {"detail": exc.detail},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         serializer.save()
         return Response(serializer.data)
 
@@ -54,11 +72,26 @@ class PublicationDetailView(APIView):
         self.check_object_permissions(request, publication)
         serializer = PublicationSerializer(publication, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
+        kind = serializer.validated_data.get("kind", publication.kind)
+        try:
+            assert_can_mutate_publications(publication.project, kind)
+        except WorkflowError as exc:
+            return Response(
+                {"detail": exc.detail},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         serializer.save()
         return Response(serializer.data)
 
     def delete(self, request, pk: int):
         publication = get_visible_publication(request.user, pk)
         self.check_object_permissions(request, publication)
+        try:
+            assert_can_mutate_publications(publication.project, publication.kind)
+        except WorkflowError as exc:
+            return Response(
+                {"detail": exc.detail},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         publication.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

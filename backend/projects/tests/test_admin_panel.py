@@ -30,18 +30,33 @@ class AdminPanelApiTests(TestCase):
         self.super_api = admin_client(self.super_admin)
         self.owner_client = auth_client(self.owner)
 
-    def test_list_users_admin_ok_researcher_denied(self):
+    def test_list_users_researchers_only(self):
         ok = self.admin_api.get("/api/admin/users/")
         self.assertEqual(ok.status_code, status.HTTP_200_OK)
         emails = {row["email"] for row in ok.data}
-        self.assertIn(self.admin.email, emails)
+        roles = {row["role"] for row in ok.data}
         self.assertIn(self.owner.email, emails)
+        self.assertIn(self.other.email, emails)
+        self.assertNotIn(self.admin.email, emails)
+        self.assertNotIn(self.super_admin.email, emails)
+        self.assertEqual(roles, {GlobalRole.RESEARCHER})
 
         denied = admin_client(self.owner).get("/api/admin/users/")
         self.assertEqual(denied.status_code, status.HTTP_403_FORBIDDEN)
 
         no_origin = auth_client(self.admin).get("/api/admin/users/")
         self.assertEqual(no_origin.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_list_admins_super_only(self):
+        ok = self.super_api.get("/api/admin/admins/")
+        self.assertEqual(ok.status_code, status.HTTP_200_OK)
+        emails = {row["email"] for row in ok.data}
+        self.assertIn(self.admin.email, emails)
+        self.assertIn(self.super_admin.email, emails)
+        self.assertNotIn(self.owner.email, emails)
+
+        by_admin = self.admin_api.get("/api/admin/admins/")
+        self.assertEqual(by_admin.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_patch_user_active_only_no_role_flip(self):
         patched = self.admin_api.patch(
@@ -55,18 +70,23 @@ class AdminPanelApiTests(TestCase):
         self.assertEqual(self.other.role, GlobalRole.RESEARCHER)
         self.assertFalse(self.other.is_active)
 
-        # Role changes via PATCH are ignored / rejected (serializer has no role).
         with_role = self.admin_api.patch(
             f"/api/admin/users/{self.other.id}/",
             {"role": GlobalRole.ADMIN, "is_active": True},
             format="json",
         )
-        # Extra fields ignored by default DRF Serializer → only is_active applied if present
-        # Our serializer requires is_active only; role is not a field so ignored.
         self.assertEqual(with_role.status_code, status.HTTP_200_OK)
         self.other.refresh_from_db()
         self.assertEqual(self.other.role, GlobalRole.RESEARCHER)
         self.assertTrue(self.other.is_active)
+
+    def test_regular_admin_cannot_patch_admin_account(self):
+        response = self.admin_api.patch(
+            f"/api/admin/users/{self.super_admin.id}/",
+            {"is_active": False},
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_cannot_patch_self(self):
         response = self.admin_api.patch(
@@ -74,6 +94,7 @@ class AdminPanelApiTests(TestCase):
             {"is_active": False},
             format="json",
         )
+        # Self-guard runs first (400); admin targeting another admin is 403.
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_create_admin_super_only(self):
