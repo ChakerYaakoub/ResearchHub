@@ -1,12 +1,12 @@
 import { Form, Formik } from 'formik'
 import { Link } from 'react-router-dom'
-import { TextInput } from '../form/TextInput'
-import type { AuthFormValues } from './authSchemas'
-import { useLoginForm, type LoginFormProps } from './useLoginForm'
+import { TextInput } from '../../form/TextInput'
+import type { AuthFormValues } from '../authSchemas'
+import { useRegisterForm, type RegisterFormProps } from './useRegisterForm'
 
-/** Formik login form targeting `/api/auth/login/`. */
-export function LoginForm(props: LoginFormProps) {
-  const vm = useLoginForm(props)
+/** Formik register form targeting `/api/auth/register/`. */
+export function RegisterForm(props: RegisterFormProps) {
+  const vm = useRegisterForm(props)
 
   return (
     <Formik<AuthFormValues>
@@ -16,7 +16,7 @@ export function LoginForm(props: LoginFormProps) {
     >
       {({ isSubmitting, status }) => (
         <>
-          <p className="text-muted small mb-3">{vm.t('login.subtitle')}</p>
+          <p className="text-muted small mb-3">{vm.t('register.subtitle')}</p>
           {status ? (
             <div className="alert alert-danger py-2" role="alert">
               {status}
@@ -33,20 +33,23 @@ export function LoginForm(props: LoginFormProps) {
               name="password"
               label={vm.t('common.password')}
               type="password"
-              autoComplete="current-password"
+              autoComplete="new-password"
+              helperText={vm.t('register.passwordHint')}
             />
             <button
               className="btn btn-primary w-100"
               type="submit"
               disabled={isSubmitting}
             >
-              {isSubmitting ? vm.t('login.submitting') : vm.t('login.submit')}
+              {isSubmitting
+                ? vm.t('register.submitting')
+                : vm.t('register.submit')}
             </button>
           </Form>
           <p className="mt-3 mb-0 small text-muted">
-            {vm.t('login.noAccount')}{' '}
-            <Link to="/register" state={{ background: vm.background }}>
-              {vm.t('login.registerLink')}
+            {vm.t('register.haveAccount')}{' '}
+            <Link to="/login" state={{ background: vm.background }}>
+              {vm.t('register.loginLink')}
             </Link>
           </p>
         </>

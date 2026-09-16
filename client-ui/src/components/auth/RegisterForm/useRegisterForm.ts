@@ -1,9 +1,9 @@
 import type { FormikHelpers } from 'formik'
 import { useTranslation } from 'react-i18next'
 import { useLocation, type Location } from 'react-router-dom'
-import { ApiError } from '../../api/client'
-import { useAuth } from '../../auth'
-import { registerSchema, type AuthFormValues } from './authSchemas'
+import { ApiError } from '../../../api/client'
+import { useAuth } from '../../../auth'
+import { registerSchema, type AuthFormValues } from '../authSchemas'
 
 export type RegisterFormProps = {
   onSuccess: () => void

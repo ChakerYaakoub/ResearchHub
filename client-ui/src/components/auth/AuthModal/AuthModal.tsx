@@ -1,7 +1,7 @@
 import { Navigate } from 'react-router-dom'
-import { Popup } from '../Popup'
-import { LoginForm } from './LoginForm'
-import { RegisterForm } from './RegisterForm'
+import { Popup } from '../../Popup'
+import { LoginForm } from '../LoginForm'
+import { RegisterForm } from '../RegisterForm'
 import { useAuthModal, type AuthModalProps } from './useAuthModal'
 
 export type { AuthModalMode } from './useAuthModal'
