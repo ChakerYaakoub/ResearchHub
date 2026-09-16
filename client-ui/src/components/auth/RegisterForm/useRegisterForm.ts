@@ -1,21 +1,21 @@
 import type { FormikHelpers } from 'formik'
 import { useTranslation } from 'react-i18next'
-import { useLocation, type Location } from 'react-router-dom'
 import { ApiError } from '../../../api/client'
 import { useAuth } from '../../../auth'
 import { registerSchema, type AuthFormValues } from '../authSchemas'
 
 export type RegisterFormProps = {
   onSuccess: () => void
+  onSwitchToLogin: () => void
 }
 
-/** Register form state: auth, background link, Formik submit. */
-export function useRegisterForm({ onSuccess }: RegisterFormProps) {
+/** Register form state and Formik submit. */
+export function useRegisterForm({
+  onSuccess,
+  onSwitchToLogin,
+}: RegisterFormProps) {
   const { t } = useTranslation()
   const { register } = useAuth()
-  const location = useLocation()
-  const background = (location.state as { background?: Location } | null)
-    ?.background
 
   const initialValues: AuthFormValues = { email: '', password: '' }
   const validationSchema = registerSchema(t)
@@ -35,5 +35,5 @@ export function useRegisterForm({ onSuccess }: RegisterFormProps) {
     }
   }
 
-  return { t, background, initialValues, validationSchema, onSubmit }
+  return { t, initialValues, validationSchema, onSubmit, onSwitchToLogin }
 }

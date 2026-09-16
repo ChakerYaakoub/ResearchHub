@@ -114,7 +114,8 @@ class InvitationApiTests(TestCase):
         self.assertEqual(mine.status_code, status.HTTP_200_OK)
         self.assertEqual(len(mine.data), 1)
         self.assertEqual(mine.data[0]["email"], "invitee@example.com")
-        self.assertNotIn("token", mine.data[0])
+        self.assertIn("token", mine.data[0])
+        self.assertTrue(mine.data[0]["token"])
 
     def test_duplicate_pending_rejected(self):
         self._create_invite(email="dup@example.com")

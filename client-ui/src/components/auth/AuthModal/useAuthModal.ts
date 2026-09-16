@@ -1,45 +1,34 @@
 import { useTranslation } from 'react-i18next'
-import {
-  useLocation,
-  useNavigate,
-  type Location,
-} from 'react-router-dom'
-import { useAuth } from '../../../auth'
-
-export type AuthModalMode = 'login' | 'register'
+import type { AuthModalMode } from '../../AuthUi/AuthUiContext'
 
 export type AuthModalProps = {
+  open: boolean
   mode: AuthModalMode
+  onClose: () => void
+  onSuccess: () => void
+  onSwitchMode: (mode: AuthModalMode) => void
 }
 
-type LocationState = { background?: Location }
-
-/** Auth modal close/redirect logic over background location. */
-export function useAuthModal({ mode }: AuthModalProps) {
+/** Auth popup controlled by AuthUi context (no routes). */
+export function useAuthModal({
+  open,
+  mode,
+  onClose,
+  onSuccess,
+  onSwitchMode,
+}: AuthModalProps) {
   const { t } = useTranslation()
-  const { isAuthenticated } = useAuth()
-  const navigate = useNavigate()
-  const location = useLocation()
-  const background = (location.state as LocationState | null)?.background
-
-  function close() {
-    if (background) {
-      navigate(background, { replace: true })
-      return
-    }
-    navigate('/', { replace: true })
-  }
-
   const title = mode === 'login' ? t('login.title') : t('register.title')
-  const redirectTo = background ?? '/'
 
   return {
+    open,
     mode,
-    t,
-    isAuthenticated,
-    background,
-    close,
+    onClose,
+    onSuccess,
+    onSwitchMode,
     title,
-    redirectTo,
+    t,
   }
 }
+
+export type { AuthModalMode }

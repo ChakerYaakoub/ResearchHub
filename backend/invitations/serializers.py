@@ -43,3 +43,11 @@ class InvitationCreatedSerializer(InvitationListSerializer):
     class Meta(InvitationListSerializer.Meta):
         fields = InvitationListSerializer.Meta.fields + ("token",)
         read_only_fields = fields
+
+
+class MyInvitationSerializer(InvitationListSerializer):
+    """Invitee list — includes token so accept/decline UI can call token URLs."""
+
+    class Meta(InvitationListSerializer.Meta):
+        fields = InvitationListSerializer.Meta.fields + ("token",)
+        read_only_fields = fields

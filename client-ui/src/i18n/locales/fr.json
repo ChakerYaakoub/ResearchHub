@@ -10,7 +10,13 @@
     "scrollToTop": "Remonter",
     "toggleNav": "Ouvrir le menu",
     "langEn": "EN",
-    "langFr": "FR"
+    "langFr": "FR",
+    "loading": "Chargement…",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "create": "Créer",
+    "actions": "Actions",
+    "back": "Retour"
   },
   "validation": {
     "emailRequired": "L'e-mail est obligatoire.",
@@ -21,7 +27,12 @@
   "errors": {
     "requestFailed": "Échec de la requête",
     "loginFailed": "Échec de la connexion.",
-    "registerFailed": "Échec de l'inscription."
+    "registerFailed": "Échec de l'inscription.",
+    "loadFailed": "Impossible de charger les données.",
+    "createFailed": "Impossible de créer.",
+    "inviteFailed": "Impossible d'envoyer l'invitation.",
+    "acceptFailed": "Impossible d'accepter l'invitation.",
+    "declineFailed": "Impossible de refuser l'invitation."
   },
   "nav": {
     "brand": "ResearchHub",
@@ -29,6 +40,11 @@
     "instruments": "Instruments",
     "howItWorks": "Fonctionnement",
     "documentation": "Documentation",
+    "dashboard": "Tableau de bord",
+    "projects": "Projets",
+    "invitations": "Invitations",
+    "publicSite": "Site public",
+    "goToDashboard": "Aller au tableau de bord",
     "footerTagline": "ResearchHub — gestion de projets et d'expériences scientifiques",
     "copyrightPrefix": "©"
   },
@@ -169,5 +185,74 @@
     "submitting": "Création du compte…",
     "haveAccount": "Déjà inscrit ?",
     "loginLink": "Se connecter"
+  },
+  "status": {
+    "DRAFT": "Brouillon",
+    "SUBMITTED": "Soumis",
+    "UNDER_REVIEW": "En revue",
+    "APPROVED": "Approuvé",
+    "REJECTED": "Rejeté",
+    "IN_PROGRESS": "En cours",
+    "COMPLETED": "Terminé",
+    "PENDING": "En attente",
+    "ACCEPTED": "Acceptée",
+    "DECLINED": "Refusée",
+    "EXPIRED": "Expirée"
+  },
+  "dashboard": {
+    "title": "Tableau de bord",
+    "subtitle": "Vue d'ensemble de vos projets et invitations.",
+    "myProjects": "Mes projets",
+    "pendingInvitations": "Invitations en attente",
+    "underReview": "En revue",
+    "approved": "Approuvés",
+    "experiments": "Expériences",
+    "publications": "Publications",
+    "phase11Hint": "Détails dans la prochaine phase",
+    "viewProjects": "Voir les projets",
+    "viewInvitations": "Voir les invitations",
+    "newProject": "Nouveau projet"
+  },
+  "projects": {
+    "title": "Projets",
+    "subtitle": "Projets que vous possédez ou auxquels vous collaborez.",
+    "newTitle": "Nouveau projet",
+    "detailTitle": "Projet",
+    "empty": "Aucun projet pour le moment.",
+    "createCta": "Créer un projet",
+    "fieldTitle": "Titre",
+    "fieldDescription": "Description",
+    "fieldObjective": "Objectif scientifique",
+    "owner": "Propriétaire",
+    "status": "Statut",
+    "lifecycle": "Cycle de vie",
+    "collaborators": "Collaborateurs",
+    "collaboratorsEmpty": "Aucun collaborateur listé.",
+    "inviteTitle": "Inviter un collaborateur",
+    "inviteEmail": "E-mail de l'invité",
+    "inviteRole": "Rôle",
+    "inviteSubmit": "Envoyer l'invitation",
+    "inviteSent": "Invitation créée.",
+    "roleEditor": "Éditeur",
+    "roleViewer": "Lecteur",
+    "sectionProposal": "Proposition",
+    "sectionExperiments": "Expériences",
+    "sectionPublications": "Publications",
+    "sectionComingSoon": "Disponible dans la prochaine phase.",
+    "titleRequired": "Le titre est obligatoire.",
+    "creating": "Création…"
+  },
+  "invitations": {
+    "title": "Invitations",
+    "subtitle": "Acceptez ou refusez les invitations pour votre e-mail.",
+    "empty": "Aucune invitation.",
+    "project": "Projet",
+    "role": "Rôle",
+    "from": "De",
+    "expires": "Expire",
+    "accept": "Accepter",
+    "decline": "Refuser",
+    "accepting": "Acceptation…",
+    "declining": "Refus…"
   }
 }

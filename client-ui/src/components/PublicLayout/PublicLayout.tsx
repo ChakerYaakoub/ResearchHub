@@ -1,11 +1,11 @@
 import { Link, NavLink, Outlet } from 'react-router-dom'
 import { ScrollToTop } from '../ScrollToTop'
-import { useAppLayout } from './useAppLayout'
-import './AppLayout.css'
+import { usePublicLayout } from './usePublicLayout'
+import './PublicLayout.css'
 
-/** Public shell: navbar, page outlet, footer. */
-export function AppLayout() {
-  const vm = useAppLayout()
+/** Public marketing shell: navbar, page outlet, footer. */
+export function PublicLayout() {
+  const vm = usePublicLayout()
 
   function renderNavLinks() {
     return (
@@ -50,13 +50,17 @@ export function AppLayout() {
     if (vm.isAuthenticated && vm.user) {
       return (
         <div className="rh-nav-auth">
-          <span className="rh-nav-user" title={vm.user.email}>
-            {vm.user.email}
-          </span>
+          <Link
+            className="btn btn-primary btn-sm"
+            to="/dashboard"
+            onClick={vm.closeMenu}
+          >
+            {vm.t('nav.goToDashboard')}
+          </Link>
           <button
             type="button"
             className="btn btn-outline-secondary btn-sm"
-            onClick={vm.onLogout}
+            onClick={() => void vm.onLogout()}
           >
             {vm.t('common.logOut')}
           </button>
@@ -65,22 +69,20 @@ export function AppLayout() {
     }
     return (
       <div className="rh-nav-auth">
-        <Link
+        <button
+          type="button"
           className="btn btn-outline-secondary btn-sm"
-          to="/login"
-          state={{ background: vm.authBackground }}
-          onClick={vm.closeMenu}
+          onClick={vm.onOpenLogin}
         >
           {vm.t('common.logIn')}
-        </Link>
-        <Link
+        </button>
+        <button
+          type="button"
           className="btn btn-primary btn-sm"
-          to="/register"
-          state={{ background: vm.authBackground }}
-          onClick={vm.closeMenu}
+          onClick={vm.onOpenRegister}
         >
           {vm.t('common.register')}
-        </Link>
+        </button>
       </div>
     )
   }
@@ -113,7 +115,9 @@ export function AppLayout() {
           <button
             type="button"
             className="rh-toggler"
-            aria-label={vm.menuOpen ? vm.t('common.close') : vm.t('common.toggleNav')}
+            aria-label={
+              vm.menuOpen ? vm.t('common.close') : vm.t('common.toggleNav')
+            }
             aria-expanded={vm.menuOpen}
             onClick={vm.toggleMenu}
           >
