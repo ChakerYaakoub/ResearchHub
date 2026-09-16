@@ -14,6 +14,7 @@ from .serializers import (
     InvitationCreateSerializer,
     InvitationCreatedSerializer,
     InvitationListSerializer,
+    MyInvitationSerializer,
 )
 from .services import (
     InvitationError,
@@ -87,7 +88,7 @@ class MyInvitationListView(APIView):
             .select_related("project", "invited_by")
             .all()
         )
-        return Response(InvitationListSerializer(qs, many=True).data)
+        return Response(MyInvitationSerializer(qs, many=True).data)
 
 
 class InvitationAcceptView(APIView):
