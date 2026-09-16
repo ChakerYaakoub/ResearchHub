@@ -5,6 +5,13 @@ from django.db import models
 from projects.models import ResearchProject
 
 
+class ExperimentKind(models.TextChoices):
+    """PLANNED = proposal intent; EXECUTED = after acceptance."""
+
+    PLANNED = "PLANNED", "Planned"
+    EXECUTED = "EXECUTED", "Executed"
+
+
 class ExperimentStatus(models.TextChoices):
     PLANNED = "PLANNED", "Planned"
     SCHEDULED = "SCHEDULED", "Scheduled"
@@ -17,6 +24,11 @@ class Experiment(models.Model):
         ResearchProject,
         on_delete=models.CASCADE,
         related_name="experiments",
+    )
+    kind = models.CharField(
+        max_length=20,
+        choices=ExperimentKind.choices,
+        default=ExperimentKind.PLANNED,
     )
     instrument = models.CharField(max_length=255)
     scheduled_date = models.DateTimeField()

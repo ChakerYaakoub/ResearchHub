@@ -1,5 +1,36 @@
 /* Project details — team panel */
 
+.rh-project-tabs {
+  border-bottom-color: var(--rh-border);
+  -webkit-overflow-scrolling: touch;
+}
+
+.rh-project-tabs .nav-link {
+  color: var(--rh-text-muted);
+  border: none;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  padding: 0.65rem 1rem;
+  white-space: nowrap;
+}
+
+.rh-project-tabs .nav-link:hover {
+  color: var(--rh-accent);
+  border-bottom-color: color-mix(in srgb, var(--rh-accent) 40%, transparent);
+}
+
+.rh-project-tabs .nav-link.active {
+  color: var(--rh-primary);
+  font-weight: 650;
+  background: transparent;
+  border-bottom-color: var(--rh-primary);
+}
+
+.rh-project-tab-panels > .tab-pane > section:last-child,
+.rh-project-tab-panels > .tab-pane > .border:last-child {
+  margin-bottom: 0;
+}
+
 .rh-team {
   border: 1px solid var(--rh-border);
   border-radius: 0.75rem;

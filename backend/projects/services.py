@@ -51,25 +51,49 @@ def complete_project(project: ResearchProject) -> ResearchProject:
     return transition_project(project, ProjectStatus.COMPLETED)
 
 
-def assert_can_mutate_experiments(project: ResearchProject) -> None:
-    """Experiments only after proposal approval (APPROVED or IN_PROGRESS)."""
-    if project.status not in (
-        ProjectStatus.APPROVED,
-        ProjectStatus.IN_PROGRESS,
-    ):
-        raise WorkflowError(
-            "Experiments can only be added or changed when the project is "
-            "APPROVED or IN_PROGRESS."
-        )
+def assert_can_mutate_experiments(project: ResearchProject, kind: str) -> None:
+    """PLANNED only in DRAFT; EXECUTED only when APPROVED or IN_PROGRESS."""
+    from experiments.models import ExperimentKind
+
+    if kind == ExperimentKind.PLANNED:
+        if project.status != ProjectStatus.DRAFT:
+            raise WorkflowError(
+                "Planned experiments can only be added or changed when the "
+                "project is DRAFT."
+            )
+        return
+    if kind == ExperimentKind.EXECUTED:
+        if project.status not in (
+            ProjectStatus.APPROVED,
+            ProjectStatus.IN_PROGRESS,
+        ):
+            raise WorkflowError(
+                "Executed experiments can only be added or changed when the "
+                "project is APPROVED or IN_PROGRESS."
+            )
+        return
+    raise WorkflowError(f"Unknown experiment kind: {kind}.")
 
 
-def assert_can_mutate_publications(project: ResearchProject) -> None:
-    """Publications only after work has started (IN_PROGRESS or COMPLETED)."""
-    if project.status not in (
-        ProjectStatus.IN_PROGRESS,
-        ProjectStatus.COMPLETED,
-    ):
-        raise WorkflowError(
-            "Publications can only be added or changed when the project is "
-            "IN_PROGRESS or COMPLETED."
-        )
+def assert_can_mutate_publications(project: ResearchProject, kind: str) -> None:
+    """EXISTING only in DRAFT; RESULTING when IN_PROGRESS or COMPLETED."""
+    from publications.models import PublicationKind
+
+    if kind == PublicationKind.EXISTING:
+        if project.status != ProjectStatus.DRAFT:
+            raise WorkflowError(
+                "Existing publications can only be added or changed when the "
+                "project is DRAFT."
+            )
+        return
+    if kind == PublicationKind.RESULTING:
+        if project.status not in (
+            ProjectStatus.IN_PROGRESS,
+            ProjectStatus.COMPLETED,
+        ):
+            raise WorkflowError(
+                "Resulting publications can only be added or changed when the "
+                "project is IN_PROGRESS or COMPLETED."
+            )
+        return
+    raise WorkflowError(f"Unknown publication kind: {kind}.")

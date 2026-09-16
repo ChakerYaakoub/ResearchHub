@@ -5,11 +5,23 @@ from django.db import models
 from projects.models import ResearchProject
 
 
+class PublicationKind(models.TextChoices):
+    """EXISTING = prior/related work; RESULTING = from this project's work."""
+
+    EXISTING = "EXISTING", "Existing"
+    RESULTING = "RESULTING", "Resulting"
+
+
 class Publication(models.Model):
     project = models.ForeignKey(
         ResearchProject,
         on_delete=models.CASCADE,
         related_name="publications",
+    )
+    kind = models.CharField(
+        max_length=20,
+        choices=PublicationKind.choices,
+        default=PublicationKind.EXISTING,
     )
     title = models.CharField(max_length=255)
     authors = models.TextField()

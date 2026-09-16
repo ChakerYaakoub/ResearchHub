@@ -1,8 +1,9 @@
-"""Experiment API authz and workflow gate tests."""
+"""Experiment API authz and kind-based workflow gate tests."""
 
 from django.test import TestCase, override_settings
 from rest_framework import status
 
+from experiments.models import ExperimentKind
 from projects.models import MembershipRole, ProjectStatus
 from test_helpers import (
     add_member,
@@ -25,6 +26,7 @@ class ExperimentApiTests(TestCase):
         add_member(self.project, self.viewer, MembershipRole.VIEWER)
         self.owner_client = auth_client(self.owner)
         self.payload = {
+            "kind": ExperimentKind.EXECUTED,
             "instrument": "BL-1",
             "scheduled_date": "2030-06-01T12:00:00Z",
             "notes": "n",
@@ -37,6 +39,7 @@ class ExperimentApiTests(TestCase):
             format="json",
         )
         self.assertEqual(created.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(created.data["kind"], ExperimentKind.EXECUTED)
         exp_id = created.data["id"]
         self.project.refresh_from_db()
         self.assertEqual(self.project.status, ProjectStatus.IN_PROGRESS)
@@ -66,15 +69,49 @@ class ExperimentApiTests(TestCase):
         response = outsider.get(f"/api/experiments/{created.data['id']}/")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-    def test_create_blocked_while_draft(self):
+    def test_planned_allowed_in_draft(self):
         draft = make_project(self.owner, title="Still draft")
         response = self.owner_client.post(
             f"/api/projects/{draft.id}/experiments/",
-            self.payload,
+            {
+                "kind": ExperimentKind.PLANNED,
+                "instrument": "BL-draft",
+                "scheduled_date": "2030-06-01T12:00:00Z",
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data["kind"], ExperimentKind.PLANNED)
+        draft.refresh_from_db()
+        self.assertEqual(draft.status, ProjectStatus.DRAFT)
+
+    def test_executed_blocked_while_draft(self):
+        draft = make_project(self.owner, title="Draft no execute")
+        response = self.owner_client.post(
+            f"/api/projects/{draft.id}/experiments/",
+            {
+                "kind": ExperimentKind.EXECUTED,
+                "instrument": "BL-1",
+                "scheduled_date": "2030-06-01T12:00:00Z",
+            },
             format="json",
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("APPROVED", response.data["detail"])
+        self.assertIn("IN_PROGRESS", response.data["detail"])
+
+    def test_planned_blocked_when_approved(self):
+        response = self.owner_client.post(
+            f"/api/projects/{self.project.id}/experiments/",
+            {
+                "kind": ExperimentKind.PLANNED,
+                "instrument": "BL-plan",
+                "scheduled_date": "2030-06-01T12:00:00Z",
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("DRAFT", response.data["detail"])
 
 
 @override_settings(ADMIN_UI_ORIGINS=["http://localhost:5175"])
@@ -86,7 +123,7 @@ class ExperimentAfterApproveTests(TestCase):
         self.owner_client = auth_client(self.owner)
         self.admin_api = admin_client(self.admin)
 
-    def test_experiment_allowed_after_approve(self):
+    def test_executed_experiment_allowed_after_approve(self):
         created = self.owner_client.post(
             f"/api/projects/{self.project.id}/proposal/",
             {"methodology": "XAS", "expected_results": "spectra"},
@@ -107,6 +144,7 @@ class ExperimentAfterApproveTests(TestCase):
         response = self.owner_client.post(
             f"/api/projects/{self.project.id}/experiments/",
             {
+                "kind": ExperimentKind.EXECUTED,
                 "instrument": "BL-2",
                 "scheduled_date": "2030-07-01T10:00:00Z",
             },

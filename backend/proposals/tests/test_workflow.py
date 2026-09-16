@@ -98,6 +98,7 @@ class WorkflowApiTests(TestCase):
         exp = self.owner_client.post(
             f"/api/projects/{self.project.id}/experiments/",
             {
+                "kind": "EXECUTED",
                 "instrument": "beamline-1",
                 "scheduled_date": "2030-01-15T10:00:00Z",
                 "notes": "run",

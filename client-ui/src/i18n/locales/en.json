@@ -237,6 +237,7 @@
     "collaboratorsEmpty": "No collaborators listed.",
     "overview": "Overview",
     "team": "Team",
+    "sectionNav": "Project sections",
     "inviteTitle": "Invite collaborator",
     "inviteHint": "The invitee must use this email to accept under Invitations.",
     "inviteEmail": "Invitee email",
@@ -282,7 +283,15 @@
   "experiments": {
     "title": "Experiments",
     "empty": "No experiments yet.",
+    "plannedHeading": "Planned",
+    "executedHeading": "Executed",
+    "emptyPlanned": "No planned experiments.",
+    "emptyPlannedEditable": "Add planned experiments for the proposal.",
+    "emptyExecuted": "No executed experiments yet.",
+    "emptyExecutedEditable": "Add the first executed experiment to start the project.",
     "add": "Add experiment",
+    "addPlanned": "Add planned experiment",
+    "addExecuted": "Add experiment",
     "edit": "Edit experiment",
     "instrument": "Instrument",
     "scheduledDate": "Scheduled date",
@@ -292,12 +301,26 @@
     "dateRequired": "Scheduled date is required.",
     "confirmDelete": "Delete this experiment?",
     "deleteTitle": "Delete experiment",
-    "lockedUntilApproved": "Experiments can be added after the proposal is approved."
+    "hintPlanned": "While the project is a draft, you can add planned experiments for the proposal.",
+    "hintExecuted": "After approval, add executed experiments. The first one moves the project to in progress.",
+    "hintNoAdd": "Experiments cannot be added in the current project status.",
+    "kind": {
+      "PLANNED": "Planned",
+      "EXECUTED": "Executed"
+    }
   },
   "publications": {
     "title": "Publications",
     "empty": "No publications yet.",
+    "existingHeading": "Existing / related",
+    "resultingHeading": "Resulting",
+    "emptyExisting": "No existing publications linked.",
+    "emptyExistingEditable": "Link existing or related publications to the proposal.",
+    "emptyResulting": "No resulting publications yet.",
+    "emptyResultingEditable": "Add publications that result from this project's work.",
     "add": "Add publication",
+    "addExisting": "Add existing publication",
+    "addResulting": "Add resulting publication",
     "edit": "Edit publication",
     "fieldTitle": "Title",
     "authors": "Authors",
@@ -309,7 +332,13 @@
     "authorsRequired": "Authors are required.",
     "confirmDelete": "Delete this publication?",
     "deleteTitle": "Delete publication",
-    "lockedUntilInProgress": "Publications can be added once the project is in progress (after the first experiment)."
+    "hintExisting": "While drafting, link existing or related publications to the proposal.",
+    "hintResulting": "Once work is underway, add publications that result from this project.",
+    "hintNoAdd": "Publications cannot be added in the current project status.",
+    "kind": {
+      "EXISTING": "Existing",
+      "RESULTING": "Resulting"
+    }
   },
   "invitations": {
     "title": "Invitations",

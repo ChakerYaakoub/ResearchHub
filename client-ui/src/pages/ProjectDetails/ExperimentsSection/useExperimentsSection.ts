@@ -12,6 +12,7 @@ import {
 import { useAuth } from '../../../auth'
 import type {
   Experiment,
+  ExperimentKind,
   ExperimentStatus,
   Project,
 } from '../../../types/api'
@@ -20,6 +21,8 @@ export type ExperimentsSectionProps = {
   projectId: number
   project: Project
   canEdit: boolean
+  canAddPlanned: boolean
+  canAddExecuted: boolean
   onProjectChanged: () => void
 }
 
@@ -44,10 +47,21 @@ function toLocalInput(iso: string) {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
 }
 
-/** Experiments list + create/edit/delete. */
+function canMutateKind(
+  status: Project['status'],
+  kind: ExperimentKind,
+): boolean {
+  if (kind === 'PLANNED') return status === 'DRAFT'
+  return status === 'APPROVED' || status === 'IN_PROGRESS'
+}
+
+/** Experiments list + create/edit/delete (planned vs executed). */
 export function useExperimentsSection({
   projectId,
+  project,
   canEdit,
+  canAddPlanned,
+  canAddExecuted,
   onProjectChanged,
 }: ExperimentsSectionProps) {
   const { t } = useTranslation()
@@ -57,6 +71,7 @@ export function useExperimentsSection({
   const [error, setError] = useState<string | null>(null)
   const [actionError, setActionError] = useState<string | null>(null)
   const [editingId, setEditingId] = useState<number | null>(null)
+  const [createKind, setCreateKind] = useState<ExperimentKind | null>(null)
   const [showForm, setShowForm] = useState(false)
 
   const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null)
@@ -87,6 +102,9 @@ export function useExperimentsSection({
   }
 
   const editing = items.find((e) => e.id === editingId) ?? null
+  const formKind: ExperimentKind | null = editing
+    ? editing.kind
+    : createKind
 
   const initialValues: ExperimentFormValues = editing
     ? {
@@ -104,14 +122,16 @@ export function useExperimentsSection({
     notes: Yup.string(),
   })
 
-  function openCreate() {
+  function openCreate(kind: ExperimentKind) {
     setEditingId(null)
+    setCreateKind(kind)
     setShowForm(true)
     setActionError(null)
   }
 
   function openEdit(id: number) {
     setEditingId(id)
+    setCreateKind(null)
     setShowForm(true)
     setActionError(null)
   }
@@ -119,15 +139,21 @@ export function useExperimentsSection({
   function closeForm() {
     setShowForm(false)
     setEditingId(null)
+    setCreateKind(null)
+  }
+
+  function canMutateItem(exp: Experiment) {
+    return canEdit && canMutateKind(project.status, exp.kind)
   }
 
   async function onSave(
     values: ExperimentFormValues,
     helpers: FormikHelpers<ExperimentFormValues>,
   ) {
-    if (!access || !canEdit) return
+    if (!access || !canEdit || !formKind) return
     setActionError(null)
     const body = {
+      kind: formKind,
       instrument: values.instrument.trim(),
       scheduled_date: new Date(values.scheduled_date).toISOString(),
       status: values.status,
@@ -179,15 +205,48 @@ export function useExperimentsSection({
     }
   }
 
+  const formTitle = editingId
+    ? t('experiments.edit')
+    : createKind === 'EXECUTED'
+      ? t('experiments.addExecuted')
+      : t('experiments.addPlanned')
+
+  const plannedItems = items.filter((e) => e.kind === 'PLANNED')
+  const executedItems = items.filter((e) => e.kind === 'EXECUTED')
+
+  const phaseHint = canAddPlanned
+    ? t('experiments.hintPlanned')
+    : canAddExecuted
+      ? t('experiments.hintExecuted')
+      : canEdit
+        ? t('experiments.hintNoAdd')
+        : null
+
+  const plannedEmpty = canAddPlanned
+    ? t('experiments.emptyPlannedEditable')
+    : t('experiments.emptyPlanned')
+  const executedEmpty = canAddExecuted
+    ? t('experiments.emptyExecutedEditable')
+    : t('experiments.emptyExecuted')
+
   return {
     t,
     items,
+    plannedItems,
+    executedItems,
+    phaseHint,
+    plannedEmpty,
+    executedEmpty,
     loading,
     error,
     actionError,
-    canEdit,
+    canAddPlanned,
+    canAddExecuted,
+    canMutateItem,
     showForm,
     editingId,
+    formKind,
+    formTitle,
     initialValues,
     validationSchema,
     statuses: STATUSES,

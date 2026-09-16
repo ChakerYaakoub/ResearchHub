@@ -14,6 +14,7 @@ from projects.services import (
     start_project,
 )
 
+from .models import ExperimentKind
 from .serializers import ExperimentSerializer
 
 
@@ -31,18 +32,22 @@ class ProjectExperimentListCreateView(APIView):
     def post(self, request, project_pk: int):
         project = get_visible_project(request.user, project_pk)
         self.check_object_permissions(request, project)
+        serializer = ExperimentSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        kind = serializer.validated_data.get("kind", ExperimentKind.PLANNED)
         try:
-            assert_can_mutate_experiments(project)
+            assert_can_mutate_experiments(project, kind)
         except WorkflowError as exc:
             return Response(
                 {"detail": exc.detail},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        serializer = ExperimentSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
         experiment = serializer.save(project=project)
-        # First experiment after approval starts the project.
-        if project.status == ProjectStatus.APPROVED:
+        # First executed experiment after approval starts the project.
+        if (
+            kind == ExperimentKind.EXECUTED
+            and project.status == ProjectStatus.APPROVED
+        ):
             try:
                 start_project(project)
             except WorkflowError as exc:
@@ -66,30 +71,32 @@ class ExperimentDetailView(APIView):
     def put(self, request, pk: int):
         experiment = get_visible_experiment(request.user, pk)
         self.check_object_permissions(request, experiment)
+        serializer = ExperimentSerializer(experiment, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        kind = serializer.validated_data.get("kind", experiment.kind)
         try:
-            assert_can_mutate_experiments(experiment.project)
+            assert_can_mutate_experiments(experiment.project, kind)
         except WorkflowError as exc:
             return Response(
                 {"detail": exc.detail},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        serializer = ExperimentSerializer(experiment, data=request.data)
-        serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
 
     def patch(self, request, pk: int):
         experiment = get_visible_experiment(request.user, pk)
         self.check_object_permissions(request, experiment)
+        serializer = ExperimentSerializer(experiment, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        kind = serializer.validated_data.get("kind", experiment.kind)
         try:
-            assert_can_mutate_experiments(experiment.project)
+            assert_can_mutate_experiments(experiment.project, kind)
         except WorkflowError as exc:
             return Response(
                 {"detail": exc.detail},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        serializer = ExperimentSerializer(experiment, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
 
@@ -97,7 +104,7 @@ class ExperimentDetailView(APIView):
         experiment = get_visible_experiment(request.user, pk)
         self.check_object_permissions(request, experiment)
         try:
-            assert_can_mutate_experiments(experiment.project)
+            assert_can_mutate_experiments(experiment.project, experiment.kind)
         except WorkflowError as exc:
             return Response(
                 {"detail": exc.detail},

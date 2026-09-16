@@ -11,6 +11,7 @@ class ExperimentSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "project",
+            "kind",
             "instrument",
             "scheduled_date",
             "status",

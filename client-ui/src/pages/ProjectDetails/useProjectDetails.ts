@@ -30,6 +30,12 @@ export type InviteFormValues = {
 
 export type ProjectConfirmKind = 'delete' | 'complete' | 'cancelInvite'
 
+export type ProjectDetailsSection =
+  | 'team'
+  | 'proposal'
+  | 'experiments'
+  | 'publications'
+
 /** Project detail shell: metadata, collaborators, owner invite, complete. */
 export function useProjectDetails() {
   const { t } = useTranslation()
@@ -57,6 +63,8 @@ export function useProjectDetails() {
     null,
   )
   const [pendingInvite, setPendingInvite] = useState<Invitation | null>(null)
+  const [activeSection, setActiveSection] =
+    useState<ProjectDetailsSection>('team')
 
   const reloadInvitations = useCallback(async () => {
     if (!access || !id) return
@@ -126,13 +134,13 @@ export function useProjectDetails() {
   )
 
   const status = project?.status
-  const canEditExperiments = Boolean(
-    canEdit &&
-      (status === 'APPROVED' || status === 'IN_PROGRESS'),
+  const canAddPlannedExperiment = Boolean(canEdit && status === 'DRAFT')
+  const canAddExecutedExperiment = Boolean(
+    canEdit && (status === 'APPROVED' || status === 'IN_PROGRESS'),
   )
-  const canEditPublications = Boolean(
-    canEdit &&
-      (status === 'IN_PROGRESS' || status === 'COMPLETED'),
+  const canAddExistingPublication = Boolean(canEdit && status === 'DRAFT')
+  const canAddResultingPublication = Boolean(
+    canEdit && (status === 'IN_PROGRESS' || status === 'COMPLETED'),
   )
 
   const canComplete = Boolean(
@@ -306,8 +314,10 @@ export function useProjectDetails() {
     error,
     isOwner,
     canEdit,
-    canEditExperiments,
-    canEditPublications,
+    canAddPlannedExperiment,
+    canAddExecutedExperiment,
+    canAddExistingPublication,
+    canAddResultingPublication,
     canComplete,
     inviteInitial,
     inviteSchema,
@@ -325,6 +335,8 @@ export function useProjectDetails() {
     deleting,
     deleteError,
     refreshProject,
+    activeSection,
+    setActiveSection,
     confirmOpen: confirmKind != null,
     confirmDialog,
     confirmBusy,
