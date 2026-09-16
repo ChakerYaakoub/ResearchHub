@@ -103,9 +103,6 @@ export function DashboardLayout() {
                 {vm.t('common.langFr')}
               </button>
             </div>
-            <Link className="btn btn-outline-secondary btn-sm d-none d-sm-inline-flex" to="/">
-              {vm.t('nav.publicSite')}
-            </Link>
             <button
               type="button"
               className="btn btn-outline-secondary btn-sm"
