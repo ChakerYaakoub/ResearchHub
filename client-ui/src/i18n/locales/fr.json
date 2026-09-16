@@ -291,7 +291,8 @@
     "instrumentRequired": "L'instrument est obligatoire.",
     "dateRequired": "La date prévue est obligatoire.",
     "confirmDelete": "Supprimer cette expérience ?",
-    "deleteTitle": "Supprimer l'expérience"
+    "deleteTitle": "Supprimer l'expérience",
+    "lockedUntilApproved": "Les expériences peuvent être ajoutées après l'approbation de la proposition."
   },
   "publications": {
     "title": "Publications",
@@ -307,7 +308,8 @@
     "titleRequired": "Le titre est obligatoire.",
     "authorsRequired": "Les auteurs sont obligatoires.",
     "confirmDelete": "Supprimer cette publication ?",
-    "deleteTitle": "Supprimer la publication"
+    "deleteTitle": "Supprimer la publication",
+    "lockedUntilInProgress": "Les publications peuvent être ajoutées une fois le projet en cours (après la première expérience)."
   },
   "invitations": {
     "title": "Invitations",

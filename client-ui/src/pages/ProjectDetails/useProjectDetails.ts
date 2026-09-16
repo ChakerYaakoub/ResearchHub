@@ -125,6 +125,16 @@ export function useProjectDetails() {
       membership?.role === 'EDITOR',
   )
 
+  const status = project?.status
+  const canEditExperiments = Boolean(
+    canEdit &&
+      (status === 'APPROVED' || status === 'IN_PROGRESS'),
+  )
+  const canEditPublications = Boolean(
+    canEdit &&
+      (status === 'IN_PROGRESS' || status === 'COMPLETED'),
+  )
+
   const canComplete = Boolean(
     canEdit && project?.status === 'IN_PROGRESS',
   )
@@ -296,6 +306,8 @@ export function useProjectDetails() {
     error,
     isOwner,
     canEdit,
+    canEditExperiments,
+    canEditPublications,
     canComplete,
     inviteInitial,
     inviteSchema,

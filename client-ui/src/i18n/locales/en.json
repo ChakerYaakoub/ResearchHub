@@ -291,7 +291,8 @@
     "instrumentRequired": "Instrument is required.",
     "dateRequired": "Scheduled date is required.",
     "confirmDelete": "Delete this experiment?",
-    "deleteTitle": "Delete experiment"
+    "deleteTitle": "Delete experiment",
+    "lockedUntilApproved": "Experiments can be added after the proposal is approved."
   },
   "publications": {
     "title": "Publications",
@@ -307,7 +308,8 @@
     "titleRequired": "Title is required.",
     "authorsRequired": "Authors are required.",
     "confirmDelete": "Delete this publication?",
-    "deleteTitle": "Delete publication"
+    "deleteTitle": "Delete publication",
+    "lockedUntilInProgress": "Publications can be added once the project is in progress (after the first experiment)."
   },
   "invitations": {
     "title": "Invitations",

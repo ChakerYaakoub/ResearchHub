@@ -8,7 +8,11 @@ from rest_framework.views import APIView
 from projects.models import ProjectStatus
 from projects.permissions import IsProjectMemberReadEditorWrite
 from projects.selectors import get_visible_experiment, get_visible_project
-from projects.services import WorkflowError, start_project
+from projects.services import (
+    WorkflowError,
+    assert_can_mutate_experiments,
+    start_project,
+)
 
 from .serializers import ExperimentSerializer
 
@@ -27,6 +31,13 @@ class ProjectExperimentListCreateView(APIView):
     def post(self, request, project_pk: int):
         project = get_visible_project(request.user, project_pk)
         self.check_object_permissions(request, project)
+        try:
+            assert_can_mutate_experiments(project)
+        except WorkflowError as exc:
+            return Response(
+                {"detail": exc.detail},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         serializer = ExperimentSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         experiment = serializer.save(project=project)
@@ -55,6 +66,13 @@ class ExperimentDetailView(APIView):
     def put(self, request, pk: int):
         experiment = get_visible_experiment(request.user, pk)
         self.check_object_permissions(request, experiment)
+        try:
+            assert_can_mutate_experiments(experiment.project)
+        except WorkflowError as exc:
+            return Response(
+                {"detail": exc.detail},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         serializer = ExperimentSerializer(experiment, data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -63,6 +81,13 @@ class ExperimentDetailView(APIView):
     def patch(self, request, pk: int):
         experiment = get_visible_experiment(request.user, pk)
         self.check_object_permissions(request, experiment)
+        try:
+            assert_can_mutate_experiments(experiment.project)
+        except WorkflowError as exc:
+            return Response(
+                {"detail": exc.detail},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         serializer = ExperimentSerializer(experiment, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -71,5 +96,12 @@ class ExperimentDetailView(APIView):
     def delete(self, request, pk: int):
         experiment = get_visible_experiment(request.user, pk)
         self.check_object_permissions(request, experiment)
+        try:
+            assert_can_mutate_experiments(experiment.project)
+        except WorkflowError as exc:
+            return Response(
+                {"detail": exc.detail},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         experiment.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

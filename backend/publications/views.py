@@ -7,6 +7,7 @@ from rest_framework.views import APIView
 
 from projects.permissions import IsProjectMemberReadEditorWrite
 from projects.selectors import get_visible_project, get_visible_publication
+from projects.services import WorkflowError, assert_can_mutate_publications
 
 from .serializers import PublicationSerializer
 
@@ -25,6 +26,13 @@ class ProjectPublicationListCreateView(APIView):
     def post(self, request, project_pk: int):
         project = get_visible_project(request.user, project_pk)
         self.check_object_permissions(request, project)
+        try:
+            assert_can_mutate_publications(project)
+        except WorkflowError as exc:
+            return Response(
+                {"detail": exc.detail},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         serializer = PublicationSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         publication = serializer.save(project=project)
@@ -44,6 +52,13 @@ class PublicationDetailView(APIView):
     def put(self, request, pk: int):
         publication = get_visible_publication(request.user, pk)
         self.check_object_permissions(request, publication)
+        try:
+            assert_can_mutate_publications(publication.project)
+        except WorkflowError as exc:
+            return Response(
+                {"detail": exc.detail},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         serializer = PublicationSerializer(publication, data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -52,6 +67,13 @@ class PublicationDetailView(APIView):
     def patch(self, request, pk: int):
         publication = get_visible_publication(request.user, pk)
         self.check_object_permissions(request, publication)
+        try:
+            assert_can_mutate_publications(publication.project)
+        except WorkflowError as exc:
+            return Response(
+                {"detail": exc.detail},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         serializer = PublicationSerializer(publication, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -60,5 +82,12 @@ class PublicationDetailView(APIView):
     def delete(self, request, pk: int):
         publication = get_visible_publication(request.user, pk)
         self.check_object_permissions(request, publication)
+        try:
+            assert_can_mutate_publications(publication.project)
+        except WorkflowError as exc:
+            return Response(
+                {"detail": exc.detail},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         publication.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

@@ -293,16 +293,26 @@ export function ProjectDetailsPage() {
             canEdit={vm.canEdit}
             onProjectChanged={() => void vm.refreshProject()}
           />
+          {vm.canEdit && !vm.canEditExperiments ? (
+            <p className="small text-muted mb-2">
+              {vm.t('experiments.lockedUntilApproved')}
+            </p>
+          ) : null}
           <ExperimentsSection
             projectId={vm.project.id}
             project={vm.project}
-            canEdit={vm.canEdit}
+            canEdit={vm.canEditExperiments}
             onProjectChanged={() => void vm.refreshProject()}
           />
+          {vm.canEdit && !vm.canEditPublications ? (
+            <p className="small text-muted mb-2">
+              {vm.t('publications.lockedUntilInProgress')}
+            </p>
+          ) : null}
           <PublicationsSection
             projectId={vm.project.id}
             project={vm.project}
-            canEdit={vm.canEdit}
+            canEdit={vm.canEditPublications}
           />
         </>
       ) : null}
