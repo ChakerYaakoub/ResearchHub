@@ -86,8 +86,14 @@ class AdminUserDetailView(APIView):
                 {"detail": "You cannot change your own active status."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        # Only SUPER_ADMIN may activate/deactivate ADMIN or SUPER_ADMIN accounts.
-        if target.role in (GlobalRole.ADMIN, GlobalRole.SUPER_ADMIN):
+        # SUPER_ADMIN accounts are never deactivated via the admin API.
+        if target.role == GlobalRole.SUPER_ADMIN:
+            return Response(
+                {"detail": "Super admin accounts cannot be deactivated."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        # Only SUPER_ADMIN may activate/deactivate ADMIN accounts.
+        if target.role == GlobalRole.ADMIN:
             if not is_super_admin(request.user):
                 return Response(
                     {"detail": "Only a super admin can change admin accounts."},

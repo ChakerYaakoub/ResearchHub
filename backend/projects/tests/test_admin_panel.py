@@ -89,6 +89,27 @@ class AdminPanelApiTests(TestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
+    def test_super_admin_cannot_deactivate_super_admin(self):
+        other_super = make_super_admin("othersuper@example.com")
+        response = self.super_api.patch(
+            f"/api/admin/users/{other_super.id}/",
+            {"is_active": False},
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        other_super.refresh_from_db()
+        self.assertTrue(other_super.is_active)
+
+    def test_super_admin_can_deactivate_regular_admin(self):
+        response = self.super_api.patch(
+            f"/api/admin/users/{self.admin.id}/",
+            {"is_active": False},
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.admin.refresh_from_db()
+        self.assertFalse(self.admin.is_active)
+
     def test_cannot_patch_self(self):
         response = self.admin_api.patch(
             f"/api/admin/users/{self.admin.id}/",

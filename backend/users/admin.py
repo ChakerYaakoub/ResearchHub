@@ -3,7 +3,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 
-from .models import User
+from .models import GlobalRole, User
 
 
 @admin.register(User)
@@ -40,3 +40,16 @@ class UserAdmin(DjangoUserAdmin):
             },
         ),
     )
+
+    def get_readonly_fields(self, request, obj=None):
+        readonly = list(super().get_readonly_fields(request, obj))
+        if obj is not None and obj.role == GlobalRole.SUPER_ADMIN:
+            for field in ("is_active", "role", "is_superuser"):
+                if field not in readonly:
+                    readonly.append(field)
+        return readonly
+
+    def has_delete_permission(self, request, obj=None):
+        if obj is not None and obj.role == GlobalRole.SUPER_ADMIN:
+            return False
+        return super().has_delete_permission(request, obj)

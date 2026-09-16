@@ -61,6 +61,7 @@ export function AdminsPage() {
               <tbody>
                 {vm.users.map((u) => {
                   const isSelf = u.id === vm.meId
+                  const isSuperAdmin = u.role === 'SUPER_ADMIN'
                   const busy = vm.busyId === u.id
                   return (
                     <tr key={u.id}>
@@ -74,7 +75,7 @@ export function AdminsPage() {
                       </td>
                       <td>{new Date(u.date_joined).toLocaleDateString()}</td>
                       <td>
-                        {!isSelf ? (
+                        {!isSelf && !isSuperAdmin ? (
                           <button
                             type="button"
                             className="btn btn-outline-secondary btn-sm"
@@ -99,6 +100,7 @@ export function AdminsPage() {
           <div className="d-md-none rh-admin-card-list">
             {vm.users.map((u) => {
               const isSelf = u.id === vm.meId
+              const isSuperAdmin = u.role === 'SUPER_ADMIN'
               const busy = vm.busyId === u.id
               return (
                 <article key={u.id} className="rh-admin-item-card">
@@ -110,7 +112,7 @@ export function AdminsPage() {
                     {u.username} ·{' '}
                     {u.is_active ? vm.copy.active : vm.copy.inactive}
                   </p>
-                  {!isSelf ? (
+                  {!isSelf && !isSuperAdmin ? (
                     <button
                       type="button"
                       className="btn btn-outline-secondary btn-sm"

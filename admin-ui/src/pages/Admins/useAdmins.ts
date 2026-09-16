@@ -88,6 +88,8 @@ export function useAdmins() {
 
   async function setActive(id: number, is_active: boolean) {
     if (!access) return
+    const target = users.find((u) => u.id === id)
+    if (!target || target.role === 'SUPER_ADMIN') return
     setBusyId(id)
     setActionError(null)
     setSuccess(null)
