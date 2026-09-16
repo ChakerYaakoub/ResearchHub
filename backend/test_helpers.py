@@ -40,6 +40,17 @@ def make_admin(
     return make_user(email, password=password, global_role=GlobalRole.ADMIN, **extra)
 
 
+def make_super_admin(
+    email: str = "super@example.com",
+    *,
+    password: str = DEFAULT_PASSWORD,
+    **extra,
+) -> User:
+    return make_user(
+        email, password=password, global_role=GlobalRole.SUPER_ADMIN, **extra
+    )
+
+
 def auth_client(user: User) -> APIClient:
     """APIClient with Bearer access JWT for ``user``."""
     client = APIClient()

@@ -9,12 +9,21 @@ from .models import MembershipRole, ProjectMembership, ResearchProject
 
 
 def is_platform_admin(user) -> bool:
-    """True for GlobalRole.ADMIN or Django staff."""
+    """True for SUPER_ADMIN, ADMIN, or Django staff."""
     if user is None or not getattr(user, "is_authenticated", False):
         return False
-    return getattr(user, "role", None) == GlobalRole.ADMIN or bool(
+    role = getattr(user, "role", None)
+    return role in (GlobalRole.SUPER_ADMIN, GlobalRole.ADMIN) or bool(
         getattr(user, "is_staff", False)
     )
+
+
+def is_super_admin(user) -> bool:
+    """True only for GlobalRole.SUPER_ADMIN."""
+    if user is None or not getattr(user, "is_authenticated", False):
+        return False
+    return getattr(user, "role", None) == GlobalRole.SUPER_ADMIN
+
 
 
 def projects_visible_to(user) -> QuerySet[ResearchProject]:

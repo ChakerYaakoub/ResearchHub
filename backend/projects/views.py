@@ -127,3 +127,5 @@ class AdminStatsView(APIView):
             "publications": Publication.objects.count(),
         }
         return Response(data)
+
+

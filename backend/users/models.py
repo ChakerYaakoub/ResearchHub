@@ -1,14 +1,28 @@
-"""Custom user: email login and global ADMIN/RESEARCHER role."""
+"""Custom user: email login and global SUPER_ADMIN / ADMIN / RESEARCHER roles."""
 
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, UserManager as DjangoUserManager
 from django.db import models
 
 
 class GlobalRole(models.TextChoices):
     """Platform role (separate from project OWNER/EDITOR/VIEWER)."""
 
+    SUPER_ADMIN = "SUPER_ADMIN", "Super admin"
     ADMIN = "ADMIN", "Admin"
     RESEARCHER = "RESEARCHER", "Researcher"
+
+
+class UserManager(DjangoUserManager):
+    """Ensure createsuperuser gets SUPER_ADMIN (can create other admins)."""
+
+    def create_superuser(self, username=None, email=None, password=None, **extra_fields):
+        extra_fields.setdefault("role", GlobalRole.SUPER_ADMIN)
+        return super().create_superuser(
+            username=username,
+            email=email,
+            password=password,
+            **extra_fields,
+        )
 
 
 class User(AbstractUser):
@@ -20,6 +34,8 @@ class User(AbstractUser):
         choices=GlobalRole.choices,
         default=GlobalRole.RESEARCHER,
     )
+
+    objects = UserManager()
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["username"]

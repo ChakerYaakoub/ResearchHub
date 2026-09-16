@@ -158,7 +158,7 @@ make shell-backend      # shell into backend
 make shell-client-ui    # shell into client-ui
 make shell-admin-ui     # shell into admin-ui
 make migrate            # Django migrate
-make createsuperuser    # Django superuser
+make createsuperuser    # Django superuser (sets platform role=SUPER_ADMIN)
 make clean              # down -v (destroys DB volume)
 ```
 

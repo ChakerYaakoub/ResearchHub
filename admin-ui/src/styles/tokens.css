@@ -1,0 +1,28 @@
+/* ResearchHub brand tokens — see docs/UI_DESIGN.md */
+:root {
+  --rh-primary: #b82721;
+  --rh-primary-hover: #9c1a1a;
+  --rh-accent: #328ba0;
+  --rh-accent-rgb: 50, 139, 160;
+  --rh-highlight: #fbd600;
+  --rh-success: #73a104;
+  --rh-danger: #b82721;
+  --rh-text: #292929;
+  --rh-text-muted: #585858;
+  --rh-border: #d5d5d5;
+  --rh-surface: #ffffff;
+  --rh-surface-muted: #ededed;
+  --rh-on-primary: #ffffff;
+
+  --bs-primary: var(--rh-primary);
+  --bs-primary-rgb: 184, 39, 33;
+  --bs-secondary: var(--rh-accent);
+  --bs-secondary-rgb: var(--rh-accent-rgb);
+  --bs-success: var(--rh-success);
+  --bs-danger: var(--rh-danger);
+  --bs-body-color: var(--rh-text);
+  --bs-body-bg: var(--rh-surface-muted);
+  --bs-border-color: var(--rh-border);
+  --bs-link-color: var(--rh-accent);
+  --bs-link-hover-color: #286f80;
+}

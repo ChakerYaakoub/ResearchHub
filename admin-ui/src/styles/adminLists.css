@@ -1,0 +1,65 @@
+/* Shared admin list / panel cards */
+
+.rh-admin-panel {
+  container-type: inline-size;
+}
+
+.rh-admin-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.rh-admin-table-wrap {
+  overflow-x: auto;
+  background: var(--rh-surface);
+  border: 1px solid var(--rh-border);
+  border-radius: 0.65rem;
+}
+
+.rh-admin-table {
+  margin-bottom: 0;
+  min-width: 36rem;
+}
+
+.rh-admin-table th {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--rh-text-muted);
+  white-space: nowrap;
+}
+
+.rh-admin-card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.rh-admin-item-card {
+  background: var(--rh-surface);
+  border: 1px solid var(--rh-border);
+  border-radius: 0.65rem;
+  padding: 1rem 1.1rem;
+}
+
+.rh-dash-card-link {
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.rh-dash-card-link:hover {
+  border-color: color-mix(in srgb, var(--rh-primary) 35%, var(--rh-border));
+  box-shadow: 0 2px 8px rgba(41, 41, 41, 0.06);
+  color: inherit;
+}
+
+.rh-dash-card-hint {
+  margin-top: auto;
+  padding-top: 0.75rem;
+  font-size: 0.8rem;
+  color: var(--rh-text-muted);
+}
