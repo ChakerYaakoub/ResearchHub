@@ -55,10 +55,37 @@ export type AdminExperiment = {
   id: number
   project: number
   project_title: string
-  instrument: string
+  kind?: string
+  instrument: number
+  instrument_code?: string
+  instrument_name?: string
+  installation_name?: string
   scheduled_date: string
   status: string
   notes: string
+}
+
+export type AdminInstallation = {
+  id: number
+  name: string
+  description: string
+  location: string
+  status: 'ACTIVE' | 'INACTIVE'
+  created_at: string
+  updated_at: string
+}
+
+export type AdminInstrument = {
+  id: number
+  installation: number
+  installation_name: string
+  code: string
+  name: string
+  technique: string
+  description: string
+  status: 'AVAILABLE' | 'UNAVAILABLE'
+  created_at: string
+  updated_at: string
 }
 
 export type AdminPublication = {
@@ -176,6 +203,90 @@ export function rejectProposal(
 
 export function listExperiments(token: string) {
   return apiFetch<AdminExperiment[]>('/admin/experiments/', { token })
+}
+
+export function listInstallations(token: string) {
+  return apiFetch<AdminInstallation[]>('/admin/installations/', { token })
+}
+
+export function createInstallation(
+  token: string,
+  body: Partial<AdminInstallation>,
+) {
+  return apiFetch<AdminInstallation>('/admin/installations/', {
+    method: 'POST',
+    token,
+    body: JSON.stringify(body),
+  })
+}
+
+export function patchInstallation(
+  token: string,
+  id: number,
+  body: Partial<AdminInstallation>,
+) {
+  return apiFetch<AdminInstallation>(`/admin/installations/${id}/`, {
+    method: 'PATCH',
+    token,
+    body: JSON.stringify(body),
+  })
+}
+
+export function deleteInstallation(token: string, id: number) {
+  return apiFetch<void>(`/admin/installations/${id}/`, {
+    method: 'DELETE',
+    token,
+  })
+}
+
+export function listAdminInstruments(token: string, installationId?: number) {
+  const q =
+    installationId != null ? `?installation=${installationId}` : ''
+  return apiFetch<AdminInstrument[]>(`/admin/instruments/${q}`, { token })
+}
+
+export function createInstrument(
+  token: string,
+  body: {
+    installation: number
+    code: string
+    name: string
+    technique?: string
+    description?: string
+    status?: string
+  },
+) {
+  return apiFetch<AdminInstrument>('/admin/instruments/', {
+    method: 'POST',
+    token,
+    body: JSON.stringify(body),
+  })
+}
+
+export function patchInstrument(
+  token: string,
+  id: number,
+  body: Partial<{
+    installation: number
+    code: string
+    name: string
+    technique: string
+    description: string
+    status: string
+  }>,
+) {
+  return apiFetch<AdminInstrument>(`/admin/instruments/${id}/`, {
+    method: 'PATCH',
+    token,
+    body: JSON.stringify(body),
+  })
+}
+
+export function deleteInstrument(token: string, id: number) {
+  return apiFetch<void>(`/admin/instruments/${id}/`, {
+    method: 'DELETE',
+    token,
+  })
 }
 
 export function listPublications(token: string) {

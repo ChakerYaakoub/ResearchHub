@@ -93,7 +93,11 @@ export type Experiment = {
   id: number
   project: number
   kind: ExperimentKind
-  instrument: string
+  instrument: number
+  instrument_code: string
+  instrument_name: string
+  installation_id: number
+  installation_name: string
   scheduled_date: string
   status: ExperimentStatus
   notes: string
@@ -101,10 +105,29 @@ export type Experiment = {
 
 export type ExperimentInput = {
   kind?: ExperimentKind
-  instrument: string
+  instrument: number
   scheduled_date: string
   status?: ExperimentStatus
   notes?: string
+}
+
+export type Installation = {
+  id: number
+  name: string
+  description: string
+  location: string
+  status: 'ACTIVE' | 'INACTIVE'
+}
+
+export type Instrument = {
+  id: number
+  installation: number
+  installation_name: string
+  code: string
+  name: string
+  technique: string
+  description: string
+  status: 'AVAILABLE' | 'UNAVAILABLE'
 }
 
 export type PublicationKind = 'EXISTING' | 'RESULTING'

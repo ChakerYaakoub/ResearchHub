@@ -32,3 +32,11 @@
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
+
+.home-card {
+  background: var(--rh-surface);
+}
+
+.home-cta {
+  background: rgba(var(--rh-accent-rgb), 0.06);
+}

@@ -10,6 +10,7 @@ from test_helpers import (
     admin_client,
     auth_client,
     make_admin,
+    make_instrument,
     make_project,
     make_user,
 )
@@ -95,11 +96,12 @@ class WorkflowApiTests(TestCase):
         self.project.refresh_from_db()
         self.assertEqual(self.project.status, ProjectStatus.APPROVED)
 
+        instrument = make_instrument(code="beamline-1", name="Beamline 1")
         exp = self.owner_client.post(
             f"/api/projects/{self.project.id}/experiments/",
             {
                 "kind": "EXECUTED",
-                "instrument": "beamline-1",
+                "instrument": instrument.id,
                 "scheduled_date": "2030-01-15T10:00:00Z",
                 "notes": "run",
             },

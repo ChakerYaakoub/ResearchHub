@@ -31,12 +31,15 @@ function ExperimentRow({
     <li className="list-group-item d-flex flex-column flex-md-row justify-content-md-between gap-2">
       <div>
         <div className="d-flex flex-wrap align-items-center gap-2 mb-1">
-          <span className="fw-semibold">{exp.instrument}</span>
+          <span className="fw-semibold">
+            {exp.instrument_code} · {exp.instrument_name}
+          </span>
           <span className={`badge ${kindClass}`}>
             {t(`experiments.kind.${exp.kind}`)}
           </span>
         </div>
         <div className="small text-muted">
+          {exp.installation_name} ·{' '}
           {new Date(exp.scheduled_date).toLocaleString()}
         </div>
         {exp.notes ? <div className="small mt-1">{exp.notes}</div> : null}
@@ -201,22 +204,65 @@ export function ExperimentsSection(props: ExperimentsSectionProps) {
             values,
             handleChange,
             handleBlur,
+            setFieldValue,
             errors,
             touched,
           }) => (
             <Form noValidate>
               <div className="mb-3">
+                <label className="form-label" htmlFor="installation_id">
+                  {vm.t('experiments.installation')}
+                </label>
+                <select
+                  id="installation_id"
+                  name="installation_id"
+                  className={`form-select${touched.installation_id && errors.installation_id ? ' is-invalid' : ''}`}
+                  value={values.installation_id}
+                  onChange={(e) => {
+                    const next = e.target.value
+                    void setFieldValue('installation_id', next)
+                    void setFieldValue('instrument', '')
+                    vm.setFormInstallationId(next)
+                  }}
+                  onBlur={handleBlur}
+                >
+                  <option value="">
+                    {vm.t('experiments.selectInstallation')}
+                  </option>
+                  {vm.installations.map((inst) => (
+                    <option key={inst.id} value={inst.id}>
+                      {inst.name}
+                    </option>
+                  ))}
+                </select>
+                {touched.installation_id && errors.installation_id ? (
+                  <div className="invalid-feedback">
+                    {errors.installation_id}
+                  </div>
+                ) : null}
+              </div>
+              <div className="mb-3">
                 <label className="form-label" htmlFor="instrument">
                   {vm.t('experiments.instrument')}
                 </label>
-                <input
+                <select
                   id="instrument"
                   name="instrument"
-                  className={`form-control${touched.instrument && errors.instrument ? ' is-invalid' : ''}`}
+                  className={`form-select${touched.instrument && errors.instrument ? ' is-invalid' : ''}`}
                   value={values.instrument}
                   onChange={handleChange}
                   onBlur={handleBlur}
-                />
+                  disabled={!values.installation_id}
+                >
+                  <option value="">
+                    {vm.t('experiments.selectInstrument')}
+                  </option>
+                  {vm.instrumentsForForm.map((instr) => (
+                    <option key={instr.id} value={instr.id}>
+                      {instr.code} · {instr.name}
+                    </option>
+                  ))}
+                </select>
                 {touched.instrument && errors.instrument ? (
                   <div className="invalid-feedback">{errors.instrument}</div>
                 ) : null}

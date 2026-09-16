@@ -1,5 +1,5 @@
 import type { FormikHelpers } from 'formik'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import * as Yup from 'yup'
 import { ApiError } from '../../../api/client'
@@ -9,11 +9,14 @@ import {
   listExperiments,
   updateExperiment,
 } from '../../../api/experiments'
+import { listInstallations, listInstruments } from '../../../api/facilities'
 import { useAuth } from '../../../auth'
 import type {
   Experiment,
   ExperimentKind,
   ExperimentStatus,
+  Installation,
+  Instrument,
   Project,
 } from '../../../types/api'
 
@@ -27,6 +30,7 @@ export type ExperimentsSectionProps = {
 }
 
 export type ExperimentFormValues = {
+  installation_id: string
   instrument: string
   scheduled_date: string
   status: ExperimentStatus
@@ -67,12 +71,15 @@ export function useExperimentsSection({
   const { t } = useTranslation()
   const { access } = useAuth()
   const [items, setItems] = useState<Experiment[]>([])
+  const [installations, setInstallations] = useState<Installation[]>([])
+  const [instruments, setInstruments] = useState<Instrument[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [actionError, setActionError] = useState<string | null>(null)
   const [editingId, setEditingId] = useState<number | null>(null)
   const [createKind, setCreateKind] = useState<ExperimentKind | null>(null)
   const [showForm, setShowForm] = useState(false)
+  const [formInstallationId, setFormInstallationId] = useState('')
 
   const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null)
   const [deleting, setDeleting] = useState(false)
@@ -82,7 +89,14 @@ export function useExperimentsSection({
     setLoading(true)
     setError(null)
     try {
-      setItems(await listExperiments(access, projectId))
+      const [exps, insts, allInstruments] = await Promise.all([
+        listExperiments(access, projectId),
+        listInstallations(access),
+        listInstruments(access),
+      ])
+      setItems(exps)
+      setInstallations(insts)
+      setInstruments(allInstruments)
     } catch (err) {
       setError(err instanceof ApiError ? err.message : t('errors.loadFailed'))
     } finally {
@@ -95,6 +109,7 @@ export function useExperimentsSection({
   }, [reload])
 
   const blank: ExperimentFormValues = {
+    installation_id: '',
     instrument: '',
     scheduled_date: '',
     status: 'PLANNED',
@@ -108,7 +123,8 @@ export function useExperimentsSection({
 
   const initialValues: ExperimentFormValues = editing
     ? {
-        instrument: editing.instrument,
+        installation_id: String(editing.installation_id),
+        instrument: String(editing.instrument),
         scheduled_date: toLocalInput(editing.scheduled_date),
         status: editing.status,
         notes: editing.notes ?? '',
@@ -116,22 +132,32 @@ export function useExperimentsSection({
     : blank
 
   const validationSchema = Yup.object({
-    instrument: Yup.string().trim().required(t('experiments.instrumentRequired')),
+    installation_id: Yup.string().required(t('experiments.installationRequired')),
+    instrument: Yup.string().required(t('experiments.instrumentRequired')),
     scheduled_date: Yup.string().required(t('experiments.dateRequired')),
     status: Yup.mixed<ExperimentStatus>().oneOf(STATUSES).required(),
     notes: Yup.string(),
   })
 
+  const instrumentsForForm = useMemo(() => {
+    const installationId = Number(formInstallationId)
+    if (!installationId) return []
+    return instruments.filter((i) => i.installation === installationId)
+  }, [instruments, formInstallationId])
+
   function openCreate(kind: ExperimentKind) {
     setEditingId(null)
     setCreateKind(kind)
+    setFormInstallationId('')
     setShowForm(true)
     setActionError(null)
   }
 
   function openEdit(id: number) {
+    const exp = items.find((e) => e.id === id)
     setEditingId(id)
     setCreateKind(null)
+    setFormInstallationId(exp ? String(exp.installation_id) : '')
     setShowForm(true)
     setActionError(null)
   }
@@ -140,6 +166,7 @@ export function useExperimentsSection({
     setShowForm(false)
     setEditingId(null)
     setCreateKind(null)
+    setFormInstallationId('')
   }
 
   function canMutateItem(exp: Experiment) {
@@ -154,7 +181,7 @@ export function useExperimentsSection({
     setActionError(null)
     const body = {
       kind: formKind,
-      instrument: values.instrument.trim(),
+      instrument: Number(values.instrument),
       scheduled_date: new Date(values.scheduled_date).toISOString(),
       status: values.status,
       notes: values.notes.trim(),
@@ -237,6 +264,10 @@ export function useExperimentsSection({
     phaseHint,
     plannedEmpty,
     executedEmpty,
+    installations,
+    instrumentsForForm,
+    formInstallationId,
+    setFormInstallationId,
     loading,
     error,
     actionError,

@@ -3,7 +3,7 @@ import './Documentation.css'
 
 type DocSection = { title: string; body: string; items?: string[] }
 
-/** Public documentation overview aligned with the live product. */
+/** Commercial learn-more overview for researchers. */
 export function DocumentationPage() {
   const { t } = useTranslation()
   const sections = t('documentation.sections', {

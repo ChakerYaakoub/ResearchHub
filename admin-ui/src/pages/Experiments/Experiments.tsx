@@ -38,7 +38,16 @@ export function ExperimentsPage() {
                     <td>
                       <Link to={`/projects/${e.project}`}>{e.project_title}</Link>
                     </td>
-                    <td>{e.instrument}</td>
+                    <td>
+                      {e.instrument_code
+                        ? `${e.instrument_code}${e.instrument_name ? ` · ${e.instrument_name}` : ''}`
+                        : String(e.instrument)}
+                      {e.installation_name ? (
+                        <div className="small text-muted">
+                          {e.installation_name}
+                        </div>
+                      ) : null}
+                    </td>
                     <td>{new Date(e.scheduled_date).toLocaleString()}</td>
                     <td>
                       <StatusBadge status={e.status} />
@@ -58,7 +67,9 @@ export function ExperimentsPage() {
                   <StatusBadge status={e.status} />
                 </div>
                 <p className="small mb-0">
-                  {e.instrument} · {new Date(e.scheduled_date).toLocaleString()}
+                  {e.instrument_code || e.instrument}
+                  {e.installation_name ? ` · ${e.installation_name}` : ''} ·{' '}
+                  {new Date(e.scheduled_date).toLocaleString()}
                 </p>
               </article>
             ))}

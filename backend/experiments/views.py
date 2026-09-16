@@ -26,7 +26,9 @@ class ProjectExperimentListCreateView(APIView):
     def get(self, request, project_pk: int):
         project = get_visible_project(request.user, project_pk)
         self.check_object_permissions(request, project)
-        qs = project.experiments.all()
+        qs = project.experiments.select_related(
+            "instrument", "instrument__installation"
+        ).all()
         return Response(ExperimentSerializer(qs, many=True).data)
 
     def post(self, request, project_pk: int):
