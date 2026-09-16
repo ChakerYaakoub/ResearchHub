@@ -1,32 +1,35 @@
 export type StatusBadgeProps = {
   status: string
+  /** Optional display label (defaults to status). */
+  label?: string
 }
 
-const TONE: Record<string, string> = {
-  DRAFT: 'secondary',
-  SUBMITTED: 'info',
-  UNDER_REVIEW: 'warning',
-  APPROVED: 'success',
-  REJECTED: 'danger',
-  RESUBMITTED: 'info',
-  IN_PROGRESS: 'primary',
-  COMPLETED: 'success',
-  PENDING: 'warning',
-  PLANNED: 'secondary',
-  SCHEDULED: 'info',
-  CANCELLED: 'secondary',
-  ACCEPTED: 'success',
-  DECLINED: 'secondary',
-  EXPIRED: 'dark',
-  ADMIN: 'danger',
-  SUPER_ADMIN: 'dark',
-  RESEARCHER: 'primary',
-}
+const KNOWN = new Set([
+  'DRAFT',
+  'SUBMITTED',
+  'UNDER_REVIEW',
+  'APPROVED',
+  'REJECTED',
+  'RESUBMITTED',
+  'IN_PROGRESS',
+  'COMPLETED',
+  'PENDING',
+  'PLANNED',
+  'SCHEDULED',
+  'CANCELLED',
+  'ACCEPTED',
+  'DECLINED',
+  'EXPIRED',
+  'ADMIN',
+  'SUPER_ADMIN',
+  'RESEARCHER',
+])
 
-export function useStatusBadge({ status }: StatusBadgeProps) {
+export function useStatusBadge({ status, label }: StatusBadgeProps) {
   const key = status.toUpperCase()
+  const toneKey = KNOWN.has(key) ? key.toLowerCase() : 'unknown'
   return {
-    label: status,
-    tone: TONE[key] ?? 'light',
+    label: label ?? status,
+    className: `badge rh-status-badge rh-status-badge--${toneKey}`,
   }
 }

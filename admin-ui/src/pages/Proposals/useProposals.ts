@@ -10,11 +10,11 @@ import { useAuth } from '../../auth'
 import { copy } from '../../copy'
 
 export type ReviewKind = 'approve' | 'reject'
-export type ProposalFilter = '' | 'PENDING' | 'APPROVED' | 'REJECTED'
+export type ProposalFilter = '' | 'DRAFT' | 'PENDING' | 'APPROVED' | 'REJECTED'
 
 export function useProposals() {
   const { access } = useAuth()
-  const [filter, setFilter] = useState<ProposalFilter>('')
+  const [filter, setFilter] = useState<ProposalFilter>('PENDING')
   const [proposals, setProposals] = useState<AdminProposal[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)

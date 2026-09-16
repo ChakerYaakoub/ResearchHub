@@ -5,8 +5,17 @@ import { StatusBadge } from '../../components/StatusBadge'
 import { useProposals, type ProposalFilter } from './useProposals'
 import '../../styles/adminLists.css'
 
-const FILTERS: { value: ProposalFilter; labelKey: 'filterAll' | 'filterPending' | 'filterApproved' | 'filterRejected' }[] = [
+const FILTERS: {
+  value: ProposalFilter
+  labelKey:
+    | 'filterAll'
+    | 'filterDraft'
+    | 'filterPending'
+    | 'filterApproved'
+    | 'filterRejected'
+}[] = [
   { value: '', labelKey: 'filterAll' },
+  { value: 'DRAFT', labelKey: 'filterDraft' },
   { value: 'PENDING', labelKey: 'filterPending' },
   { value: 'APPROVED', labelKey: 'filterApproved' },
   { value: 'REJECTED', labelKey: 'filterRejected' },
@@ -53,7 +62,24 @@ export function ProposalsPage() {
             <article key={p.id} className="rh-admin-item-card">
               <div className="d-flex flex-wrap justify-content-between gap-2 mb-2">
                 <h3 className="h6 mb-0">{p.project_title}</h3>
-                <StatusBadge status={p.status} />
+                <div className="d-flex flex-wrap gap-1">
+                  {p.project_status === 'DRAFT' ? (
+                    <StatusBadge
+                      status="DRAFT"
+                      label={vm.copy.filterDraft}
+                    />
+                  ) : (
+                    <StatusBadge status={p.status} />
+                  )}
+                  {p.status === 'PENDING' &&
+                  p.project_status === 'UNDER_REVIEW' &&
+                  p.reviewed_at ? (
+                    <StatusBadge
+                      status="RESUBMITTED"
+                      label={vm.copy.resubmitted}
+                    />
+                  ) : null}
+                </div>
               </div>
               <dl className="row small mb-3">
                 <dt className="col-sm-3">{vm.copy.methodology}</dt>
@@ -74,6 +100,14 @@ export function ProposalsPage() {
                     </dd>
                   </>
                 ) : null}
+                {p.status === 'PENDING' && p.review_comment ? (
+                  <>
+                    <dt className="col-sm-3">
+                      {vm.copy.previousReviewComment}
+                    </dt>
+                    <dd className="col-sm-9">{p.review_comment}</dd>
+                  </>
+                ) : null}
                 {p.reviewed_at ? (
                   <>
                     <dt className="col-sm-3">{vm.copy.reviewedAt}</dt>
@@ -83,7 +117,8 @@ export function ProposalsPage() {
                   </>
                 ) : null}
               </dl>
-              {p.status === 'PENDING' ? (
+              {p.status === 'PENDING' &&
+              p.project_status === 'UNDER_REVIEW' ? (
                 <div className="d-flex flex-wrap gap-2">
                   <button
                     type="button"

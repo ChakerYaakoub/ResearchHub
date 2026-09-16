@@ -43,6 +43,7 @@ export type AdminProposal = {
   id: number
   project: number
   project_title: string
+  project_status?: string
   methodology: string
   expected_results: string
   submitted_at: string | null

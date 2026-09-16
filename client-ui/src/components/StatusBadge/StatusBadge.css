@@ -1,0 +1,101 @@
+/* Unique color per lifecycle / entity status (both UIs share this mapping). */
+
+.rh-status-badge {
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.rh-status-badge--draft {
+  background-color: #6c757d;
+  color: #fff;
+}
+
+.rh-status-badge--submitted {
+  background-color: #0dcaf0;
+  color: #053b4a;
+}
+
+.rh-status-badge--under_review {
+  background-color: #ffc107;
+  color: #5c4400;
+}
+
+.rh-status-badge--approved {
+  background-color: #198754;
+  color: #fff;
+}
+
+.rh-status-badge--rejected {
+  background-color: #b82721;
+  color: #fff;
+}
+
+.rh-status-badge--resubmitted {
+  background-color: #6f42c1;
+  color: #fff;
+}
+
+.rh-status-badge--in_progress {
+  background-color: #328ba0;
+  color: #fff;
+}
+
+.rh-status-badge--completed {
+  background-color: #0f766e;
+  color: #fff;
+}
+
+.rh-status-badge--pending {
+  background-color: #fd7e14;
+  color: #fff;
+}
+
+.rh-status-badge--planned {
+  background-color: #64748b;
+  color: #fff;
+}
+
+.rh-status-badge--scheduled {
+  background-color: #3b82f6;
+  color: #fff;
+}
+
+.rh-status-badge--cancelled {
+  background-color: #78716c;
+  color: #fff;
+}
+
+.rh-status-badge--accepted {
+  background-color: #16a34a;
+  color: #fff;
+}
+
+.rh-status-badge--declined {
+  background-color: #e11d48;
+  color: #fff;
+}
+
+.rh-status-badge--expired {
+  background-color: #1e293b;
+  color: #fff;
+}
+
+.rh-status-badge--admin {
+  background-color: #b91c1c;
+  color: #fff;
+}
+
+.rh-status-badge--super_admin {
+  background-color: #111827;
+  color: #fff;
+}
+
+.rh-status-badge--researcher {
+  background-color: #2563eb;
+  color: #fff;
+}
+
+.rh-status-badge--unknown {
+  background-color: #e5e7eb;
+  color: #374151;
+}

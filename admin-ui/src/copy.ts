@@ -140,8 +140,11 @@ export const copy = {
   cancelInviteMessage: 'Cancel this pending invitation?',
   cancelling: 'Cancelling…',
   filterAll: 'All',
+  filterDraft: 'Draft',
   filterPending: 'Pending',
   filterApproved: 'Approved',
   filterRejected: 'Rejected',
+  resubmitted: 'Resubmitted',
+  previousReviewComment: 'Previous review comment',
   actions: 'Actions',
 } as const
