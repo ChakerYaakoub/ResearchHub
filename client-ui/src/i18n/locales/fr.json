@@ -126,49 +126,163 @@
   },
   "howItWorks": {
     "title": "Fonctionnement",
-    "intro": "ResearchHub suit un cycle de projet simple. Les transitions de statut invalides sont rejetées côté serveur.",
+    "intro": "ResearchHub accompagne un projet scientifique du brouillon de proposition jusqu'à la campagne terminée. Les transitions de statut sont contrôlées côté serveur — vous ne pouvez pas sauter d'étapes.",
+    "phasesTitle": "Deux phases de travail",
+    "phases": [
+      {
+        "title": "Avant acceptation",
+        "body": "Tant que le projet est un brouillon (puis en revue), vous préparez le dossier scientifique : objectifs, texte de proposition, expériences planifiées, publications existantes ou connexes, et votre équipe."
+      },
+      {
+        "title": "Après acceptation",
+        "body": "Une fois la proposition approuvée par un admin, vous planifiez et menez des expériences exécutées. La première expérience exécutée passe le projet en cours. Ensuite vous ajoutez des publications résultantes, puis vous pouvez marquer le projet comme terminé."
+      }
+    ],
+    "lifecycleTitle": "Cycle de vie du projet",
     "steps": [
       {
         "status": "DRAFT",
-        "title": "Créer un projet",
-        "body": "Décrivez le cas scientifique et préparez une proposition tant que le projet est en brouillon."
+        "title": "Créer et préparer",
+        "body": "Créez un projet avec titre, description et objectif scientifique. En brouillon vous rédigez la proposition, invitez des collaborateurs, ajoutez des expériences planifiées (intention de campagne) et liez des publications existantes ou connexes.",
+        "items": [
+          "Méthodologie et résultats attendus de la proposition",
+          "Expériences planifiées uniquement",
+          "Publications existantes / connexes uniquement",
+          "Inviter éditeurs et lecteurs par e-mail"
+        ]
       },
       {
-        "status": "UNDER_REVIEW",
-        "title": "Soumettre à revue",
-        "body": "Les éditeurs soumettent la proposition. Les admins de la plateforme approuvent ou rejettent depuis l'app admin."
+        "status": "SUBMITTED → UNDER_REVIEW",
+        "title": "Soumettre à la revue scientifique",
+        "body": "Quand la proposition est prête, un propriétaire ou éditeur la soumet. Le projet entre en revue. Les admins de la plateforme le voient dans l'application admin séparée et l'approuvent ou le rejettent.",
+        "items": [
+          "Les chercheurs ne peuvent pas approuver leurs propres propositions",
+          "La revue se fait dans l'app admin, pas dans client-ui",
+          "Les sauts de statut invalides sont bloqués par l'API"
+        ]
       },
       {
         "status": "APPROVED",
-        "title": "Planifier les expériences",
-        "body": "Après approbation, planifiez les instruments et démarrez le travail expérimental."
+        "title": "Démarrer le travail exécuté",
+        "body": "Après approbation vous pouvez ajouter des expériences exécutées (planification / déroulement). Les expériences planifiées restent des artefacts de proposition et ne sont plus modifiables. Les publications résultantes ne sont pas encore disponibles tant que le travail n'a pas démarré.",
+        "items": [
+          "Ajouter des expériences exécutées",
+          "Première expérience exécutée → le projet passe en IN_PROGRESS"
+        ]
+      },
+      {
+        "status": "IN_PROGRESS",
+        "title": "Mener la campagne",
+        "body": "Poursuivez les expériences exécutées et enregistrez les publications résultantes issues de ce projet. Propriétaires et éditeurs peuvent marquer le projet comme terminé lorsque la campagne est finie.",
+        "items": [
+          "Expériences exécutées",
+          "Publications résultantes",
+          "Action Terminer disponible pour les éditeurs"
+        ]
       },
       {
         "status": "COMPLETED",
-        "title": "Publier et clôturer",
-        "body": "Ajoutez des publications et marquez le projet comme terminé lorsque la campagne est finie."
+        "title": "Clôturer le projet",
+        "body": "Le projet est clos. Vous pouvez encore ajouter des publications résultantes. Une proposition rejetée arrête le cycle ; elle ne mène pas aux expériences.",
+        "items": [
+          "Publications résultantes encore autorisées",
+          "REJECTED termine le parcours — pas de travail exécuté"
+        ]
+      }
+    ],
+    "rolesTitle": "Qui fait quoi",
+    "roles": [
+      {
+        "title": "Propriétaire",
+        "body": "Crée le projet, invite les collaborateurs, peut supprimer le projet et a tous les droits d'édition."
+      },
+      {
+        "title": "Éditeur",
+        "body": "Peut modifier proposition, expériences et publications selon le statut du projet ; peut soumettre la proposition et terminer le projet."
+      },
+      {
+        "title": "Lecteur",
+        "body": "Accès en lecture seule au projet et à ses sections."
+      },
+      {
+        "title": "Admin plateforme",
+        "body": "Utilise l'app admin pour revoir les propositions et gérer les utilisateurs. Seuls les super admins peuvent créer d'autres admins."
       }
     ]
   },
   "documentation": {
     "title": "Documentation",
-    "intro": "Vue d'ensemble publique des concepts ResearchHub. La doc API détaillée est côté backend ; cette page aide les chercheurs à découvrir la plateforme.",
+    "intro": "Guide pratique de ResearchHub pour les chercheurs. Il décrit le produit actuel — pas les fonctionnalités futures.",
     "sections": [
       {
-        "title": "Comptes",
-        "body": "Inscrivez-vous avec e-mail et mot de passe. Les sessions utilisent des jetons JWT access et refresh stockés uniquement sur cette origine."
+        "title": "Comptes et connexion",
+        "body": "Inscrivez-vous avec e-mail et mot de passe en tant que chercheur. Connectez-vous depuis client-ui. Les sessions utilisent des jetons JWT access et refresh stockés uniquement pour cette origine navigateur.",
+        "items": [
+          "Un e-mail de compte doit correspondre pour accepter une invitation",
+          "Le personnel admin utilise une application et une origine séparées"
+        ]
       },
       {
-        "title": "Projets et rôles",
-        "body": "Les propriétaires gèrent invitations et collaborateurs. Les éditeurs peuvent modifier le contenu ; les lecteurs ont un accès en lecture seule."
+        "title": "Projets",
+        "body": "Un projet de recherche regroupe l'aperçu, l'équipe, la proposition, les expériences et les publications. Ouvrez un projet : l'aperçu reste en haut, puis basculez les sections via les onglets Équipe, Proposition, Expériences, Publications.",
+        "items": [
+          "Statuts : DRAFT → SUBMITTED → UNDER_REVIEW → APPROVED → IN_PROGRESS → COMPLETED (ou REJECTED)",
+          "Le tableau de bord liste vos projets et invitations en attente"
+        ]
       },
       {
-        "title": "Invitations",
-        "body": "Les propriétaires invitent par e-mail. L'accès n'est accordé qu'après acceptation avec un compte dont l'e-mail correspond."
+        "title": "Équipe et invitations",
+        "body": "Les propriétaires invitent des collaborateurs par e-mail avec le rôle EDITOR ou VIEWER. L'invité doit se connecter avec le même e-mail et accepter sous Invitations. L'accès n'est accordé qu'après acceptation — jamais à la seule création de l'invitation.",
+        "items": [
+          "Les invitations expirent après 7 jours",
+          "Les propriétaires peuvent annuler les invitations en attente",
+          "Les jetons ne sont pas exposés dans les réponses API projet normales"
+        ]
+      },
+      {
+        "title": "Proposition",
+        "body": "Rédigez méthodologie et résultats attendus tant que le projet est DRAFT. Soumettez pour revue quand c'est prêt. Les admins approuvent ou rejettent depuis l'app admin.",
+        "items": [
+          "Une seule proposition par projet",
+          "La soumission engage le parcours de revue"
+        ]
+      },
+      {
+        "title": "Expériences (planifiées vs exécutées)",
+        "body": "Les expériences ont un type (kind) lié au cycle de vie.",
+        "items": [
+          "PLANNED — intention de proposition ; création/édition seulement en DRAFT",
+          "EXECUTED — après acceptation ; création/édition en APPROVED ou IN_PROGRESS",
+          "La première EXECUTED sur un projet APPROVED démarre IN_PROGRESS",
+          "Chaque expérience a aussi un statut d'exécution : planifiée, programmée, terminée ou annulée"
+        ]
+      },
+      {
+        "title": "Publications (existantes vs résultantes)",
+        "body": "Les publications ont aussi un type lié au statut du projet.",
+        "items": [
+          "EXISTING — travaux connexes ou antérieurs cités dans la proposition ; DRAFT seulement",
+          "RESULTING — productions de cette campagne ; IN_PROGRESS ou COMPLETED",
+          "Impossible d'ajouter des publications résultantes tant que le projet est seulement APPROVED"
+        ]
       },
       {
         "title": "Revue admin",
-        "body": "Les admins de la plateforme approuvent ou rejettent les propositions depuis une application admin séparée."
+        "body": "Les admins travaillent dans admin-ui. Ils listent les propositions en attente, approuvent ou rejettent, consultent les projets et entités liées, et (en super admin) gèrent les comptes admin séparément des chercheurs.",
+        "items": [
+          "On ne transforme pas un chercheur en admin par simple changement de rôle",
+          "Les appels API admin exigent l'origine admin"
+        ]
+      },
+      {
+        "title": "Pas encore dans le produit",
+        "body": "Éléments prévus plus tard et absents de l'interface aujourd'hui.",
+        "items": [
+          "Demande de modifications / resoumission / statut fermé",
+          "Entité résultats et téléversement de documents",
+          "Pages projets publiques",
+          "Notifications e-mail au-delà du socle d'invitation"
+        ]
       }
     ]
   },

@@ -7,6 +7,17 @@
   color: var(--rh-primary);
 }
 
+.workflow-phase,
+.workflow-role {
+  background: var(--rh-surface);
+  border: 1px solid var(--rh-border);
+  border-radius: 0.35rem;
+}
+
+.workflow-phase {
+  border-top: 3px solid var(--rh-accent);
+}
+
 .workflow-step {
   background: var(--rh-surface);
   border: 1px solid var(--rh-border);
@@ -19,4 +30,14 @@
   font-weight: 700;
   letter-spacing: 0.06em;
   color: var(--rh-accent);
+}
+
+.workflow-items {
+  padding-left: 1.15rem;
+  margin-top: 0.35rem;
+  color: var(--rh-text);
+}
+
+.workflow-items li + li {
+  margin-top: 0.25rem;
 }

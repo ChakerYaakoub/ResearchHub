@@ -126,49 +126,163 @@
   },
   "howItWorks": {
     "title": "How it works",
-    "intro": "ResearchHub follows a simple project lifecycle. Invalid status jumps are blocked on the server.",
+    "intro": "ResearchHub guides a scientific project from draft proposal to completed campaign. Status transitions are enforced on the server — you cannot skip steps.",
+    "phasesTitle": "Two phases of work",
+    "phases": [
+      {
+        "title": "Before acceptance",
+        "body": "While the project is a draft (and later under review), you prepare the science case: objectives, proposal text, planned experiments, existing related publications, and your team."
+      },
+      {
+        "title": "After acceptance",
+        "body": "Once an admin approves the proposal, you schedule and run executed experiments. The first executed experiment moves the project to in progress. Then you can add resulting publications and finally mark the project complete."
+      }
+    ],
+    "lifecycleTitle": "Project lifecycle",
     "steps": [
       {
         "status": "DRAFT",
-        "title": "Create a project",
-        "body": "Describe the science case and prepare a proposal while the project is still a draft."
+        "title": "Create and prepare",
+        "body": "Create a project with title, description, and scientific objective. In draft you can write the proposal, invite collaborators, add planned experiments (intent for the campaign), and link existing or related publications.",
+        "items": [
+          "Proposal methodology and expected results",
+          "Planned experiments only",
+          "Existing / related publications only",
+          "Invite editors and viewers by email"
+        ]
       },
       {
-        "status": "UNDER_REVIEW",
-        "title": "Submit for review",
-        "body": "Editors submit the proposal. Platform admins approve or reject from the admin app."
+        "status": "SUBMITTED → UNDER_REVIEW",
+        "title": "Submit for scientific review",
+        "body": "When the proposal is ready, an owner or editor submits it. The project enters review. Platform admins see it in the separate admin application and approve or reject it.",
+        "items": [
+          "Researchers cannot approve their own proposals",
+          "Review happens in the admin app, not client-ui",
+          "Invalid status jumps are blocked by the API"
+        ]
       },
       {
         "status": "APPROVED",
-        "title": "Plan experiments",
-        "body": "After approval, schedule instruments and start experimental work."
+        "title": "Start executed work",
+        "body": "After approval you may add executed experiments (schedule / run). Planned experiments stay as proposal artifacts and are no longer editable. Resulting publications are not available yet until work has started.",
+        "items": [
+          "Add executed experiments",
+          "First executed experiment → project becomes IN_PROGRESS"
+        ]
+      },
+      {
+        "status": "IN_PROGRESS",
+        "title": "Run the campaign",
+        "body": "Continue executed experiments and record resulting publications that come from this project's work. Owners and editors can mark the project complete when the campaign is finished.",
+        "items": [
+          "Executed experiments",
+          "Resulting publications",
+          "Complete action available to editors"
+        ]
       },
       {
         "status": "COMPLETED",
-        "title": "Publish and close",
-        "body": "Attach publications and mark the project complete when the campaign is done."
+        "title": "Close the project",
+        "body": "The project is closed. You can still attach resulting publications. Rejected proposals stop the lifecycle; they do not move to experiments.",
+        "items": [
+          "Resulting publications still allowed",
+          "REJECTED ends the path — no executed work"
+        ]
+      }
+    ],
+    "rolesTitle": "Who does what",
+    "roles": [
+      {
+        "title": "Owner",
+        "body": "Creates the project, invites collaborators, can delete the project, and has full edit rights."
+      },
+      {
+        "title": "Editor",
+        "body": "Can edit proposal, experiments, and publications according to project status; can submit the proposal and complete the project."
+      },
+      {
+        "title": "Viewer",
+        "body": "Read-only access to the project and its sections."
+      },
+      {
+        "title": "Platform admin",
+        "body": "Uses the admin app to review proposals and manage platform users. Super admins alone can create other admins."
       }
     ]
   },
   "documentation": {
     "title": "Documentation",
-    "intro": "Public overview of ResearchHub concepts. Detailed API docs live with the backend team; this page is for researchers discovering the platform.",
+    "intro": "Practical guide to ResearchHub for researchers. This matches what the product does today — not future features.",
     "sections": [
       {
-        "title": "Accounts",
-        "body": "Register with email and password. Sessions use JWT access and refresh tokens stored in this browser origin only."
+        "title": "Accounts & login",
+        "body": "Register with email and password as a researcher. Log in from client-ui. Sessions use JWT access and refresh tokens stored only for this browser origin.",
+        "items": [
+          "One account email per invitation accept",
+          "Admin staff use a separate admin application and origin"
+        ]
       },
       {
-        "title": "Projects & roles",
-        "body": "Owners manage invitations and collaborators. Editors can edit content; viewers have read-only access."
+        "title": "Projects",
+        "body": "A research project holds overview metadata, team, proposal, experiments, and publications. Open a project to see Overview always on top, then switch sections with tabs: Team, Proposal, Experiments, Publications.",
+        "items": [
+          "Statuses: DRAFT → SUBMITTED → UNDER_REVIEW → APPROVED → IN_PROGRESS → COMPLETED (or REJECTED)",
+          "Dashboard lists your projects and pending invitations"
+        ]
       },
       {
-        "title": "Invitations",
-        "body": "Owners invite by email. Access is granted only after the invitee accepts with a matching account email."
+        "title": "Team & invitations",
+        "body": "Owners invite collaborators by email with role EDITOR or VIEWER. The invitee must sign in with the same email and accept under Invitations. Access is granted only after acceptance — never when the invite is merely created.",
+        "items": [
+          "Invitations expire after 7 days",
+          "Owners can cancel pending invitations",
+          "Tokens are not exposed in normal project API responses"
+        ]
+      },
+      {
+        "title": "Proposal",
+        "body": "Create methodology and expected results while the project is DRAFT. Submit for review when ready. Admins approve or reject from the admin app.",
+        "items": [
+          "Only one proposal per project",
+          "Submit moves the project into the review path"
+        ]
+      },
+      {
+        "title": "Experiments (planned vs executed)",
+        "body": "Experiments have a kind that follows the lifecycle.",
+        "items": [
+          "PLANNED — proposal intent; create/edit only in DRAFT",
+          "EXECUTED — after acceptance; create/edit when APPROVED or IN_PROGRESS",
+          "First EXECUTED on an APPROVED project starts IN_PROGRESS",
+          "Each experiment also has a run status: planned, scheduled, completed, or cancelled"
+        ]
+      },
+      {
+        "title": "Publications (existing vs resulting)",
+        "body": "Publications also have a kind tied to project status.",
+        "items": [
+          "EXISTING — related or prior work cited in the proposal; DRAFT only",
+          "RESULTING — outputs of this campaign; IN_PROGRESS or COMPLETED",
+          "Cannot add resulting publications while still only APPROVED"
+        ]
       },
       {
         "title": "Admin review",
-        "body": "Platform admins approve or reject proposals from a separate admin application."
+        "body": "Platform admins work in admin-ui. They list pending proposals, approve or reject, view projects and related entities, and (as super admin) manage admin accounts separately from researchers.",
+        "items": [
+          "Researchers never appear as creatable admins via role flip",
+          "Admin API calls require the admin origin"
+        ]
+      },
+      {
+        "title": "What is not in the product yet",
+        "body": "These are planned later and are not available in the UI today.",
+        "items": [
+          "Request changes / resubmit / closed statuses",
+          "Results entity and document uploads",
+          "Public project pages",
+          "Email notifications beyond invitation plumbing"
+        ]
       }
     ]
   },
