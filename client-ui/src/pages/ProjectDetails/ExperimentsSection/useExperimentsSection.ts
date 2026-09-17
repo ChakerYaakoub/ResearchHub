@@ -11,6 +11,7 @@ import {
 } from '../../../api/experiments'
 import { listInstallations, listInstruments } from '../../../api/facilities'
 import { useAuth } from '../../../auth'
+import { notifyError, notifySuccess } from '../../../notify'
 import type {
   Experiment,
   ExperimentKind,
@@ -78,7 +79,6 @@ export function useExperimentsSection({
   const [instruments, setInstruments] = useState<Instrument[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [actionError, setActionError] = useState<string | null>(null)
   const [editingId, setEditingId] = useState<number | null>(null)
   const [createKind, setCreateKind] = useState<ExperimentKind | null>(null)
   const [showForm, setShowForm] = useState(false)
@@ -153,7 +153,6 @@ export function useExperimentsSection({
     setCreateKind(kind)
     setFormInstallationId('')
     setShowForm(true)
-    setActionError(null)
   }
 
   function openEdit(id: number) {
@@ -162,7 +161,6 @@ export function useExperimentsSection({
     setCreateKind(null)
     setFormInstallationId(exp ? String(exp.installation_id) : '')
     setShowForm(true)
-    setActionError(null)
   }
 
   function closeForm() {
@@ -181,7 +179,6 @@ export function useExperimentsSection({
     helpers: FormikHelpers<ExperimentFormValues>,
   ) {
     if (!access || !canEdit || !formKind) return
-    setActionError(null)
     const body = {
       kind: formKind,
       instrument: Number(values.instrument),
@@ -192,14 +189,16 @@ export function useExperimentsSection({
     try {
       if (editingId) {
         await updateExperiment(access, editingId, body)
+        notifySuccess(t('toast.saved'))
       } else {
         await createExperiment(access, projectId, body)
+        notifySuccess(t('toast.created'))
         onProjectChanged()
       }
       closeForm()
       await reload()
     } catch (err) {
-      setActionError(
+      notifyError(
         err instanceof ApiError ? err.message : t('errors.createFailed'),
       )
     } finally {
@@ -208,7 +207,6 @@ export function useExperimentsSection({
   }
 
   function requestDelete(id: number) {
-    setActionError(null)
     setPendingDeleteId(id)
   }
 
@@ -220,14 +218,14 @@ export function useExperimentsSection({
   async function confirmDelete() {
     if (!access || !canEdit || pendingDeleteId == null) return
     setDeleting(true)
-    setActionError(null)
     try {
       await deleteExperiment(access, pendingDeleteId)
+      notifySuccess(t('toast.deleted'))
       if (editingId === pendingDeleteId) closeForm()
       setPendingDeleteId(null)
       await reload()
     } catch (err) {
-      setActionError(
+      notifyError(
         err instanceof ApiError ? err.message : t('errors.requestFailed'),
       )
     } finally {
@@ -277,7 +275,6 @@ export function useExperimentsSection({
     setFormInstallationId,
     loading,
     error,
-    actionError,
     canAddPlanned,
     canAddExecuted,
     canMutateItem,

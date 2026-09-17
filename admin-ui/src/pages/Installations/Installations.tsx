@@ -29,11 +29,6 @@ export function InstallationsPage() {
           {vm.error}
         </div>
       ) : null}
-      {vm.actionError && !vm.showForm ? (
-        <div className="alert alert-danger" role="alert">
-          {vm.actionError}
-        </div>
-      ) : null}
 
       {vm.filtersUi}
 
@@ -100,11 +95,6 @@ export function InstallationsPage() {
         }
         size="md"
       >
-        {vm.actionError ? (
-          <div className="alert alert-danger py-2" role="alert">
-            {vm.actionError}
-          </div>
-        ) : null}
         <div className="mb-3">
           <label className="form-label" htmlFor="inst-name">
             {vm.copy.name}

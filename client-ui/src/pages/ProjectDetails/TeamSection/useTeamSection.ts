@@ -19,8 +19,6 @@ export type TeamSectionProps = {
   openInvite: () => void
   closeInvite: () => void
   requestCancelInvite: (inv: Invitation) => void
-  inviteMessage: string | null
-  inviteError: string | null
   /** Show a section heading (used when Team sits outside tabs). */
   showTitle?: boolean
 }

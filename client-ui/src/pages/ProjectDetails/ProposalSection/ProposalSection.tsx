@@ -53,11 +53,6 @@ export function ProposalSection(props: ProposalSectionProps) {
           {vm.error}
         </div>
       ) : null}
-      {vm.actionError && !vm.showForm ? (
-        <div className="alert alert-danger py-2" role="alert">
-          {vm.actionError}
-        </div>
-      ) : null}
 
       {!vm.loading && !vm.error && !vm.proposal ? (
         <EmptyState compact message={vm.t('proposal.empty')} />
@@ -123,11 +118,6 @@ export function ProposalSection(props: ProposalSectionProps) {
         }
         size="md"
       >
-        {vm.actionError ? (
-          <div className="alert alert-danger py-2" role="alert">
-            {vm.actionError}
-          </div>
-        ) : null}
         <Formik<ProposalFormValues>
           enableReinitialize
           initialValues={vm.initialValues}

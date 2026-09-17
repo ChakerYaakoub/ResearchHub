@@ -13,14 +13,9 @@ export function RegisterForm(props: RegisterFormProps) {
       validationSchema={vm.validationSchema}
       onSubmit={vm.onSubmit}
     >
-      {({ isSubmitting, status }) => (
+      {({ isSubmitting }) => (
         <>
           <p className="text-muted small mb-3">{vm.t('register.subtitle')}</p>
-          {status ? (
-            <div className="alert alert-danger py-2" role="alert">
-              {status}
-            </div>
-          ) : null}
           <Form noValidate>
             <TextInput
               name="email"

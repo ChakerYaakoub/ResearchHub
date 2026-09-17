@@ -1,11 +1,11 @@
 import type { FormikHelpers } from 'formik'
-import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import * as Yup from 'yup'
 import { ApiError } from '../../api/client'
 import { createProject } from '../../api/projects'
 import { useAuth } from '../../auth'
+import { notifyError, notifySuccess } from '../../notify'
 
 export type ProjectFormValues = {
   title: string
@@ -18,7 +18,6 @@ export function useProjectsNew() {
   const { t } = useTranslation()
   const { access } = useAuth()
   const navigate = useNavigate()
-  const [formError, setFormError] = useState<string | null>(null)
 
   const initialValues: ProjectFormValues = {
     title: '',
@@ -37,21 +36,21 @@ export function useProjectsNew() {
     helpers: FormikHelpers<ProjectFormValues>,
   ) {
     if (!access) return
-    setFormError(null)
     try {
       const project = await createProject(access, {
         title: values.title.trim(),
         description: values.description.trim(),
         scientific_objective: values.scientific_objective.trim(),
       })
+      notifySuccess(t('toast.created'))
       navigate(`/projects/${project.id}`, { replace: true })
     } catch (err) {
-      setFormError(
+      notifyError(
         err instanceof ApiError ? err.message : t('errors.createFailed'),
       )
       helpers.setSubmitting(false)
     }
   }
 
-  return { t, initialValues, validationSchema, onSubmit, formError }
+  return { t, initialValues, validationSchema, onSubmit }
 }

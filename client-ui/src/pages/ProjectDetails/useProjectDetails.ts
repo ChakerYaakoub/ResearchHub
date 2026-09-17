@@ -16,6 +16,7 @@ import {
   listCollaborators,
 } from '../../api/projects'
 import { useAuth } from '../../auth'
+import { notifyError, notifySuccess } from '../../notify'
 import type {
   Invitation,
   InvitationRole,
@@ -70,13 +71,9 @@ export function useProjectDetails() {
   )
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [inviteMessage, setInviteMessage] = useState<string | null>(null)
-  const [inviteError, setInviteError] = useState<string | null>(null)
   const [inviteOpen, setInviteOpen] = useState(false)
-  const [completeError, setCompleteError] = useState<string | null>(null)
   const [completing, setCompleting] = useState(false)
   const [deleting, setDeleting] = useState(false)
-  const [deleteError, setDeleteError] = useState<string | null>(null)
   const [cancellingInviteId, setCancellingInviteId] = useState<number | null>(
     null,
   )
@@ -208,24 +205,19 @@ export function useProjectDetails() {
   }
 
   function requestDelete() {
-    setDeleteError(null)
     setConfirmKind('delete')
   }
 
   function requestComplete() {
-    setCompleteError(null)
     setConfirmKind('complete')
   }
 
   function requestCancelInvite(invitation: Invitation) {
-    setInviteError(null)
     setPendingInvite(invitation)
     setConfirmKind('cancelInvite')
   }
 
   function openInvite() {
-    setInviteError(null)
-    setInviteMessage(null)
     setInviteOpen(true)
   }
 
@@ -238,19 +230,17 @@ export function useProjectDetails() {
     helpers: FormikHelpers<InviteFormValues>,
   ) {
     if (!access || !id) return
-    setInviteError(null)
-    setInviteMessage(null)
     try {
       await createProjectInvitation(access, id, {
         email: values.email.trim().toLowerCase(),
         role: values.role,
       })
-      setInviteMessage(t('projects.inviteSent'))
+      notifySuccess(t('toast.inviteSent'))
       helpers.resetForm()
       setInviteOpen(false)
       await reloadInvitations()
     } catch (err) {
-      setInviteError(
+      notifyError(
         err instanceof ApiError ? err.message : t('errors.inviteFailed'),
       )
     } finally {
@@ -261,14 +251,14 @@ export function useProjectDetails() {
   async function runCancelInvite() {
     if (!access || !id || !pendingInvite) return
     setCancellingInviteId(pendingInvite.id)
-    setInviteError(null)
     try {
       await cancelProjectInvitation(access, id, pendingInvite.id)
+      notifySuccess(t('toast.inviteCancelled'))
       setConfirmKind(null)
       setPendingInvite(null)
       await reloadInvitations()
     } catch (err) {
-      setInviteError(
+      notifyError(
         err instanceof ApiError ? err.message : t('errors.inviteFailed'),
       )
     } finally {
@@ -279,12 +269,12 @@ export function useProjectDetails() {
   async function runComplete() {
     if (!access || !id || !canComplete) return
     setCompleting(true)
-    setCompleteError(null)
     try {
       setProject(await completeProject(access, id))
+      notifySuccess(t('toast.completed'))
       setConfirmKind(null)
     } catch (err) {
-      setCompleteError(
+      notifyError(
         err instanceof ApiError ? err.message : t('errors.requestFailed'),
       )
     } finally {
@@ -295,12 +285,12 @@ export function useProjectDetails() {
   async function runDelete() {
     if (!access || !id || !isOwner) return
     setDeleting(true)
-    setDeleteError(null)
     try {
       await deleteProject(access, id)
+      notifySuccess(t('toast.projectDeleted'))
       navigate('/projects', { replace: true })
     } catch (err) {
-      setDeleteError(
+      notifyError(
         err instanceof ApiError ? err.message : t('errors.requestFailed'),
       )
       setDeleting(false)
@@ -324,6 +314,7 @@ export function useProjectDetails() {
           title: t('projects.deleteTitle'),
           message: t('projects.confirmDelete'),
           confirmLabel: t('projects.delete'),
+          cancelLabel: t('common.cancel'),
           busyLabel: t('projects.deleting'),
           danger: true,
         }
@@ -332,6 +323,7 @@ export function useProjectDetails() {
             title: t('projects.completeTitle'),
             message: t('projects.confirmComplete'),
             confirmLabel: t('projects.complete'),
+            cancelLabel: t('common.cancel'),
             busyLabel: t('projects.completing'),
             danger: false,
           }
@@ -339,7 +331,8 @@ export function useProjectDetails() {
           ? {
               title: t('projects.cancelInviteTitle'),
               message: t('projects.confirmCancelInvite'),
-              confirmLabel: t('projects.cancelInvite'),
+              confirmLabel: t('projects.cancelInviteConfirm'),
+              cancelLabel: t('projects.cancelInviteKeep'),
               busyLabel: t('projects.cancellingInvite'),
               danger: true,
             }
@@ -376,14 +369,10 @@ export function useProjectDetails() {
     openInvite,
     closeInvite,
     requestCancelInvite,
-    inviteMessage,
-    inviteError,
     requestComplete,
     completing,
-    completeError,
     requestDelete,
     deleting,
-    deleteError,
     refreshProject,
     activeSection,
     setActiveSection,

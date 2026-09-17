@@ -1,5 +1,5 @@
+import { useId, useState, type InputHTMLAttributes } from 'react'
 import { useField } from 'formik'
-import type { InputHTMLAttributes } from 'react'
 
 export type TextInputProps = {
   name: string
@@ -14,20 +14,30 @@ export function useTextInput({
   helperText,
   id,
   className,
+  type = 'text',
   ...rest
 }: TextInputProps) {
   const [field, meta] = useField(name)
+  const [passwordVisible, setPasswordVisible] = useState(false)
+  const reactId = useId()
   const inputId = id ?? name
   const showError = Boolean(meta.touched && meta.error)
   const message = showError ? meta.error : (helperText ?? '')
   const describedBy = message ? `${inputId}-msg` : undefined
+  const isPassword = type === 'password'
+  const inputType = isPassword && passwordVisible ? 'text' : type
   const inputClassName = [
     'form-control',
     showError ? 'is-invalid' : '',
+    isPassword ? 'rh-text-input-password' : '',
     className ?? '',
   ]
     .filter(Boolean)
     .join(' ')
+
+  function togglePasswordVisible() {
+    setPasswordVisible((v) => !v)
+  }
 
   return {
     field,
@@ -39,5 +49,10 @@ export function useTextInput({
     message,
     describedBy,
     inputClassName,
+    inputType,
+    isPassword,
+    passwordVisible,
+    togglePasswordVisible,
+    toggleId: `${reactId}-pw-toggle`,
   }
 }

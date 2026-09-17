@@ -5,6 +5,7 @@ import { listExperiments } from '../../../api/experiments'
 import { getProposal, submitProposal } from '../../../api/proposals'
 import { listPublications } from '../../../api/publications'
 import { useAuth } from '../../../auth'
+import { notifyError, notifySuccess } from '../../../notify'
 import type { Project, Proposal } from '../../../types/api'
 
 export type SubmitSectionProps = {
@@ -28,7 +29,6 @@ export function useSubmitSection({
   const [existingCount, setExistingCount] = useState(0)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [actionError, setActionError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
   const [confirmOpen, setConfirmOpen] = useState(false)
 
@@ -62,7 +62,6 @@ export function useSubmitSection({
 
   function openConfirm() {
     if (!canSubmit) return
-    setActionError(null)
     setConfirmOpen(true)
   }
 
@@ -74,13 +73,13 @@ export function useSubmitSection({
   async function onConfirmSubmit() {
     if (!access || !canSubmit) return
     setSubmitting(true)
-    setActionError(null)
     try {
       setProposal(await submitProposal(access, projectId))
+      notifySuccess(t('toast.submitted'))
       setConfirmOpen(false)
       onProjectChanged()
     } catch (err) {
-      setActionError(
+      notifyError(
         err instanceof ApiError ? err.message : t('errors.requestFailed'),
       )
     } finally {
@@ -92,7 +91,6 @@ export function useSubmitSection({
     t,
     loading,
     error,
-    actionError,
     hasProposal: Boolean(proposal),
     plannedCount,
     existingCount,

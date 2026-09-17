@@ -48,11 +48,6 @@ export function ProposalsPage() {
           {vm.error}
         </div>
       ) : null}
-      {vm.actionError ? (
-        <div className="alert alert-danger" role="alert">
-          {vm.actionError}
-        </div>
-      ) : null}
 
       {vm.loading ? (
         <LoadingState label={vm.copy.loading} />

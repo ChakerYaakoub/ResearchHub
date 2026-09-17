@@ -17,16 +17,34 @@ export class ApiError extends Error {
 }
 
 /** Pull a human-readable message from DRF error payloads. */
+function messagesFromValue(value: unknown): string[] {
+  if (typeof value === 'string') return [value]
+  if (Array.isArray(value)) return value.map(String).filter(Boolean)
+  return []
+}
+
 export function formatApiError(body: unknown, fallback?: string): string {
   const fb = fallback ?? i18n.t('errors.requestFailed')
   if (!body || typeof body !== 'object') return fb
   const data = body as Record<string, unknown>
   if (typeof data.detail === 'string') return data.detail
   if (Array.isArray(data.detail)) return data.detail.map(String).join(' ')
+
   const parts: string[] = []
   for (const [key, value] of Object.entries(data)) {
-    if (Array.isArray(value)) parts.push(`${key}: ${value.map(String).join(' ')}`)
-    else if (typeof value === 'string') parts.push(`${key}: ${value}`)
+    const msgs = messagesFromValue(value)
+    if (!msgs.length) continue
+    // DRF non-field / form-level errors — show message only (no key prefix).
+    if (key === 'non_field_errors' || key === '__all__') {
+      parts.push(...msgs)
+      continue
+    }
+    // Prefer message-only when a single field has one message.
+    if (msgs.length === 1) {
+      parts.push(msgs[0])
+    } else {
+      parts.push(msgs.join(' '))
+    }
   }
   return parts.length ? parts.join(' ') : fb
 }

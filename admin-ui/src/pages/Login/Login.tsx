@@ -1,5 +1,6 @@
 import { Form, Formik } from 'formik'
 import { Navigate } from 'react-router-dom'
+import { PasswordField } from '../../components/PasswordField'
 import { useLogin, type LoginFormValues } from './useLogin'
 
 export function LoginPage() {
@@ -29,14 +30,8 @@ export function LoginPage() {
                 handleChange,
                 handleBlur,
                 isSubmitting,
-                status,
               }) => (
                 <Form noValidate>
-                  {status ? (
-                    <div className="alert alert-danger py-2" role="alert">
-                      {status}
-                    </div>
-                  ) : null}
                   <div className="mb-3">
                     <label className="form-label" htmlFor="email">
                       {vm.copy.email}
@@ -55,24 +50,21 @@ export function LoginPage() {
                       <div className="invalid-feedback">{errors.email}</div>
                     ) : null}
                   </div>
-                  <div className="mb-3">
-                    <label className="form-label" htmlFor="password">
-                      {vm.copy.password}
-                    </label>
-                    <input
-                      id="password"
-                      name="password"
-                      type="password"
-                      autoComplete="current-password"
-                      className={`form-control${touched.password && errors.password ? ' is-invalid' : ''}`}
-                      value={values.password}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                    />
-                    {touched.password && errors.password ? (
-                      <div className="invalid-feedback">{errors.password}</div>
-                    ) : null}
-                  </div>
+                  <PasswordField
+                    id="password"
+                    name="password"
+                    label={vm.copy.password}
+                    value={values.password}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    autoComplete="current-password"
+                    invalid={Boolean(touched.password && errors.password)}
+                    error={
+                      touched.password && errors.password
+                        ? errors.password
+                        : undefined
+                    }
+                  />
                   <button
                     type="submit"
                     className="btn btn-primary w-100"

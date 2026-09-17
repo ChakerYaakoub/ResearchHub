@@ -7,6 +7,7 @@ import {
   listMyInvitations,
 } from '../../api/invitations'
 import { useAuth } from '../../auth'
+import { notifyError, notifySuccess } from '../../notify'
 import type { Invitation } from '../../types/api'
 
 /** My invitations list + accept/decline actions. */
@@ -17,7 +18,6 @@ export function useInvitations() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [busyToken, setBusyToken] = useState<string | null>(null)
-  const [actionError, setActionError] = useState<string | null>(null)
 
   const reload = useCallback(async () => {
     if (!access) return
@@ -41,13 +41,13 @@ export function useInvitations() {
 
   async function onAccept(invite: Invitation) {
     if (!access || !invite.token) return
-    setActionError(null)
     setBusyToken(invite.token)
     try {
       await acceptInvitation(access, invite.token)
+      notifySuccess(t('toast.accepted'))
       await reload()
     } catch (err) {
-      setActionError(
+      notifyError(
         err instanceof ApiError ? err.message : t('errors.acceptFailed'),
       )
     } finally {
@@ -57,13 +57,13 @@ export function useInvitations() {
 
   async function onDecline(invite: Invitation) {
     if (!access || !invite.token) return
-    setActionError(null)
     setBusyToken(invite.token)
     try {
       await declineInvitation(access, invite.token)
+      notifySuccess(t('toast.declined'))
       await reload()
     } catch (err) {
-      setActionError(
+      notifyError(
         err instanceof ApiError ? err.message : t('errors.declineFailed'),
       )
     } finally {
@@ -77,7 +77,6 @@ export function useInvitations() {
     pending,
     loading,
     error,
-    actionError,
     busyToken,
     onAccept,
     onDecline,

@@ -10,6 +10,7 @@ import { AdminListFilters } from '../../components/AdminListFilters'
 import { useAuth } from '../../auth'
 import { copy } from '../../copy'
 import { useAdminListParams } from '../../hooks/useAdminListParams'
+import { notifyError, notifySuccess } from '../../notify'
 
 export type ReviewKind = 'approve' | 'reject'
 export type ProposalFilter = '' | 'DRAFT' | 'PENDING' | 'APPROVED' | 'REJECTED'
@@ -21,7 +22,6 @@ export function useProposals() {
   const [proposals, setProposals] = useState<AdminProposal[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [actionError, setActionError] = useState<string | null>(null)
   const [reviewKind, setReviewKind] = useState<ReviewKind | null>(null)
   const [pending, setPending] = useState<AdminProposal | null>(null)
   const [reviewComment, setReviewComment] = useState('')
@@ -51,7 +51,6 @@ export function useProposals() {
   }, [reload])
 
   function openReview(kind: ReviewKind, proposal: AdminProposal) {
-    setActionError(null)
     setReviewComment('')
     setReviewKind(kind)
     setPending(proposal)
@@ -67,19 +66,20 @@ export function useProposals() {
   async function confirmReview() {
     if (!access || !pending || !reviewKind) return
     setBusy(true)
-    setActionError(null)
     try {
       if (reviewKind === 'approve') {
         await approveProposal(access, pending.id, reviewComment.trim())
+        notifySuccess(copy.proposalApproved)
       } else {
         await rejectProposal(access, pending.id, reviewComment.trim())
+        notifySuccess(copy.proposalRejected)
       }
       setReviewKind(null)
       setPending(null)
       setReviewComment('')
       await reload()
     } catch (err) {
-      setActionError(err instanceof ApiError ? err.message : copy.requestFailed)
+      notifyError(err instanceof ApiError ? err.message : copy.requestFailed)
     } finally {
       setBusy(false)
     }
@@ -101,7 +101,6 @@ export function useProposals() {
     proposals,
     loading,
     error,
-    actionError,
     reviewKind,
     pending,
     reviewComment,

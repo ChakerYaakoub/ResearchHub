@@ -11,6 +11,7 @@ import { AdminListFilters } from '../../components/AdminListFilters'
 import { useAuth } from '../../auth'
 import { copy } from '../../copy'
 import { useAdminListParams } from '../../hooks/useAdminListParams'
+import { notifyError, notifySuccess } from '../../notify'
 
 export type InstallationFormValues = {
   name: string
@@ -32,7 +33,6 @@ export function useInstallations() {
   const [items, setItems] = useState<AdminInstallation[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [actionError, setActionError] = useState<string | null>(null)
   const [showForm, setShowForm] = useState(false)
   const [editingId, setEditingId] = useState<number | null>(null)
   const [form, setForm] = useState<InstallationFormValues>(blank)
@@ -66,7 +66,6 @@ export function useInstallations() {
   function openCreate() {
     setEditingId(null)
     setForm(blank)
-    setActionError(null)
     setShowForm(true)
   }
 
@@ -78,7 +77,6 @@ export function useInstallations() {
       location: row.location,
       status: row.status,
     })
-    setActionError(null)
     setShowForm(true)
   }
 
@@ -91,17 +89,17 @@ export function useInstallations() {
   async function onSave() {
     if (!access) return
     setSaving(true)
-    setActionError(null)
     try {
       if (editingId) {
         await patchInstallation(access, editingId, form)
       } else {
         await createInstallation(access, form)
       }
+      notifySuccess(copy.saved)
       closeForm()
       await reload()
     } catch (err) {
-      setActionError(err instanceof ApiError ? err.message : copy.requestFailed)
+      notifyError(err instanceof ApiError ? err.message : copy.requestFailed)
     } finally {
       setSaving(false)
     }
@@ -109,19 +107,18 @@ export function useInstallations() {
 
   function requestDelete(id: number) {
     setPendingDeleteId(id)
-    setActionError(null)
   }
 
   async function confirmDelete() {
     if (!access || pendingDeleteId == null) return
     setDeleting(true)
-    setActionError(null)
     try {
       await deleteInstallation(access, pendingDeleteId)
       setPendingDeleteId(null)
+      notifySuccess(copy.deleted)
       await reload()
     } catch (err) {
-      setActionError(err instanceof ApiError ? err.message : copy.requestFailed)
+      notifyError(err instanceof ApiError ? err.message : copy.requestFailed)
     } finally {
       setDeleting(false)
     }
@@ -154,7 +151,6 @@ export function useInstallations() {
     items,
     loading,
     error,
-    actionError,
     showForm,
     editingId,
     form,

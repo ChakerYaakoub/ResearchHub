@@ -9,6 +9,7 @@ import {
   updateProposal,
 } from '../../../api/proposals'
 import { useAuth } from '../../../auth'
+import { notifyError, notifySuccess } from '../../../notify'
 import type { Project, Proposal } from '../../../types/api'
 
 export type ProposalSectionProps = {
@@ -37,7 +38,6 @@ export function useProposalSection({
   const [proposal, setProposal] = useState<Proposal | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [actionError, setActionError] = useState<string | null>(null)
   const [showForm, setShowForm] = useState(false)
 
   const isDraft = project.status === 'DRAFT'
@@ -73,7 +73,6 @@ export function useProposalSection({
   })
 
   function openForm() {
-    setActionError(null)
     setShowForm(true)
   }
 
@@ -86,7 +85,6 @@ export function useProposalSection({
     helpers: FormikHelpers<ProposalFormValues>,
   ) {
     if (!access || !canMutate) return
-    setActionError(null)
     const body = {
       methodology: values.methodology.trim(),
       expected_results: values.expected_results.trim(),
@@ -96,9 +94,10 @@ export function useProposalSection({
         ? await updateProposal(access, projectId, body)
         : await createProposal(access, projectId, body)
       setProposal(saved)
+      notifySuccess(t(proposal ? 'toast.saved' : 'toast.created'))
       setShowForm(false)
     } catch (err) {
-      setActionError(
+      notifyError(
         err instanceof ApiError ? err.message : t('errors.createFailed'),
       )
     } finally {
@@ -111,7 +110,6 @@ export function useProposalSection({
     proposal,
     loading,
     error,
-    actionError,
     canMutate,
     isDraft,
     isPreparing,

@@ -44,12 +44,6 @@ export function TeamSection(props: TeamSectionProps) {
         ) : null}
       </div>
 
-      {vm.inviteMessage ? (
-        <div className="alert alert-success py-1 px-2 small mb-2" role="status">
-          {vm.inviteMessage}
-        </div>
-      ) : null}
-
       <div className="rh-team-block">
         <h3 className="rh-team-block-title">
           {vm.t('projects.collaborators')}
@@ -130,11 +124,6 @@ export function TeamSection(props: TeamSectionProps) {
             size="sm"
           >
             <p className="rh-team-hint">{vm.t('projects.inviteHint')}</p>
-            {vm.inviteError ? (
-              <div className="alert alert-danger py-2" role="alert">
-                {vm.inviteError}
-              </div>
-            ) : null}
             <Formik<InviteFormValues>
               initialValues={vm.inviteInitial}
               validationSchema={vm.inviteSchema}

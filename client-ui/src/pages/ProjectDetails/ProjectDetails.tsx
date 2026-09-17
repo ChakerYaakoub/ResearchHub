@@ -27,8 +27,6 @@ export function ProjectDetailsPage() {
     openInvite: vm.openInvite,
     closeInvite: vm.closeInvite,
     requestCancelInvite: vm.requestCancelInvite,
-    inviteMessage: vm.inviteMessage,
-    inviteError: vm.inviteError,
   }
 
   return (
@@ -73,16 +71,6 @@ export function ProjectDetailsPage() {
       {vm.error ? (
         <div className="alert alert-danger" role="alert">
           {vm.error}
-        </div>
-      ) : null}
-      {vm.completeError ? (
-        <div className="alert alert-danger" role="alert">
-          {vm.completeError}
-        </div>
-      ) : null}
-      {vm.deleteError ? (
-        <div className="alert alert-danger" role="alert">
-          {vm.deleteError}
         </div>
       ) : null}
 
@@ -244,7 +232,7 @@ export function ProjectDetailsPage() {
           title={vm.confirmDialog.title}
           message={vm.confirmDialog.message}
           confirmLabel={vm.confirmDialog.confirmLabel}
-          cancelLabel={vm.t('common.cancel')}
+          cancelLabel={vm.confirmDialog.cancelLabel}
           busy={vm.confirmBusy}
           busyLabel={vm.confirmDialog.busyLabel}
           danger={vm.confirmDialog.danger}
