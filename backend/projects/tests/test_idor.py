@@ -59,7 +59,7 @@ class ProjectIdorTests(TestCase):
         response = client.get("/api/projects/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         ids = {row["id"] for row in response.data}
-        self.assertIn(self.project.id, ids)
+        self.assertIn(str(self.project.id), ids)
 
     def test_outsider_collaborators_404(self):
         client = auth_client(self.outsider)
