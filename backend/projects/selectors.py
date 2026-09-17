@@ -1,4 +1,5 @@
 """Project visibility and role lookup (AuthZ helpers)."""
+import uuid
 
 from django.db.models import Q, QuerySet
 from django.shortcuts import get_object_or_404
@@ -37,7 +38,7 @@ def projects_visible_to(user) -> QuerySet[ResearchProject]:
     )
 
 
-def get_visible_project(user, pk: int) -> ResearchProject:
+def get_visible_project(user, pk: uuid.UUID) -> ResearchProject:
     """Resolve a project by pk within the user's visible set (404 if not)."""
     return get_object_or_404(projects_visible_to(user), pk=pk)
 

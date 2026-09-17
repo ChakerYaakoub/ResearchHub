@@ -20,7 +20,7 @@ auth_urlpatterns = [
 admin_urlpatterns = [
     path("admin/users/", AdminUserListView.as_view(), name="admin-users"),
     path(
-        "admin/users/<int:user_id>/",
+        "admin/users/<uuid:user_id>/",
         AdminUserDetailView.as_view(),
         name="admin-user-detail",
     ),

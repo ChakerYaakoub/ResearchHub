@@ -1,4 +1,5 @@
 """Admin-panel user list/manage views (admin-ui Origin + platform ADMIN)."""
+import uuid
 
 from django.shortcuts import get_object_or_404
 from rest_framework import status
@@ -84,7 +85,7 @@ class AdminUserDetailView(APIView):
 
     permission_classes = ADMIN_PERMS
 
-    def patch(self, request, user_id: int):
+    def patch(self, request, user_id: uuid.UUID):
         target = get_object_or_404(User, pk=user_id)
         if target.pk == request.user.pk:
             return Response(

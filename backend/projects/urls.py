@@ -20,24 +20,24 @@ router.register("projects", ResearchProjectViewSet, basename="project")
 
 urlpatterns = [
     path(
-        "projects/<int:project_pk>/collaborators/",
+        "projects/<uuid:project_pk>/collaborators/",
         ProjectCollaboratorListView.as_view(),
         name="project-collaborators",
     ),
     path(
-        "projects/<int:project_pk>/collaborators/<int:user_id>/",
+        "projects/<uuid:project_pk>/collaborators/<uuid:user_id>/",
         ProjectCollaboratorDeleteView.as_view(),
         name="project-collaborator-delete",
     ),
     path(
-        "projects/<int:project_pk>/complete/",
+        "projects/<uuid:project_pk>/complete/",
         ProjectCompleteView.as_view(),
         name="project-complete",
     ),
     path("admin/stats/", AdminStatsView.as_view(), name="admin-stats"),
     path("admin/projects/", AdminProjectListView.as_view(), name="admin-projects"),
     path(
-        "admin/projects/<int:project_id>/",
+        "admin/projects/<uuid:project_id>/",
         AdminProjectDetailView.as_view(),
         name="admin-project-detail",
     ),

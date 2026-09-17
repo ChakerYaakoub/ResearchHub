@@ -1,4 +1,5 @@
 """Experiment visibility helpers (project-scoped IDOR)."""
+import uuid
 
 from django.shortcuts import get_object_or_404
 
@@ -7,7 +8,7 @@ from projects.selectors import projects_visible_to
 from .models import Experiment
 
 
-def get_visible_experiment(user, pk: int) -> Experiment:
+def get_visible_experiment(user, pk: uuid.UUID) -> Experiment:
     """Experiment under a project visible to the user (404 otherwise)."""
     return get_object_or_404(
         Experiment.objects.select_related("project").filter(

@@ -7,12 +7,12 @@ from experiments.api.views import ExperimentDetailView, ProjectExperimentListCre
 
 urlpatterns = [
     path(
-        "projects/<int:project_pk>/experiments/",
+        "projects/<uuid:project_pk>/experiments/",
         ProjectExperimentListCreateView.as_view(),
         name="project-experiments",
     ),
     path(
-        "experiments/<int:pk>/",
+        "experiments/<uuid:pk>/",
         ExperimentDetailView.as_view(),
         name="experiment-detail",
     ),

@@ -10,7 +10,7 @@ from experiments.models import Experiment
 class ExperimentSerializer(serializers.ModelSerializer):
     instrument_code = serializers.CharField(source="instrument.code", read_only=True)
     instrument_name = serializers.CharField(source="instrument.name", read_only=True)
-    installation_id = serializers.IntegerField(
+    installation_id = serializers.UUIDField(
         source="instrument.installation_id", read_only=True
     )
     installation_name = serializers.CharField(

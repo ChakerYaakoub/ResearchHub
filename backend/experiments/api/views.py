@@ -1,4 +1,5 @@
 """Experiment REST endpoints nested under projects + detail by id."""
+import uuid
 
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
@@ -24,7 +25,7 @@ class ProjectExperimentListCreateView(APIView):
 
     permission_classes = [IsAuthenticated, IsProjectMemberReadEditorWrite]
 
-    def get(self, request, project_pk: int):
+    def get(self, request, project_pk: uuid.UUID):
         project = get_visible_project(request.user, project_pk)
         self.check_object_permissions(request, project)
         qs = project.experiments.select_related(
@@ -32,7 +33,7 @@ class ProjectExperimentListCreateView(APIView):
         ).all()
         return Response(ExperimentSerializer(qs, many=True).data)
 
-    def post(self, request, project_pk: int):
+    def post(self, request, project_pk: uuid.UUID):
         project = get_visible_project(request.user, project_pk)
         self.check_object_permissions(request, project)
         serializer = ExperimentSerializer(data=request.data)
@@ -60,12 +61,12 @@ class ExperimentDetailView(APIView):
 
     permission_classes = [IsAuthenticated, IsProjectMemberReadEditorWrite]
 
-    def get(self, request, pk: int):
+    def get(self, request, pk: uuid.UUID):
         experiment = get_visible_experiment(request.user, pk)
         self.check_object_permissions(request, experiment)
         return Response(ExperimentSerializer(experiment).data)
 
-    def put(self, request, pk: int):
+    def put(self, request, pk: uuid.UUID):
         experiment = get_visible_experiment(request.user, pk)
         self.check_object_permissions(request, experiment)
         serializer = ExperimentSerializer(experiment, data=request.data)
@@ -78,7 +79,7 @@ class ExperimentDetailView(APIView):
         serializer.save()
         return Response(serializer.data)
 
-    def patch(self, request, pk: int):
+    def patch(self, request, pk: uuid.UUID):
         experiment = get_visible_experiment(request.user, pk)
         self.check_object_permissions(request, experiment)
         serializer = ExperimentSerializer(experiment, data=request.data, partial=True)
@@ -91,7 +92,7 @@ class ExperimentDetailView(APIView):
         serializer.save()
         return Response(serializer.data)
 
-    def delete(self, request, pk: int):
+    def delete(self, request, pk: uuid.UUID):
         experiment = get_visible_experiment(request.user, pk)
         self.check_object_permissions(request, experiment)
         try:

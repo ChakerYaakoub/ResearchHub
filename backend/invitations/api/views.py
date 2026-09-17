@@ -1,4 +1,5 @@
 """Invitation REST endpoints (thin views; logic in services)."""
+import uuid
 
 from django.shortcuts import get_object_or_404
 from rest_framework import status
@@ -30,13 +31,13 @@ class ProjectInvitationListCreateView(APIView):
 
     permission_classes = [IsAuthenticated, IsProjectOwnerOrAdmin]
 
-    def get(self, request, project_pk: int):
+    def get(self, request, project_pk: uuid.UUID):
         project = get_visible_project(request.user, project_pk)
         self.check_object_permissions(request, project)
         qs = project.invitations.select_related("invited_by", "project").all()
         return Response(InvitationListSerializer(qs, many=True).data)
 
-    def post(self, request, project_pk: int):
+    def post(self, request, project_pk: uuid.UUID):
         project = get_visible_project(request.user, project_pk)
         self.check_object_permissions(request, project)
         serializer = InvitationCreateSerializer(data=request.data)
@@ -61,7 +62,7 @@ class ProjectInvitationCancelView(APIView):
 
     permission_classes = [IsAuthenticated, IsProjectOwnerOrAdmin]
 
-    def delete(self, request, project_pk: int, invitation_id: int):
+    def delete(self, request, project_pk: uuid.UUID, invitation_id: uuid.UUID):
         project = get_visible_project(request.user, project_pk)
         self.check_object_permissions(request, project)
         invitation = get_object_or_404(Invitation, pk=invitation_id, project=project)

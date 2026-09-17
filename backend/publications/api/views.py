@@ -1,4 +1,5 @@
 """Publication REST endpoints nested under projects + detail by id."""
+import uuid
 
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
@@ -19,13 +20,13 @@ class ProjectPublicationListCreateView(APIView):
 
     permission_classes = [IsAuthenticated, IsProjectMemberReadEditorWrite]
 
-    def get(self, request, project_pk: int):
+    def get(self, request, project_pk: uuid.UUID):
         project = get_visible_project(request.user, project_pk)
         self.check_object_permissions(request, project)
         qs = project.publications.all()
         return Response(PublicationSerializer(qs, many=True).data)
 
-    def post(self, request, project_pk: int):
+    def post(self, request, project_pk: uuid.UUID):
         project = get_visible_project(request.user, project_pk)
         self.check_object_permissions(request, project)
         serializer = PublicationSerializer(data=request.data)
@@ -44,12 +45,12 @@ class PublicationDetailView(APIView):
 
     permission_classes = [IsAuthenticated, IsProjectMemberReadEditorWrite]
 
-    def get(self, request, pk: int):
+    def get(self, request, pk: uuid.UUID):
         publication = get_visible_publication(request.user, pk)
         self.check_object_permissions(request, publication)
         return Response(PublicationSerializer(publication).data)
 
-    def put(self, request, pk: int):
+    def put(self, request, pk: uuid.UUID):
         publication = get_visible_publication(request.user, pk)
         self.check_object_permissions(request, publication)
         serializer = PublicationSerializer(publication, data=request.data)
@@ -62,7 +63,7 @@ class PublicationDetailView(APIView):
         serializer.save()
         return Response(serializer.data)
 
-    def patch(self, request, pk: int):
+    def patch(self, request, pk: uuid.UUID):
         publication = get_visible_publication(request.user, pk)
         self.check_object_permissions(request, publication)
         serializer = PublicationSerializer(publication, data=request.data, partial=True)
@@ -75,7 +76,7 @@ class PublicationDetailView(APIView):
         serializer.save()
         return Response(serializer.data)
 
-    def delete(self, request, pk: int):
+    def delete(self, request, pk: uuid.UUID):
         publication = get_visible_publication(request.user, pk)
         self.check_object_permissions(request, publication)
         try:

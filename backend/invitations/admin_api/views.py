@@ -1,4 +1,5 @@
 """Admin-panel invitation list/manage views (admin-ui Origin + platform ADMIN)."""
+import uuid
 
 from django.shortcuts import get_object_or_404
 from rest_framework import status
@@ -31,12 +32,14 @@ class AdminInvitationListView(APIView):
             qs = qs.filter(email__icontains=search)
         project_id = (request.query_params.get("project") or "").strip()
         if project_id:
-            if not project_id.isdigit():
+            try:
+                uuid.UUID(project_id)
+            except ValueError:
                 return Response(
-                    {"detail": "Invalid project. Use a numeric project id."},
+                    {"detail": "Invalid project. Use a UUID project id."},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-            qs = qs.filter(project_id=int(project_id))
+            qs = qs.filter(project_id=project_id)
         return Response(AdminInvitationSerializer(qs, many=True).data)
 
 
@@ -45,7 +48,7 @@ class AdminInvitationCancelView(APIView):
 
     permission_classes = ADMIN_PERMS
 
-    def delete(self, request, invitation_id: int):
+    def delete(self, request, invitation_id: uuid.UUID):
         invitation = get_object_or_404(Invitation, pk=invitation_id)
         try:
             cancel_invitation(invitation)

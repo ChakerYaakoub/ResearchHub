@@ -1,4 +1,5 @@
 """Proposal REST endpoints — thin views; workflow in services (Phase 6)."""
+import uuid
 
 from django.shortcuts import get_object_or_404
 from rest_framework import status
@@ -25,13 +26,13 @@ class ProjectProposalView(APIView):
 
     permission_classes = [IsAuthenticated, IsProjectMemberReadEditorWrite]
 
-    def get(self, request, project_pk: int):
+    def get(self, request, project_pk: uuid.UUID):
         project = get_visible_project(request.user, project_pk)
         self.check_object_permissions(request, project)
         proposal = get_object_or_404(Proposal, project=project)
         return Response(ProposalSerializer(proposal).data)
 
-    def post(self, request, project_pk: int):
+    def post(self, request, project_pk: uuid.UUID):
         project = get_visible_project(request.user, project_pk)
         self.check_object_permissions(request, project)
         if not is_preparing(project):
@@ -54,7 +55,7 @@ class ProjectProposalView(APIView):
         proposal = serializer.save(project=project)
         return Response(ProposalSerializer(proposal).data, status=status.HTTP_201_CREATED)
 
-    def put(self, request, project_pk: int):
+    def put(self, request, project_pk: uuid.UUID):
         project = get_visible_project(request.user, project_pk)
         self.check_object_permissions(request, project)
         if not is_preparing(project):
@@ -79,7 +80,7 @@ class ProjectProposalSubmitView(APIView):
 
     permission_classes = [IsAuthenticated, IsProjectEditor]
 
-    def post(self, request, project_pk: int):
+    def post(self, request, project_pk: uuid.UUID):
         project = get_visible_project(request.user, project_pk)
         self.check_object_permissions(request, project)
         try:
@@ -94,7 +95,7 @@ class ProposalApproveView(APIView):
 
     permission_classes = [IsAuthenticated, IsAdminUiOrigin, IsPlatformAdmin]
 
-    def post(self, request, pk: int):
+    def post(self, request, pk: uuid.UUID):
         proposal = get_object_or_404(
             Proposal.objects.select_related("project"),
             pk=pk,
@@ -116,7 +117,7 @@ class ProposalRejectView(APIView):
 
     permission_classes = [IsAuthenticated, IsAdminUiOrigin, IsPlatformAdmin]
 
-    def post(self, request, pk: int):
+    def post(self, request, pk: uuid.UUID):
         proposal = get_object_or_404(
             Proposal.objects.select_related("project"),
             pk=pk,

@@ -1,4 +1,5 @@
 """Project REST viewsets and nested collaborator helpers."""
+import uuid
 
 from rest_framework import status, viewsets
 from rest_framework.permissions import IsAuthenticated
@@ -57,7 +58,7 @@ class ProjectCollaboratorListView(APIView):
 
     permission_classes = [IsAuthenticated, IsProjectMember]
 
-    def get(self, request, project_pk: int):
+    def get(self, request, project_pk: uuid.UUID):
         project = get_visible_project(request.user, project_pk)
         self.check_object_permissions(request, project)
         qs = project.memberships.select_related("user").all()
@@ -69,7 +70,7 @@ class ProjectCollaboratorDeleteView(APIView):
 
     permission_classes = [IsAuthenticated, IsProjectOwnerOrAdmin]
 
-    def delete(self, request, project_pk: int, user_id: int):
+    def delete(self, request, project_pk: uuid.UUID, user_id: uuid.UUID):
         project = get_visible_project(request.user, project_pk)
         self.check_object_permissions(request, project)
         try:
@@ -90,7 +91,7 @@ class ProjectCompleteView(APIView):
 
     permission_classes = [IsAuthenticated, IsProjectEditor]
 
-    def post(self, request, project_pk: int):
+    def post(self, request, project_pk: uuid.UUID):
         project = get_visible_project(request.user, project_pk)
         self.check_object_permissions(request, project)
         try:

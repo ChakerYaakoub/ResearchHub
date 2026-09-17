@@ -1,4 +1,5 @@
 """Admin-panel list/manage views (admin-ui Origin + platform ADMIN)."""
+import uuid
 
 from django.db.models import Count, Prefetch, Q
 from django.shortcuts import get_object_or_404
@@ -44,7 +45,7 @@ class AdminProjectDetailView(APIView):
 
     permission_classes = ADMIN_PERMS
 
-    def get(self, request, project_id: int):
+    def get(self, request, project_id: uuid.UUID):
         qs = (
             ResearchProject.objects.select_related("owner", "proposal")
             .prefetch_related(
@@ -78,7 +79,7 @@ class AdminProjectDetailView(APIView):
         project = get_object_or_404(qs, pk=project_id)
         return Response(AdminProjectDetailSerializer(project).data)
 
-    def delete(self, request, project_id: int):
+    def delete(self, request, project_id: uuid.UUID):
         project = get_object_or_404(ResearchProject, pk=project_id)
         project.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

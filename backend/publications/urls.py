@@ -7,12 +7,12 @@ from publications.api.views import ProjectPublicationListCreateView, Publication
 
 urlpatterns = [
     path(
-        "projects/<int:project_pk>/publications/",
+        "projects/<uuid:project_pk>/publications/",
         ProjectPublicationListCreateView.as_view(),
         name="project-publications",
     ),
     path(
-        "publications/<int:pk>/",
+        "publications/<uuid:pk>/",
         PublicationDetailView.as_view(),
         name="publication-detail",
     ),

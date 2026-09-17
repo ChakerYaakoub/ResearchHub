@@ -1,4 +1,5 @@
 """Admin and researcher endpoints for installations / instruments."""
+import uuid
 
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
@@ -77,18 +78,18 @@ class AdminInstallationDetailView(APIView):
 
     permission_classes = ADMIN_PERMS
 
-    def get(self, request, pk: int):
+    def get(self, request, pk: uuid.UUID):
         obj = get_object_or_404(Installation, pk=pk)
         return Response(InstallationSerializer(obj).data)
 
-    def patch(self, request, pk: int):
+    def patch(self, request, pk: uuid.UUID):
         obj = get_object_or_404(Installation, pk=pk)
         ser = InstallationSerializer(obj, data=request.data, partial=True)
         ser.is_valid(raise_exception=True)
         ser.save()
         return Response(ser.data)
 
-    def delete(self, request, pk: int):
+    def delete(self, request, pk: uuid.UUID):
         obj = get_object_or_404(Installation, pk=pk)
         if obj.instruments.exists():
             return Response(
@@ -137,18 +138,18 @@ class AdminInstrumentDetailView(APIView):
 
     permission_classes = ADMIN_PERMS
 
-    def get(self, request, pk: int):
+    def get(self, request, pk: uuid.UUID):
         obj = get_object_or_404(Instrument.objects.select_related("installation"), pk=pk)
         return Response(InstrumentSerializer(obj).data)
 
-    def patch(self, request, pk: int):
+    def patch(self, request, pk: uuid.UUID):
         obj = get_object_or_404(Instrument, pk=pk)
         ser = InstrumentSerializer(obj, data=request.data, partial=True)
         ser.is_valid(raise_exception=True)
         ser.save()
         return Response(ser.data)
 
-    def delete(self, request, pk: int):
+    def delete(self, request, pk: uuid.UUID):
         obj = get_object_or_404(Instrument, pk=pk)
         if obj.experiments.exists():
             return Response(
