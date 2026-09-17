@@ -61,6 +61,14 @@ export function useAdminListParams(defaults?: { status?: string }) {
     [search, status, kind, isActive, installation],
   )
 
+  const hasActiveFilters = Boolean(
+    filters.search ||
+      filters.kind ||
+      filters.is_active ||
+      filters.installation ||
+      (params.has('status') && status !== (defaults?.status ?? '')),
+  )
+
   return {
     searchInput,
     setSearchInput,
@@ -73,5 +81,6 @@ export function useAdminListParams(defaults?: { status?: string }) {
     installation,
     setInstallation: (v: string) => setParam('installation', v),
     filters,
+    hasActiveFilters,
   }
 }

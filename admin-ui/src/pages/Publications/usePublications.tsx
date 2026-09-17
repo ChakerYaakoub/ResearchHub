@@ -36,7 +36,8 @@ export function usePublications() {
     void reload()
   }, [reload])
 
-  const filtersUi = (
+  const filtersUi =
+    !loading && (items.length > 0 || listParams.hasActiveFilters) ? (
     <AdminListFilters
       searchInput={listParams.searchInput}
       onSearchChange={listParams.setSearchInput}
@@ -55,7 +56,7 @@ export function usePublications() {
         },
       ]}
     />
-  )
+  ) : null
 
   return { copy, items, loading, error, filtersUi }
 }

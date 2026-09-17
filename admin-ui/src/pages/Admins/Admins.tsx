@@ -40,8 +40,6 @@ export function AdminsPage() {
         </div>
       ) : null}
 
-      {vm.filtersUi}
-
       {vm.loading ? (
         <LoadingState label={vm.copy.loading} />
       ) : vm.users.length === 0 ? (
