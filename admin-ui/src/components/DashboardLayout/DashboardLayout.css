@@ -25,6 +25,20 @@
   text-decoration: none;
 }
 
+.rh-dash-nav-section + .rh-dash-nav-section {
+  margin-top: 1rem;
+}
+
+.rh-dash-nav-heading {
+  margin: 0 0 0.35rem;
+  padding: 0 0.75rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--rh-text-muted, #6c757d);
+}
+
 .rh-dash-nav {
   display: flex;
   flex-direction: column;
