@@ -1,5 +1,7 @@
 """Custom user: email login and global SUPER_ADMIN / ADMIN / RESEARCHER roles."""
 
+import uuid
+
 from django.contrib.auth.models import AbstractUser, UserManager as DjangoUserManager
 from django.db import models
 
@@ -28,6 +30,7 @@ class UserManager(DjangoUserManager):
 class User(AbstractUser):
     """AbstractUser + unique email as login id + global role."""
 
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     email = models.EmailField("email address", unique=True)
     role = models.CharField(
         max_length=20,

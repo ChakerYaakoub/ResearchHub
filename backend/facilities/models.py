@@ -1,5 +1,7 @@
 """Installation (facility) and Instrument (device) catalog."""
 
+import uuid
+
 from django.db import models
 
 
@@ -16,6 +18,7 @@ class InstrumentStatus(models.TextChoices):
 class Installation(models.Model):
     """Scientific facility / experimental location (admin-managed)."""
 
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     location = models.CharField(max_length=255, blank=True)
@@ -40,6 +43,7 @@ class Installation(models.Model):
 class Instrument(models.Model):
     """Scientific device available within an installation (admin-managed)."""
 
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     installation = models.ForeignKey(
         Installation,
         on_delete=models.PROTECT,

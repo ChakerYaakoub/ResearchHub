@@ -1,6 +1,7 @@
 """Project invitations by email; membership is created only on accept (Phase 7)."""
 
 import secrets
+import uuid
 from datetime import timedelta
 
 from django.conf import settings
@@ -38,6 +39,7 @@ class Invitation(models.Model):
     Email delivery is Phase 14; token must not appear in normal project list APIs.
     """
 
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     project = models.ForeignKey(
         ResearchProject,
         on_delete=models.CASCADE,
