@@ -8,7 +8,7 @@ from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenRefreshView
 
-from .serializers import LoginSerializer, RegisterSerializer, UserSerializer
+from users.api.serializers import LoginSerializer, RegisterSerializer, UserSerializer
 
 
 def _tokens_for_user(user) -> dict:
