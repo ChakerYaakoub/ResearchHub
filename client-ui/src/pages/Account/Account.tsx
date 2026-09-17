@@ -1,4 +1,7 @@
+import { Form, FormikProvider } from 'formik'
+import { ConfirmDialog } from '../../components/ConfirmDialog'
 import { PageHeader } from '../../components/PageHeader'
+import { TextInput } from '../../components/form/TextInput'
 import { useAccount } from './useAccount'
 
 export function AccountPage() {
@@ -16,181 +19,124 @@ export function AccountPage() {
         <div className="col-12 col-lg-6">
           <div className="border rounded p-3 bg-white h-100">
             <h2 className="h5 mb-3">{vm.t('account.profileSection')}</h2>
-            <form onSubmit={pf.handleSubmit} noValidate>
-              <div className="mb-3">
-                <label className="form-label" htmlFor="account_email">
-                  {vm.t('common.email')}
-                </label>
-                <input
-                  id="account_email"
+            <FormikProvider value={pf}>
+              <Form noValidate>
+                <TextInput
+                  name="email"
+                  label={vm.t('common.email')}
                   type="email"
-                  className="form-control"
-                  value={pf.values.email}
                   disabled
                   readOnly
+                  helperText={vm.t('account.emailHint')}
                 />
-                <div className="form-text">{vm.t('account.emailHint')}</div>
-              </div>
-              <div className="mb-3">
-                <label className="form-label" htmlFor="account_username">
-                  {vm.t('account.username')}
-                </label>
-                <input
-                  id="account_username"
+                <TextInput
                   name="username"
+                  label={vm.t('account.username')}
                   type="text"
-                  className={`form-control${
-                    pf.touched.username && pf.errors.username
-                      ? ' is-invalid'
-                      : ''
-                  }`}
-                  value={pf.values.username}
-                  onChange={pf.handleChange}
-                  onBlur={pf.handleBlur}
-                  disabled={pf.isSubmitting}
                   autoComplete="username"
+                  disabled={pf.isSubmitting}
+                  required
                 />
-                {pf.touched.username && pf.errors.username ? (
-                  <div className="invalid-feedback">{pf.errors.username}</div>
-                ) : null}
-              </div>
-              <div className="mb-3">
-                <label className="form-label" htmlFor="account_first_name">
-                  {vm.t('account.firstName')}
-                </label>
-                <input
-                  id="account_first_name"
+                <TextInput
                   name="first_name"
+                  label={vm.t('account.firstName')}
                   type="text"
-                  className="form-control"
-                  value={pf.values.first_name}
-                  onChange={pf.handleChange}
-                  onBlur={pf.handleBlur}
-                  disabled={pf.isSubmitting}
                   autoComplete="given-name"
-                />
-              </div>
-              <div className="mb-3">
-                <label className="form-label" htmlFor="account_last_name">
-                  {vm.t('account.lastName')}
-                </label>
-                <input
-                  id="account_last_name"
-                  name="last_name"
-                  type="text"
-                  className="form-control"
-                  value={pf.values.last_name}
-                  onChange={pf.handleChange}
-                  onBlur={pf.handleBlur}
                   disabled={pf.isSubmitting}
-                  autoComplete="family-name"
                 />
-              </div>
-              <button
-                type="submit"
-                className="btn btn-primary"
-                disabled={pf.isSubmitting}
-              >
-                {pf.isSubmitting
-                  ? vm.t('account.saving')
-                  : vm.t('account.saveProfile')}
-              </button>
-            </form>
+                <TextInput
+                  name="last_name"
+                  label={vm.t('account.lastName')}
+                  type="text"
+                  autoComplete="family-name"
+                  disabled={pf.isSubmitting}
+                />
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  disabled={pf.isSubmitting}
+                >
+                  {pf.isSubmitting
+                    ? vm.t('account.saving')
+                    : vm.t('account.saveProfile')}
+                </button>
+              </Form>
+            </FormikProvider>
           </div>
         </div>
 
         <div className="col-12 col-lg-6">
           <div className="border rounded p-3 bg-white h-100">
             <h2 className="h5 mb-3">{vm.t('account.passwordSection')}</h2>
-            <form onSubmit={pw.handleSubmit} noValidate>
-              <div className="mb-3">
-                <label className="form-label" htmlFor="account_current_password">
-                  {vm.t('account.currentPassword')}
-                </label>
-                <input
-                  id="account_current_password"
+            <FormikProvider value={pw}>
+              <Form noValidate>
+                <TextInput
                   name="current_password"
+                  label={vm.t('account.currentPassword')}
                   type="password"
-                  className={`form-control${
-                    pw.touched.current_password && pw.errors.current_password
-                      ? ' is-invalid'
-                      : ''
-                  }`}
-                  value={pw.values.current_password}
-                  onChange={pw.handleChange}
-                  onBlur={pw.handleBlur}
-                  disabled={pw.isSubmitting}
                   autoComplete="current-password"
+                  disabled={pw.isSubmitting}
+                  required
                 />
-                {pw.touched.current_password && pw.errors.current_password ? (
-                  <div className="invalid-feedback">
-                    {pw.errors.current_password}
-                  </div>
-                ) : null}
-              </div>
-              <div className="mb-3">
-                <label className="form-label" htmlFor="account_new_password">
-                  {vm.t('account.newPassword')}
-                </label>
-                <input
-                  id="account_new_password"
+                <TextInput
                   name="new_password"
+                  label={vm.t('account.newPassword')}
                   type="password"
-                  className={`form-control${
-                    pw.touched.new_password && pw.errors.new_password
-                      ? ' is-invalid'
-                      : ''
-                  }`}
-                  value={pw.values.new_password}
-                  onChange={pw.handleChange}
-                  onBlur={pw.handleBlur}
-                  disabled={pw.isSubmitting}
                   autoComplete="new-password"
+                  disabled={pw.isSubmitting}
+                  required
                 />
-                {pw.touched.new_password && pw.errors.new_password ? (
-                  <div className="invalid-feedback">
-                    {pw.errors.new_password}
-                  </div>
-                ) : null}
-              </div>
-              <div className="mb-3">
-                <label className="form-label" htmlFor="account_confirm_password">
-                  {vm.t('account.confirmPassword')}
-                </label>
-                <input
-                  id="account_confirm_password"
+                <TextInput
                   name="confirm_password"
+                  label={vm.t('account.confirmPassword')}
                   type="password"
-                  className={`form-control${
-                    pw.touched.confirm_password && pw.errors.confirm_password
-                      ? ' is-invalid'
-                      : ''
-                  }`}
-                  value={pw.values.confirm_password}
-                  onChange={pw.handleChange}
-                  onBlur={pw.handleBlur}
-                  disabled={pw.isSubmitting}
                   autoComplete="new-password"
+                  disabled={pw.isSubmitting}
+                  required
                 />
-                {pw.touched.confirm_password && pw.errors.confirm_password ? (
-                  <div className="invalid-feedback">
-                    {pw.errors.confirm_password}
-                  </div>
-                ) : null}
-              </div>
-              <button
-                type="submit"
-                className="btn btn-primary"
-                disabled={pw.isSubmitting}
-              >
-                {pw.isSubmitting
-                  ? vm.t('account.changingPassword')
-                  : vm.t('account.changePassword')}
-              </button>
-            </form>
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  disabled={pw.isSubmitting}
+                >
+                  {pw.isSubmitting
+                    ? vm.t('account.changingPassword')
+                    : vm.t('account.changePassword')}
+                </button>
+              </Form>
+            </FormikProvider>
+          </div>
+        </div>
+
+        <div className="col-12 col-lg-6">
+          <div className="border rounded p-3 bg-white h-100">
+            <h2 className="h5 mb-3">{vm.t('account.resetEmailSection')}</h2>
+            <p className="text-muted small mb-3">
+              {vm.t('account.resetEmailHint')}
+            </p>
+            <button
+              type="button"
+              className="btn btn-outline-primary"
+              disabled={vm.resetSending}
+              onClick={vm.openResetConfirm}
+            >
+              {vm.t('account.sendResetLink')}
+            </button>
           </div>
         </div>
       </div>
+
+      <ConfirmDialog
+        open={vm.resetConfirmOpen}
+        title={vm.t('account.resetEmailTitle')}
+        message={vm.t('account.resetEmailConfirm')}
+        confirmLabel={vm.t('account.sendResetLink')}
+        cancelLabel={vm.t('common.cancel')}
+        busy={vm.resetSending}
+        busyLabel={vm.t('account.sendingResetLink')}
+        onConfirm={() => void vm.confirmSendResetLink()}
+        onClose={vm.closeResetConfirm}
+      />
     </div>
   )
 }

@@ -86,6 +86,17 @@ export const copy = {
   confirmPassword: 'Confirm new password',
   changePassword: 'Change password',
   changingPassword: 'Changing…',
+  resetEmailSection: 'Reset via email',
+  resetEmailHint:
+    'Forgot your current password? We can email you a one-time link to choose a new one (then sign in here again).',
+  sendResetLink: 'Send reset link',
+  sendingResetLink: 'Sending…',
+  resetEmailTitle: 'Send password reset link?',
+  resetEmailConfirm:
+    'We will email a password reset link to your account address. Continue?',
+  resetEmailSent:
+    'If an account exists for that email, a reset link was sent.',
+  resetFailed: 'Could not send the reset email.',
   profileSaved: 'Profile updated.',
   passwordChanged: 'Password changed.',
   role: 'Role',

@@ -1,7 +1,7 @@
 import { Form, Formik } from 'formik'
 import { Navigate } from 'react-router-dom'
 import { DocumentTitle } from '../../components/DocumentTitle'
-import { PasswordField } from '../../components/PasswordField'
+import { TextInput } from '../../components/form/TextInput'
 import { useLogin, type LoginFormValues } from './useLogin'
 
 export function LoginPage() {
@@ -25,47 +25,21 @@ export function LoginPage() {
               validationSchema={vm.validationSchema}
               onSubmit={vm.onSubmit}
             >
-              {({
-                values,
-                errors,
-                touched,
-                handleChange,
-                handleBlur,
-                isSubmitting,
-              }) => (
+              {({ isSubmitting }) => (
                 <Form noValidate>
-                  <div className="mb-3">
-                    <label className="form-label" htmlFor="email">
-                      {vm.copy.email}
-                    </label>
-                    <input
-                      id="email"
-                      name="email"
-                      type="email"
-                      autoComplete="email"
-                      className={`form-control${touched.email && errors.email ? ' is-invalid' : ''}`}
-                      value={values.email}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                    />
-                    {touched.email && errors.email ? (
-                      <div className="invalid-feedback">{errors.email}</div>
-                    ) : null}
-                  </div>
-                  <PasswordField
-                    id="password"
+                  <TextInput
+                    name="email"
+                    label={vm.copy.email}
+                    type="email"
+                    autoComplete="email"
+                    required
+                  />
+                  <TextInput
                     name="password"
                     label={vm.copy.password}
-                    value={values.password}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
+                    type="password"
                     autoComplete="current-password"
-                    invalid={Boolean(touched.password && errors.password)}
-                    error={
-                      touched.password && errors.password
-                        ? errors.password
-                        : undefined
-                    }
+                    required
                   />
                   <button
                     type="submit"

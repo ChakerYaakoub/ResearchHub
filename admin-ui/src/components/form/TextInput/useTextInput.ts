@@ -1,5 +1,6 @@
 import { useId, useState, type InputHTMLAttributes } from 'react'
 import { useField } from 'formik'
+import { copy } from '../../../copy'
 
 export type TextInputProps = {
   name: string
@@ -58,5 +59,7 @@ export function useTextInput({
     passwordVisible,
     togglePasswordVisible,
     toggleId: `${reactId}-pw-toggle`,
+    showPasswordLabel: copy.showPassword,
+    hidePasswordLabel: copy.hidePassword,
   }
 }

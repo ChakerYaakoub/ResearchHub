@@ -44,3 +44,10 @@ export async function updateMeRequest(
     body: JSON.stringify(body),
   })
 }
+
+export async function requestPasswordReset(email: string): Promise<void> {
+  await apiFetch('/auth/password-reset/', {
+    method: 'POST',
+    body: JSON.stringify({ email }),
+  })
+}

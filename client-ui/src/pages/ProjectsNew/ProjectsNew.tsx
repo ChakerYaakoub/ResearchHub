@@ -31,6 +31,7 @@ export function ProjectsNewPage() {
                   name="title"
                   label={vm.t('projects.fieldTitle')}
                   autoComplete="off"
+                  required
                 />
                 <div className="mb-3">
                   <label className="form-label" htmlFor="description">

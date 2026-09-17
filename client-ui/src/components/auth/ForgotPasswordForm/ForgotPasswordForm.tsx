@@ -25,6 +25,7 @@ export function ForgotPasswordForm(props: ForgotPasswordFormProps) {
               label={vm.t('common.email')}
               type="email"
               autoComplete="email"
+              required
             />
             <button
               className="btn btn-primary w-100"

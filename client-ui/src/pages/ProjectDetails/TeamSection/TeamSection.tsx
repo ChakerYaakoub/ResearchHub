@@ -136,10 +136,14 @@ export function TeamSection(props: TeamSectionProps) {
                     label={vm.t('projects.inviteEmail')}
                     type="email"
                     autoComplete="email"
+                    required
                   />
-                  <div className="mb-3">
+                  <div className="rh-text-input">
                     <label className="form-label" htmlFor="role">
                       {vm.t('projects.inviteRole')}
+                      <span className="rh-required-mark" aria-hidden="true">
+                        *
+                      </span>
                     </label>
                     <select
                       id="role"
@@ -156,6 +160,7 @@ export function TeamSection(props: TeamSectionProps) {
                         {vm.t('projects.roleViewer')}
                       </option>
                     </select>
+                    <div className="rh-text-input-slot">{'\u00a0'}</div>
                   </div>
                   <div className="d-flex flex-wrap justify-content-end gap-2">
                     <button

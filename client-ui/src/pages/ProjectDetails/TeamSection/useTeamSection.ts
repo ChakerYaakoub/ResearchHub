@@ -24,8 +24,14 @@ export type TeamSectionProps = {
 }
 
 export function useTeamSection(props: TeamSectionProps) {
+  // Accepted invites already appear under Collaborators — omit them here.
+  const projectInvitations = props.projectInvitations.filter(
+    (inv) => inv.status !== 'ACCEPTED',
+  )
+
   return {
     ...props,
+    projectInvitations,
     showTitle: Boolean(props.showTitle),
   }
 }

@@ -2,6 +2,7 @@ import { Form, Formik } from 'formik'
 import { ConfirmDialog } from '../../../components/ConfirmDialog'
 import { LoadingState } from '../../../components/LoadingState'
 import { Popup } from '../../../components/Popup'
+import { TextInput } from '../../../components/form/TextInput'
 import type { Publication } from '../../../types/api'
 import { PublicationsSectionSkeleton } from './PublicationsSectionSkeleton'
 import {
@@ -192,103 +193,36 @@ export function PublicationsSection(props: PublicationsSectionProps) {
           validationSchema={vm.validationSchema}
           onSubmit={vm.onSave}
         >
-          {({
-            isSubmitting,
-            values,
-            handleChange,
-            handleBlur,
-            errors,
-            touched,
-          }) => (
+          {({ isSubmitting }) => (
             <Form noValidate>
-              <div className="mb-3">
-                <label className="form-label" htmlFor="pub-title">
-                  {vm.t('publications.fieldTitle')}
-                </label>
-                <input
-                  id="pub-title"
-                  name="title"
-                  className={`form-control${touched.title && errors.title ? ' is-invalid' : ''}`}
-                  value={values.title}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                />
-                {touched.title && errors.title ? (
-                  <div className="invalid-feedback">{errors.title}</div>
-                ) : null}
-              </div>
-              <div className="mb-3">
-                <label className="form-label" htmlFor="authors">
-                  {vm.t('publications.authors')}
-                </label>
-                <input
-                  id="authors"
-                  name="authors"
-                  className={`form-control${touched.authors && errors.authors ? ' is-invalid' : ''}`}
-                  value={values.authors}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                />
-                {touched.authors && errors.authors ? (
-                  <div className="invalid-feedback">{errors.authors}</div>
-                ) : null}
-              </div>
-              <div className="mb-3">
-                <label className="form-label" htmlFor="journal">
-                  {vm.t('publications.journal')}
-                </label>
-                <input
-                  id="journal"
-                  name="journal"
-                  className="form-control"
-                  value={values.journal}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                />
-              </div>
+              <TextInput
+                name="title"
+                label={vm.t('publications.fieldTitle')}
+                required
+              />
+              <TextInput
+                name="authors"
+                label={vm.t('publications.authors')}
+                required
+              />
+              <TextInput name="journal" label={vm.t('publications.journal')} />
               <div className="row g-2">
-                <div className="col-md-6 mb-3">
-                  <label className="form-label" htmlFor="doi">
-                    {vm.t('publications.doi')}
-                  </label>
-                  <input
-                    id="doi"
-                    name="doi"
-                    className="form-control"
-                    value={values.doi}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                  />
+                <div className="col-md-6">
+                  <TextInput name="doi" label={vm.t('publications.doi')} />
                 </div>
-                <div className="col-md-6 mb-3">
-                  <label className="form-label" htmlFor="publication_date">
-                    {vm.t('publications.date')}
-                  </label>
-                  <input
-                    id="publication_date"
+                <div className="col-md-6">
+                  <TextInput
                     name="publication_date"
+                    label={vm.t('publications.date')}
                     type="date"
-                    className="form-control"
-                    value={values.publication_date}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
                   />
                 </div>
               </div>
-              <div className="mb-3">
-                <label className="form-label" htmlFor="url">
-                  {vm.t('publications.url')}
-                </label>
-                <input
-                  id="url"
-                  name="url"
-                  type="url"
-                  className="form-control"
-                  value={values.url}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                />
-              </div>
+              <TextInput
+                name="url"
+                label={vm.t('publications.url')}
+                type="url"
+              />
               <div className="d-flex flex-wrap justify-content-end gap-2">
                 <button
                   type="button"

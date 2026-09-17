@@ -570,6 +570,12 @@
     "confirmPassword": "Confirm new password",
     "passwordMismatch": "Passwords do not match.",
     "changePassword": "Change password",
-    "changingPassword": "Changing…"
+    "changingPassword": "Changing…",
+    "resetEmailSection": "Reset via email",
+    "resetEmailHint": "Forgot your current password? We can email you a one-time link to choose a new one.",
+    "sendResetLink": "Send reset link",
+    "sendingResetLink": "Sending…",
+    "resetEmailTitle": "Send password reset link?",
+    "resetEmailConfirm": "We will email a password reset link to your account address. Continue?"
   }
 }

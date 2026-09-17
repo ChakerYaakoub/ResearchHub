@@ -12,6 +12,8 @@ export type PasswordFieldProps = {
   invalid?: boolean
   error?: string
   disabled?: boolean
+  /** Show a red * on the label. */
+  required?: boolean
 }
 
 export function usePasswordField({
@@ -25,6 +27,7 @@ export function usePasswordField({
   invalid = false,
   error,
   disabled = false,
+  required = false,
 }: PasswordFieldProps) {
   const [visible, setVisible] = useState(false)
 
@@ -39,6 +42,7 @@ export function usePasswordField({
     invalid,
     error,
     disabled,
+    required,
     visible,
     inputType: visible ? 'text' : 'password',
     inputClassName: `form-control rh-password-field-input${invalid ? ' is-invalid' : ''}`,

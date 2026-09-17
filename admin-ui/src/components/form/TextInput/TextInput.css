@@ -45,7 +45,6 @@
   outline: none;
 }
 
-/* Keep control size stable: no Bootstrap invalid icon / padding jump. */
 .rh-text-input .form-control.is-invalid {
   background-image: none;
 }
@@ -58,7 +57,6 @@
   box-shadow: 0 0 0 0.2rem rgba(50, 139, 160, 0.25);
 }
 
-/* Always reserve one line for helper or error so the form does not reflow. */
 .rh-text-input-slot {
   min-height: 1.25rem;
   margin-top: 0.25rem;

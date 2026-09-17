@@ -30,6 +30,11 @@ export function PasswordField(props: PasswordFieldProps) {
     <div className="mb-3">
       <label className="form-label" htmlFor={vm.id}>
         {vm.label}
+        {vm.required ? (
+          <span className="rh-required-mark" aria-hidden="true">
+            *
+          </span>
+        ) : null}
       </label>
       <div className="rh-password-field">
           <input
@@ -42,6 +47,7 @@ export function PasswordField(props: PasswordFieldProps) {
           onBlur={vm.onBlur}
           autoComplete={vm.autoComplete}
           disabled={vm.disabled}
+          aria-required={vm.required || undefined}
           aria-invalid={vm.invalid || undefined}
         />
         <button

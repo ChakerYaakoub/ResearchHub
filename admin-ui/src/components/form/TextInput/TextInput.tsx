@@ -1,4 +1,3 @@
-import { useTranslation } from 'react-i18next'
 import { useTextInput, type TextInputProps } from './useTextInput'
 import './TextInput.css'
 
@@ -25,7 +24,6 @@ function EyeIcon({ open }: { open: boolean }) {
 
 /** Formik-backed Bootstrap control with stable label / message slot height. */
 export function TextInput(props: TextInputProps) {
-  const { t } = useTranslation()
   const vm = useTextInput(props)
 
   return (
@@ -57,8 +55,8 @@ export function TextInput(props: TextInputProps) {
             onClick={vm.togglePasswordVisible}
             aria-label={
               vm.passwordVisible
-                ? t('common.hidePassword')
-                : t('common.showPassword')
+                ? vm.hidePasswordLabel
+                : vm.showPasswordLabel
             }
             aria-pressed={vm.passwordVisible}
             tabIndex={-1}

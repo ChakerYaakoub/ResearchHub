@@ -22,6 +22,7 @@ export function RegisterForm(props: RegisterFormProps) {
               label={vm.t('common.email')}
               type="email"
               autoComplete="email"
+              required
             />
             <TextInput
               name="password"
@@ -29,6 +30,7 @@ export function RegisterForm(props: RegisterFormProps) {
               type="password"
               autoComplete="new-password"
               helperText={vm.t('register.passwordHint')}
+              required
             />
             <button
               className="btn btn-primary w-100"

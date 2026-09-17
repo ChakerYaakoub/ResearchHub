@@ -3,6 +3,8 @@ import { ConfirmDialog } from '../../../components/ConfirmDialog'
 import { LoadingState } from '../../../components/LoadingState'
 import { Popup } from '../../../components/Popup'
 import { StatusBadge } from '../../../components/StatusBadge'
+import { TextInput } from '../../../components/form/TextInput'
+import '../../../components/form/TextInput/TextInput.css'
 import type { Experiment } from '../../../types/api'
 import { ExperimentsSectionSkeleton } from './ExperimentsSectionSkeleton'
 import {
@@ -201,9 +203,12 @@ export function ExperimentsSection(props: ExperimentsSectionProps) {
             touched,
           }) => (
             <Form noValidate>
-              <div className="mb-3">
+              <div className="rh-text-input">
                 <label className="form-label" htmlFor="installation_id">
                   {vm.t('experiments.installation')}
+                  <span className="rh-required-mark" aria-hidden="true">
+                    *
+                  </span>
                 </label>
                 <select
                   id="installation_id"
@@ -227,15 +232,24 @@ export function ExperimentsSection(props: ExperimentsSectionProps) {
                     </option>
                   ))}
                 </select>
-                {touched.installation_id && errors.installation_id ? (
-                  <div className="invalid-feedback">
-                    {errors.installation_id}
-                  </div>
-                ) : null}
+                <div
+                  className={`rh-text-input-slot${touched.installation_id && errors.installation_id ? ' is-error' : ''}`}
+                  role={
+                    touched.installation_id && errors.installation_id
+                      ? 'alert'
+                      : undefined
+                  }
+                >
+                  {(touched.installation_id && errors.installation_id) ||
+                    '\u00a0'}
+                </div>
               </div>
-              <div className="mb-3">
+              <div className="rh-text-input">
                 <label className="form-label" htmlFor="instrument">
                   {vm.t('experiments.instrument')}
+                  <span className="rh-required-mark" aria-hidden="true">
+                    *
+                  </span>
                 </label>
                 <select
                   id="instrument"
@@ -255,32 +269,29 @@ export function ExperimentsSection(props: ExperimentsSectionProps) {
                     </option>
                   ))}
                 </select>
-                {touched.instrument && errors.instrument ? (
-                  <div className="invalid-feedback">{errors.instrument}</div>
-                ) : null}
+                <div
+                  className={`rh-text-input-slot${touched.instrument && errors.instrument ? ' is-error' : ''}`}
+                  role={
+                    touched.instrument && errors.instrument
+                      ? 'alert'
+                      : undefined
+                  }
+                >
+                  {(touched.instrument && errors.instrument) || '\u00a0'}
+                </div>
               </div>
-              <div className="mb-3">
-                <label className="form-label" htmlFor="scheduled_date">
-                  {vm.t('experiments.scheduledDate')}
-                </label>
-                <input
-                  id="scheduled_date"
-                  name="scheduled_date"
-                  type="datetime-local"
-                  className={`form-control${touched.scheduled_date && errors.scheduled_date ? ' is-invalid' : ''}`}
-                  value={values.scheduled_date}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                />
-                {touched.scheduled_date && errors.scheduled_date ? (
-                  <div className="invalid-feedback">
-                    {errors.scheduled_date}
-                  </div>
-                ) : null}
-              </div>
-              <div className="mb-3">
+              <TextInput
+                name="scheduled_date"
+                label={vm.t('experiments.scheduledDate')}
+                type="datetime-local"
+                required
+              />
+              <div className="rh-text-input">
                 <label className="form-label" htmlFor="status">
                   {vm.t('experiments.status')}
+                  <span className="rh-required-mark" aria-hidden="true">
+                    *
+                  </span>
                 </label>
                 <select
                   id="status"
@@ -296,8 +307,9 @@ export function ExperimentsSection(props: ExperimentsSectionProps) {
                     </option>
                   ))}
                 </select>
+                <div className="rh-text-input-slot">{'\u00a0'}</div>
               </div>
-              <div className="mb-3">
+              <div className="rh-text-input">
                 <label className="form-label" htmlFor="notes">
                   {vm.t('experiments.notes')}
                 </label>
@@ -310,6 +322,7 @@ export function ExperimentsSection(props: ExperimentsSectionProps) {
                   onChange={handleChange}
                   onBlur={handleBlur}
                 />
+                <div className="rh-text-input-slot">{'\u00a0'}</div>
               </div>
               <div className="d-flex flex-wrap justify-content-end gap-2">
                 <button

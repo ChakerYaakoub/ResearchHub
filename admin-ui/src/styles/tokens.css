@@ -26,3 +26,9 @@
   --bs-link-color: var(--rh-accent);
   --bs-link-hover-color: #286f80;
 }
+
+.rh-required-mark {
+  color: var(--rh-primary);
+  font-weight: 700;
+  margin-left: 0.15rem;
+}

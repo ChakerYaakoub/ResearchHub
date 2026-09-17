@@ -25,12 +25,14 @@ export function ResetPasswordForm(props: ResetPasswordFormProps) {
               label={vm.t('reset.newPassword')}
               type="password"
               autoComplete="new-password"
+              required
             />
             <TextInput
               name="confirm_password"
               label={vm.t('reset.confirmPassword')}
               type="password"
               autoComplete="new-password"
+              required
             />
             <button
               className="btn btn-primary w-100"

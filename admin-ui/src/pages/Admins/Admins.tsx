@@ -130,6 +130,9 @@ export function AdminsPage() {
           <div className="mb-3">
             <label className="form-label" htmlFor="create_admin_email">
               {vm.copy.email}
+              <span className="rh-required-mark" aria-hidden="true">
+                *
+              </span>
             </label>
             <input
               id="create_admin_email"
@@ -143,6 +146,7 @@ export function AdminsPage() {
               onBlur={formik.handleBlur}
               disabled={vm.creating}
               autoComplete="off"
+              aria-required
             />
             {formik.touched.email && formik.errors.email ? (
               <div className="invalid-feedback">{formik.errors.email}</div>

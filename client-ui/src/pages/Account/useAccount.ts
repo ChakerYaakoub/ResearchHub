@@ -1,9 +1,10 @@
+import { useState } from 'react'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { useTranslation } from 'react-i18next'
 import { ApiError } from '../../api/client'
 import { useAuth } from '../../auth'
-import { updateMeRequest } from '../../auth/authApi'
+import { requestPasswordReset, updateMeRequest } from '../../auth/authApi'
 import { notifyError, notifySuccess } from '../../notify'
 
 export type ProfileFormValues = {
@@ -23,6 +24,8 @@ export type PasswordFormValues = {
 export function useAccount() {
   const { t } = useTranslation()
   const { access, user, setUser } = useAuth()
+  const [resetConfirmOpen, setResetConfirmOpen] = useState(false)
+  const [resetSending, setResetSending] = useState(false)
 
   const profileSchema = Yup.object({
     username: Yup.string().trim().required(t('account.usernameRequired')),
@@ -92,5 +95,40 @@ export function useAccount() {
     },
   })
 
-  return { t, profileForm, passwordForm }
+  function openResetConfirm() {
+    setResetConfirmOpen(true)
+  }
+
+  function closeResetConfirm() {
+    if (resetSending) return
+    setResetConfirmOpen(false)
+  }
+
+  async function confirmSendResetLink() {
+    const email = user?.email?.trim()
+    if (!email) return
+    setResetSending(true)
+    try {
+      await requestPasswordReset(email.toLowerCase())
+      notifySuccess(t('toast.resetEmailSent'))
+      setResetConfirmOpen(false)
+    } catch (err) {
+      notifyError(
+        err instanceof ApiError ? err.message : t('errors.resetFailed'),
+      )
+    } finally {
+      setResetSending(false)
+    }
+  }
+
+  return {
+    t,
+    profileForm,
+    passwordForm,
+    resetConfirmOpen,
+    resetSending,
+    openResetConfirm,
+    closeResetConfirm,
+    confirmSendResetLink,
+  }
 }

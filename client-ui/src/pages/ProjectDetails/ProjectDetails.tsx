@@ -41,7 +41,7 @@ export function ProjectDetailsPage() {
                 label={vm.t(`status.${vm.project.status}`)}
               />
             ) : null}
-            {vm.canComplete ? (
+            {!vm.loading && vm.canComplete ? (
               <button
                 type="button"
                 className="btn btn-primary btn-sm"
@@ -51,7 +51,7 @@ export function ProjectDetailsPage() {
                 {vm.t('projects.complete')}
               </button>
             ) : null}
-            {vm.isOwner ? (
+            {!vm.loading && vm.isOwner ? (
               <button
                 type="button"
                 className="btn btn-outline-danger btn-sm"

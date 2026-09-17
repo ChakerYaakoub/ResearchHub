@@ -570,6 +570,12 @@
     "confirmPassword": "Confirmer le nouveau mot de passe",
     "passwordMismatch": "Les mots de passe ne correspondent pas.",
     "changePassword": "Changer le mot de passe",
-    "changingPassword": "Modification…"
+    "changingPassword": "Modification…",
+    "resetEmailSection": "Réinitialiser par e-mail",
+    "resetEmailHint": "Mot de passe actuel oublié ? Nous pouvons vous envoyer un lien unique pour en choisir un nouveau.",
+    "sendResetLink": "Envoyer le lien",
+    "sendingResetLink": "Envoi…",
+    "resetEmailTitle": "Envoyer un lien de réinitialisation ?",
+    "resetEmailConfirm": "Nous enverrons un lien de réinitialisation à l'adresse de votre compte. Continuer ?"
   }
 }
