@@ -75,3 +75,79 @@ class LoginSerializer(serializers.Serializer):
             raise serializers.ValidationError("This account is disabled.")
         attrs["user"] = user
         return attrs
+
+
+class MeUpdateSerializer(serializers.Serializer):
+    """PATCH current user: profile fields and optional password change."""
+
+    username = serializers.CharField(required=False, max_length=150)
+    first_name = serializers.CharField(
+        required=False, allow_blank=True, max_length=150
+    )
+    last_name = serializers.CharField(
+        required=False, allow_blank=True, max_length=150
+    )
+    current_password = serializers.CharField(
+        required=False, allow_blank=True, write_only=True, style={"input_type": "password"}
+    )
+    new_password = serializers.CharField(
+        required=False, allow_blank=True, write_only=True, style={"input_type": "password"}
+    )
+
+    def validate(self, attrs: dict) -> dict:
+        if "email" in self.initial_data:
+            raise serializers.ValidationError(
+                {"email": "Email cannot be changed."}
+            )
+
+        user: User = self.context["request"].user
+        new_password = (attrs.get("new_password") or "").strip()
+        current_password = attrs.get("current_password") or ""
+
+        if new_password:
+            if not current_password:
+                raise serializers.ValidationError(
+                    {"current_password": "Current password is required."}
+                )
+            if not user.check_password(current_password):
+                raise serializers.ValidationError(
+                    {"current_password": "Current password is incorrect."}
+                )
+            attrs["new_password"] = validate_user_password(new_password)
+        else:
+            attrs.pop("new_password", None)
+            attrs.pop("current_password", None)
+
+        username = attrs.get("username")
+        if username is not None:
+            username = username.strip()
+            if not username:
+                raise serializers.ValidationError(
+                    {"username": "Username cannot be blank."}
+                )
+            if (
+                User.objects.filter(username__iexact=username)
+                .exclude(pk=user.pk)
+                .exists()
+            ):
+                raise serializers.ValidationError(
+                    {"username": "This username is already taken."}
+                )
+            attrs["username"] = username
+
+        return attrs
+
+    def update(self, instance: User, validated_data: dict) -> User:
+        if "username" in validated_data:
+            instance.username = validated_data["username"]
+        if "first_name" in validated_data:
+            instance.first_name = validated_data["first_name"]
+        if "last_name" in validated_data:
+            instance.last_name = validated_data["last_name"]
+
+        new_password = validated_data.get("new_password")
+        if new_password:
+            instance.set_password(new_password)
+
+        instance.save()
+        return instance

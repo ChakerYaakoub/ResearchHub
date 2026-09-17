@@ -117,6 +117,80 @@ class AuthApiTests(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["email"], "me@example.com")
 
+    def test_me_patch_profile_fields(self):
+        user = make_user("profile@example.com")
+        client = auth_client(user)
+        response = client.patch(
+            "/api/auth/me/",
+            {
+                "username": "newname",
+                "first_name": "Chaker",
+                "last_name": "Yaakoub",
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["username"], "newname")
+        self.assertEqual(response.data["first_name"], "Chaker")
+        self.assertEqual(response.data["last_name"], "Yaakoub")
+        self.assertEqual(response.data["email"], "profile@example.com")
+        user.refresh_from_db()
+        self.assertEqual(user.username, "newname")
+        self.assertEqual(user.email, "profile@example.com")
+
+    def test_me_patch_rejects_email_change(self):
+        user = make_user("keep@example.com")
+        client = auth_client(user)
+        response = client.patch(
+            "/api/auth/me/",
+            {"email": "other@example.com", "first_name": "A"},
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        user.refresh_from_db()
+        self.assertEqual(user.email, "keep@example.com")
+
+    def test_me_patch_username_taken(self):
+        make_user("taken@example.com", username="taken")
+        user = make_user("free@example.com", username="free")
+        client = auth_client(user)
+        response = client.patch(
+            "/api/auth/me/",
+            {"username": "taken"},
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_me_patch_password_change(self):
+        user = make_user("pwd@example.com")
+        client = auth_client(user)
+        response = client.patch(
+            "/api/auth/me/",
+            {
+                "current_password": DEFAULT_PASSWORD,
+                "new_password": "NewPass999!",
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        user.refresh_from_db()
+        self.assertTrue(user.check_password("NewPass999!"))
+
+    def test_me_patch_password_wrong_current(self):
+        user = make_user("badpwd@example.com")
+        client = auth_client(user)
+        response = client.patch(
+            "/api/auth/me/",
+            {
+                "current_password": "WrongPass999!",
+                "new_password": "NewPass999!",
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        user.refresh_from_db()
+        self.assertTrue(user.check_password(DEFAULT_PASSWORD))
+
     def test_refresh_issues_new_access(self):
         response = self.client.post(
             "/api/auth/register/",

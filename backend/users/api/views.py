@@ -8,8 +8,12 @@ from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenRefreshView
 
-from users.api.serializers import LoginSerializer, RegisterSerializer, UserSerializer
-
+from users.api.serializers import (
+    LoginSerializer,
+    MeUpdateSerializer,
+    RegisterSerializer,
+    UserSerializer,
+)
 
 def _tokens_for_user(user) -> dict:
     """Issue access + refresh JWTs for a user."""
@@ -71,12 +75,23 @@ class LogoutView(APIView):
 
 
 class MeView(APIView):
-    """GET `/api/auth/me/` — current authenticated user."""
+    """GET/PATCH `/api/auth/me/` — current authenticated user profile."""
 
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
         return Response(UserSerializer(request.user).data)
+
+    def patch(self, request):
+        serializer = MeUpdateSerializer(
+            instance=request.user,
+            data=request.data,
+            partial=True,
+            context={"request": request},
+        )
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+        return Response(UserSerializer(user).data)
 
 
 class RefreshView(TokenRefreshView):
