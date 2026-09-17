@@ -1,3 +1,5 @@
+/** Experiment REST helpers nested under projects + detail by id. */
+
 import { apiFetch } from './client'
 import type { Experiment, ExperimentInput } from '../types/api'
 

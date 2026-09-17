@@ -1,4 +1,8 @@
-"""Invitation create / accept / decline / cancel (Phase 7)."""
+"""Invitation create / accept / decline / cancel (Phase 7).
+
+Security: crypto token, 7-day expiry, email match on accept, membership only
+after accept. Email send is best-effort (create still succeeds if SMTP fails).
+"""
 
 from urllib.parse import urlencode
 

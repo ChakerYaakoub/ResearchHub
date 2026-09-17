@@ -20,7 +20,9 @@ export type PasswordFormValues = {
   confirm_password: string
 }
 
-/** Account profile + password forms for the admin dashboard. */
+/**
+ * `/account`: profile PATCH, password change, optional reset-email confirm.
+ */
 export function useAccount() {
   const { access, user, setUser } = useAuth()
   const [resetConfirmOpen, setResetConfirmOpen] = useState(false)

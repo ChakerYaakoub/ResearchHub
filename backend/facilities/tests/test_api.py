@@ -18,6 +18,8 @@ from test_helpers import (
 
 @override_settings(ADMIN_UI_ORIGINS=["http://localhost:5175"])
 class FacilitiesAdminApiTests(TestCase):
+    """Admin CRUD, filters, researcher blocked from admin write, delete-in-use guards."""
+
     def setUp(self):
         self.admin = make_admin("fadmin@example.com")
         self.admin_api = admin_client(self.admin)
@@ -127,6 +129,8 @@ class FacilitiesAdminApiTests(TestCase):
 
 
 class FacilitiesResearcherReadTests(TestCase):
+    """ACTIVE/AVAILABLE public lists and unavailable instrument rejection on experiments."""
+
     def setUp(self):
         self.user = make_user("picker@example.com")
         self.client = auth_client(self.user)

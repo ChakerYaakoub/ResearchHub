@@ -1,4 +1,8 @@
-"""Proposal submit / review workflows (Phase 6)."""
+"""Proposal submit / review workflows (Phase 6).
+
+Atomic project+proposal status updates. Call from thin views after AuthZ;
+invalid state raises ``WorkflowError``.
+"""
 
 from django.db import transaction
 from django.utils import timezone

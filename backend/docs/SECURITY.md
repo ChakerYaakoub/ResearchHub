@@ -1,8 +1,15 @@
-# ResearchHub Backend — Security & Validation Rules
+# Security & Validation
 
-Never trust `client-ui` or `admin-ui`. Every write path must validate on the server.
+Never trust `client-ui` or `admin-ui`. Every write path validates on the server.
 
-Shared helpers live in `core/validation.py`. Auth abuse controls: `core/honeypot.py`, `core/ratelimit.py`. AuthZ: `core/permissions.py` + filtered selectors.
+| Concern | Location |
+|---------|----------|
+| Text / username / code / HTML | `core/validation.py` |
+| Auth abuse (rate limit, honeypot) | `core/ratelimit.py`, `core/honeypot.py`, `users/api/views.py` |
+| Authorization / admin Origin | `core/permissions.py`, `core/api.py`, app selectors |
+| Workflows | `<app>/services.py` |
+
+Related: [VALIDATION.md](./VALIDATION.md), [AUTHORIZATION.md](./AUTHORIZATION.md), [AUTHENTICATION.md](./AUTHENTICATION.md).
 
 ---
 
@@ -42,28 +49,28 @@ Use the correct DRF / model field so input is parsed and the **final validated v
 | Instant | `DateTimeField` / `DateField`                         |
 | Enum    | `ChoiceField` or model `choices`                      |
 
-DRF may legitimately coerce some representations (e.g. `"123"` → `123` for integer fields). That is fine. What matters: after validation, the value is the expected type and passes constraints. Unparseable or unsafe input must still fail with 400 — do not invent fallbacks that weaken security.
+DRF may coerce some representations (e.g. `"123"` → `123` for integer fields). After validation, the value must be the expected type and pass constraints. Unparseable or unsafe input fails with **400**.
 
 ### 2. Required
 
 - Mark required fields explicitly (`required=True`, model `blank=False`).
-- Decide empty vs null: prefer `""` for optional text; avoid storing HTML/`null` surprises.
+- Prefer `""` for optional text; avoid storing HTML or unexpected `null`.
 - Optional profile fields may be blank; business-critical fields (e.g. project title, publication title/authors) must not be blank after sanitize.
 
 ### 3. Format
 
-- Email: `EmailField` + normalize (`lower().strip()`), uniqueness via `normalize_unique_email` where creating users.
+- Email: `EmailField` + normalize (`lower().strip()`), uniqueness via `normalize_unique_email` when creating users.
 - URL: `URLField`.
 - UUID path/body IDs: `UUIDField` / UUID model PKs.
 - Datetimes: timezone-aware DRF fields.
-- Do not invent formats in the UI only — always re-check here.
+- Formats are always re-checked on the server, not only in the UI.
 
 ### 4. Constraints
 
 - Enforce `max_length` / min length (username ≥ 3, titles ≤ 255, codes ≤ 64).
-- Choices for status/role/kind must match model enums.
+- Choices for status/role/kind match model enums.
 - Uniqueness where it is a **business** property: email, username (case-insensitive where checked), membership `(project, user)`, instrument `(installation, code)`.
-- Invitation `token`: DB `unique=True` is appropriate for crypto random values, but the **security** properties are unpredictability, expiry (7 days), and controlled exposure — not “uniqueness” alone.
+- Invitation `token`: DB `unique=True` for crypto random values; security also depends on unpredictability, 7-day expiry, and controlled exposure.
 
 ### 5. Character / content
 
@@ -74,15 +81,15 @@ DRF may legitimately coerce some representations (e.g. `"123"` → `123` for int
 | Facility `code`            | Alphanumeric, `_`, `-` via `validate_code`                 |
 | Free text                  | Plain text only — see HTML                                 |
 
-Auto-derived usernames from email local-parts are scrubbed with `username_from_email_local`.
+Auto-derived usernames from email local-parts use `username_from_email_local`.
 
 ### 6. HTML
 
 - **HTML is not allowed** in user-supplied text fields.
-- Detect **tag-like markup** (e.g. `<script>…</script>`, `<b>…</b>`) and reject with 400 — not a naive “any `<` / `>`” blacklist.
+- Tag-like markup (e.g. `<script>…</script>`, `<b>…</b>`) is rejected with 400 — not a naive “any `<` / `>`” blacklist.
 - Scientific comparisons like `T < 300` (no tags) remain allowed.
-- Do not rely on the frontend to strip tags.
-- Prefer reject-over-silent-strip so clients know to fix input.
+- The frontend is not relied on to strip tags.
+- Prefer reject-over-silent-strip so clients can fix input.
 
 Implementation: `core.validation.sanitize_plain_text` / `assert_no_html`.
 
@@ -90,8 +97,8 @@ Implementation: `core.validation.sanitize_plain_text` / `assert_no_html`.
 
 - Parameterized ORM only — no raw SQL with user strings.
 - Passwords: Django validators + `set_password` (never store plaintext).
-- **Never expose** internal/server-only secrets, credentials, SMTP passwords, or invitation tokens in normal API list/detail responses (token only on create / invitee “my invitations” where the product requires it).
-- **Never trust** client-provided `role`, `owner`, `project`, `installation`, or permission/capability fields to grant access — set owner/role server-side; take parent project/installation from the authorized URL/object; AuthZ from JWT + permissions + selectors.
+- **Never expose** internal secrets, credentials, SMTP passwords, or invitation tokens in normal API list/detail responses (token only on create / invitee “my invitations” where the product requires it).
+- **Never trust** client-provided `role`, `owner`, `project`, `installation`, or permission fields to grant access — set owner/role server-side; take parent project/installation from the authorized URL/object; AuthZ from JWT + permissions + selectors.
 - Public auth: rate limits (`AUTH_RATE_LIMIT`, `PASSWORD_RESET_RATE_LIMIT`) and honeypot field `company` (ignore when filled).
 - Secrets and SMTP only via environment variables (see root `.env.example`).
 - Invitation tokens: cryptographically secure (`secrets.token_urlsafe`), expire in 7 days, email match on accept.
@@ -100,7 +107,7 @@ Implementation: `core.validation.sanitize_plain_text` / `assert_no_html`.
 ### 8. Relationships
 
 - FK targets must exist (DRF/`PrimaryKeyRelatedField` / model FK).
-- Nest under the project from the URL / permission-checked object — clients must not re-parent resources.
+- Nest under the project from the URL / permission-checked object — clients cannot re-parent resources.
 - Instrument selection: must be AVAILABLE and installation ACTIVE (`assert_instrument_selectable`).
 
 ### 9. Authorization (IDOR)
@@ -119,7 +126,7 @@ Examples already enforced:
 - Login: credentials + `is_active`.
 - Experiment create/update: instrument selectable when changed.
 
-Add serializer `validate()` when two fields must agree (e.g. date ranges if introduced).
+Use serializer `validate()` when two fields must agree (e.g. date ranges).
 
 ### 11. Business rules
 
@@ -137,8 +144,8 @@ Views stay thin: validate input → permission → service → response.
 Models remain the last line of defense:
 
 - UUID PKs, `unique=True`, `UniqueConstraint`, FK `on_delete`, `choices`.
-- Do not remove DB constraints because the serializer “already checks”.
-- Prefer failing closed on integrity errors rather than inventing partial rows.
+- Keep DB constraints even when serializers already check the same rules.
+- Prefer failing closed on integrity errors rather than leaving partial rows.
 
 ---
 
@@ -167,5 +174,3 @@ Models remain the last line of defense:
 7. Confirm matching DB constraints exist or add a migration.
 8. Response must not leak secrets or unnecessary tokens.
 9. Add a focused test (happy path + one abuse/IDOR/validation failure).
-
-Also follow `.cursor/rules/security.mdc` and `docs/API.md`.

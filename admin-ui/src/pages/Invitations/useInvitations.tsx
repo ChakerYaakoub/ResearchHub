@@ -11,6 +11,7 @@ import { copy } from '../../copy'
 import { useAdminListParams } from '../../hooks/useAdminListParams'
 import { notifyError, notifySuccess } from '../../notify'
 
+/** `/invitations`: list + revoke pending (DELETE). */
 export function useInvitations() {
   const { access } = useAuth()
   const listParams = useAdminListParams({ status: 'PENDING' })

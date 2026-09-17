@@ -8,6 +8,7 @@ from test_helpers import add_member, auth_client, make_project, make_user
 
 
 class ProjectCrudApiTests(TestCase):
+    """Create/list/update/delete and collaborator list/remove happy paths."""
     def test_create_sets_owner_and_membership(self):
         owner = make_user("owner@example.com")
         client = auth_client(owner)

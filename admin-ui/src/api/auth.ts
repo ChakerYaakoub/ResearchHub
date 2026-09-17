@@ -1,3 +1,7 @@
+/**
+ * REST helpers for `/auth/…` used by admin-ui login, logout, me, password reset.
+ * Paths are relative to VITE_API_BASE_URL (includes `/api`).
+ */
 import { apiFetch } from './client'
 import type { AuthTokens, AuthUser } from '../auth/authStorage'
 

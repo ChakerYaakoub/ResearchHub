@@ -8,6 +8,7 @@ from test_helpers import admin_client, auth_client, make_admin, make_user
 
 @override_settings(ADMIN_UI_ORIGINS=["http://localhost:5175"])
 class AdminStatsTests(TestCase):
+    """``/api/admin/stats/`` requires platform admin JWT + admin-ui Origin."""
     def test_admin_with_origin_ok(self):
         admin = make_admin()
         client = admin_client(admin)

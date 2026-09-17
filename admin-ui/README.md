@@ -1,32 +1,130 @@
-# React + TypeScript + Vite
+# Admin UI (platform admin app)
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+ResearchHub **admin-ui** — platform administrator panel for stats, researchers, admins (SUPER_ADMIN), projects, proposal review, facilities, publications, and invitations.
 
-Currently, two official plugins are available:
+This README is for developers and maintainers. Stack: **React 19, TypeScript, Vite, React Router 7, Bootstrap 5, Formik, Yup, react-toastify, Vitest**. English copy via [`src/copy.ts`](./src/copy.ts) (no i18n yet).
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Run via Docker from the repository root (`make start`). Official workflow does not require a host Node install.
 
-## React Compiler
+Frontends are never trusted for security. Route guards, role checks, and form validation are **UX only**. The Django API enforces AuthZ and requires request Origin ∈ **`ADMIN_UI_ORIGINS`** for admin routes.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Architecture overview
 
-## Expanding the Oxlint configuration
+Named folders + smart/dumb when logic exists: `useX` (state, effects, API) + `X.tsx` (markup).
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```text
+BrowserRouter
+  AuthProvider              # JWT session (rh_admin_*)
+    Routes
+      /login                # public
+      RequireAuth
+        DashboardLayout
+          pages…
+          RequireSuperAdmin → /admins
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+Details: [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md).
+
+## Folder structure
+
+```text
+admin-ui/
+├── src/
+│   ├── api/            # client, auth, admin, adminQuery
+│   ├── auth/           # AuthProvider, token storage, refresh
+│   ├── components/     # Layout, guards, filters, primitives
+│   ├── hooks/          # useAdminListParams
+│   ├── pages/          # Route pages
+│   ├── styles/         # Brand tokens
+│   ├── test/           # Vitest setup
+│   ├── App.tsx
+│   ├── main.tsx
+│   ├── copy.ts         # English UI strings
+│   └── notify.ts
+└── docs/               # Developer documentation
+```
+
+## Routing
+
+| Area | Routes |
+|------|--------|
+| Public | `/login` |
+| Authenticated | `/`, `/users`, `/projects`, `/projects/:id`, `/proposals`, `/installations`, `/instruments`, `/publications`, `/invitations`, `/account` |
+| SUPER_ADMIN only (UX) | `/admins` |
+
+## Authentication
+
+- Dedicated **login page** (not modal)
+- JWT in `localStorage`: `rh_admin_access`, `rh_admin_refresh`, `rh_admin_user`
+- Only `SUPER_ADMIN` \| `ADMIN` accepted after login (researchers rejected UX-side)
+- Refresh on 401 via single-flight `ensureFreshAccess`
+
+See [`docs/AUTHENTICATION.md`](./docs/AUTHENTICATION.md).
+
+## Origin allowlist
+
+Admin API calls must come from an Origin listed in backend `ADMIN_UI_ORIGINS` (typically `http://localhost:5175` locally). See [`docs/ORIGIN.md`](./docs/ORIGIN.md).
+
+## API client
+
+Native `fetch` through [`src/api/client.ts`](./src/api/client.ts). Domain helpers in [`api/admin.ts`](./src/api/admin.ts) and [`api/auth.ts`](./src/api/auth.ts). Map: [`docs/API.md`](./docs/API.md).
+
+## State
+
+React Context only (`AuthProvider`). List filters sync to the URL (`useAdminListParams`); filtering is server-side via query strings.
+
+## Forms
+
+Formik + Yup. Frontend validation is UX only.
+
+## Permissions (UI)
+
+| Role | UI |
+|------|-----|
+| SUPER_ADMIN | Full app including Admins |
+| ADMIN | All except `/admins` |
+| RESEARCHER | Cannot use admin-ui |
+
+See [`docs/AUTHORIZATION.md`](./docs/AUTHORIZATION.md) and [`docs/WORKFLOWS.md`](./docs/WORKFLOWS.md) for privileged actions (approve/reject, deactivate, deletes, create admin).
+
+## Testing
+
+```bash
+make test-admin-ui
+```
+
+Coverage map: [`docs/TESTING.md`](./docs/TESTING.md).
+
+## Local development
+
+```bash
+# from repo root
+cp .env.example .env
+make start
+make test-admin-ui
+make shell-admin-ui
+```
+
+| Variable | Purpose |
+|----------|---------|
+| `VITE_API_BASE_URL` | API base including `/api` |
+| `ADMIN_UI_PORT` | Vite listen port (default 5175) |
+| `ADMIN_UI_ORIGINS` | Backend allowlist (must include this app Origin) |
+
+See [`docs/DEVELOPMENT.md`](./docs/DEVELOPMENT.md).
+
+## Build
+
+```bash
+docker compose exec admin-ui npm run build
+docker compose exec admin-ui npm run preview
+```
+
+See [`docs/DEPLOYMENT.md`](./docs/DEPLOYMENT.md).
+
+## Documentation
+
+| Doc | Purpose |
+|-----|---------|
+| [`docs/`](./docs/) | Full hub (architecture, auth, Origin, API, workflows, …) |
+| [`docs/TROUBLESHOOTING.md`](./docs/TROUBLESHOOTING.md) | Common local failures |

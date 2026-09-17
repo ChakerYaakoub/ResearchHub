@@ -6,6 +6,7 @@ import { useAuth } from '../../auth'
 import { copy } from '../../copy'
 import { useAdminListParams } from '../../hooks/useAdminListParams'
 
+/** `/publications`: read-only list + detail popup (no admin CRUD). */
 export function usePublications() {
   const { access } = useAuth()
   const listParams = useAdminListParams()

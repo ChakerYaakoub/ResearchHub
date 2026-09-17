@@ -9,6 +9,8 @@ from experiments.models import Experiment
 
 
 class ExperimentSerializer(serializers.ModelSerializer):
+    """Experiment payload — project is URL-bound; instrument must be selectable when set/changed."""
+
     instrument_code = serializers.CharField(source="instrument.code", read_only=True)
     instrument_name = serializers.CharField(source="instrument.name", read_only=True)
     installation_id = serializers.UUIDField(

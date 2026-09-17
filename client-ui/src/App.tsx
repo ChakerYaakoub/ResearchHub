@@ -1,7 +1,6 @@
 /**
- * Client app: public marketing + separate dashboard shell (Phase 10).
- * Tokens stay on this origin only.
- * Auth uses button-opened modal (no /login|/register routes).
+ * Client app: public marketing + researcher dashboard.
+ * Auth is modal-only (no /login|/register routes). JWT stays on this origin.
  */
 import { Route, Routes } from 'react-router-dom'
 import { AuthProvider } from './auth'

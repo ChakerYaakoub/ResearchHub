@@ -13,7 +13,7 @@ export type ForgotFormValues = {
   email: string
 }
 
-/** Forgot-password form: request reset email. */
+/** Forgot-password Formik: POST reset-request; does not change session. */
 export function useForgotPasswordForm({
   onSwitchToLogin,
 }: ForgotPasswordFormProps) {

@@ -15,6 +15,10 @@ import { notifyError, notifySuccess } from '../../notify'
 export type ReviewKind = 'approve' | 'reject'
 export type ProposalFilter = '' | 'DRAFT' | 'PENDING' | 'APPROVED' | 'REJECTED'
 
+/**
+ * `/proposals`: list/filter + approve/reject with review comment dialog.
+ * POST approve/reject require admin Origin on the backend.
+ */
 export function useProposals() {
   const { access } = useAuth()
   const listParams = useAdminListParams({ status: 'PENDING' })

@@ -1,3 +1,5 @@
+/** Facilities catalog: ACTIVE installations and AVAILABLE instruments. */
+
 import { apiFetch } from './client'
 import type { Installation, Instrument } from '../types/api'
 

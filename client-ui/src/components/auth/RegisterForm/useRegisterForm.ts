@@ -10,7 +10,10 @@ export type RegisterFormProps = {
   onSwitchToLogin: () => void
 }
 
-/** Register form state and Formik submit. */
+/**
+ * Register Formik wiring: Yup schema + AuthContext.register (honeypot `company`).
+ * Same UX validation caveats as login — backend is authoritative.
+ */
 export function useRegisterForm({
   onSuccess,
   onSwitchToLogin,

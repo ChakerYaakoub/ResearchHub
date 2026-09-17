@@ -5,7 +5,9 @@ import { ApiError } from '../../api/client'
 import { useAuth } from '../../auth'
 import type { Project } from '../../types/api'
 
-/** Load visible projects for the authenticated user. */
+/**
+ * Authenticated `/projects`: GET list for the current user (membership-scoped by API).
+ */
 export function useProjects() {
   const { t } = useTranslation()
   const { access } = useAuth()

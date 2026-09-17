@@ -7,6 +7,10 @@ import {
   type ReactNode,
 } from 'react'
 
+/**
+ * Modal-only auth UI state (no `/login` routes).
+ * Separate from JWT session (`AuthProvider`); this only controls which form is open.
+ */
 export type AuthModalMode = 'login' | 'register' | 'forgot' | 'reset'
 
 const OPEN_LOGIN_FLAG = 'rh_open_login'
@@ -24,17 +28,22 @@ type AuthUiValue = {
 
 const AuthUiContext = createContext<AuthUiValue | null>(null)
 
-/** Flag RequireAuth sets so PublicLayout can open the login modal once. */
+/**
+ * Set by RequireAuth before redirecting home so AuthModalHost can open login once.
+ * Uses sessionStorage so the flag survives the Navigate remount.
+ */
 export function requestLoginModal() {
   sessionStorage.setItem(OPEN_LOGIN_FLAG, '1')
 }
 
+/** One-shot read used by AuthModalHost after landing on `/`. */
 export function consumeLoginModalRequest(): boolean {
   if (sessionStorage.getItem(OPEN_LOGIN_FLAG) !== '1') return false
   sessionStorage.removeItem(OPEN_LOGIN_FLAG)
   return true
 }
 
+/** Provides open/mode + openLogin/Register/Forgot/Reset for marketing + deep links. */
 export function AuthUiProvider({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false)
   const [mode, setMode] = useState<AuthModalMode>('login')

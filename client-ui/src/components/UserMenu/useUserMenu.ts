@@ -4,7 +4,10 @@ export type UseUserMenuArgs = {
   onLogout: () => void | Promise<void>
 }
 
-/** Controlled account dropdown open/close + outside click. */
+/**
+ * Controlled account dropdown (Account + Log out).
+ * Outside-click closes; logout is provided by the parent layout.
+ */
 export function useUserMenu({ onLogout }: UseUserMenuArgs) {
   const [open, setOpen] = useState(false)
   const rootRef = useRef<HTMLDivElement | null>(null)

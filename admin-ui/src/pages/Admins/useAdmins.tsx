@@ -19,6 +19,9 @@ const createSchema = Yup.object({
   username: Yup.string().trim(),
 })
 
+/**
+ * `/admins` (SUPER_ADMIN UX): list/create admins; activate/deactivate (not self / not SUPER_ADMIN).
+ */
 export function useAdmins() {
   const { access, user: me } = useAuth()
   const [users, setUsers] = useState<AdminUser[]>([])

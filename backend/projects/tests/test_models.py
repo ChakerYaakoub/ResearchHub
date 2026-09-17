@@ -10,6 +10,7 @@ from test_helpers import make_project, make_user
 
 
 class ModelConstraintTests(TestCase):
+    """DB uniqueness: membership, one proposal per project, invitation token."""
     def test_unique_project_membership(self):
         owner = make_user("owner@example.com")
         other = make_user("other@example.com")

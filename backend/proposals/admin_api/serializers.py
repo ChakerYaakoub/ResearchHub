@@ -6,6 +6,8 @@ from proposals.models import Proposal
 
 
 class AdminProposalSerializer(serializers.ModelSerializer):
+    """Admin proposal row with project title/status for list and nested detail."""
+
     project_title = serializers.CharField(source="project.title", read_only=True)
     project_status = serializers.CharField(source="project.status", read_only=True)
 

@@ -1,6 +1,7 @@
 import { Popup } from '../Popup'
 import { useConfirmDialog, type ConfirmDialogProps } from './useConfirmDialog'
 
+/** Confirm/cancel modal built on Popup — used for deletes and proposal review. */
 export function ConfirmDialog(props: ConfirmDialogProps) {
   const vm = useConfirmDialog(props)
 

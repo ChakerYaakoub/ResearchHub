@@ -15,6 +15,7 @@ export type ConfirmDialogProps = {
   children?: ReactNode
 }
 
+/** Pass-through props for ConfirmDialog (Popup + confirm/cancel actions). */
 export function useConfirmDialog(props: ConfirmDialogProps) {
   return {
     open: props.open,

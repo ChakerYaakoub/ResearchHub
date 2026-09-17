@@ -11,7 +11,10 @@ export type LoginFormProps = {
   onSwitchToForgot: () => void
 }
 
-/** Login form state and Formik submit. */
+/**
+ * Login Formik wiring: Yup schema + AuthContext.login (passes honeypot `company`).
+ * Errors surface via toast; onSuccess closes modal / navigates via AuthModalHost.
+ */
 export function useLoginForm({
   onSuccess,
   onSwitchToRegister,

@@ -1,4 +1,7 @@
-"""Experiment visibility helpers (project-scoped IDOR)."""
+"""Experiment visibility helpers (project-scoped IDOR).
+
+Outsiders resolve to 404 via ``projects_visible_to``, never a leaky 403.
+"""
 import uuid
 
 from django.shortcuts import get_object_or_404

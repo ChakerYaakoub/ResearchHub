@@ -1,11 +1,13 @@
+/**
+ * Project REST helpers (`/projects/…`).
+ * Paths are relative to VITE_API_BASE_URL (includes `/api`).
+ */
 import { apiFetch } from './client'
 import type {
   Project,
   ProjectCreateInput,
   ProjectMembership,
 } from '../types/api'
-
-/** Paths are relative to VITE_API_BASE_URL (already ends with /api). */
 
 export function listProjects(token: string) {
   return apiFetch<Project[]>('/projects/', { token })

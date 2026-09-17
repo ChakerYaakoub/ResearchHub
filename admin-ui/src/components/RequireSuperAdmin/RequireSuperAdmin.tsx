@@ -1,7 +1,10 @@
 import { Navigate, Outlet } from 'react-router-dom'
 import { useRequireSuperAdmin } from './useRequireSuperAdmin'
 
-/** SUPER_ADMIN only; others redirect to dashboard. */
+/**
+ * UX-only SUPER_ADMIN gate for `/admins`.
+ * Non–super-admins redirect home; API still enforces create-admin AuthZ.
+ */
 export function RequireSuperAdmin() {
   const vm = useRequireSuperAdmin()
   if (!vm.isAuthenticated) {

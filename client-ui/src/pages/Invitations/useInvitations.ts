@@ -14,7 +14,10 @@ import {
 import { notifyError, notifySuccess } from '../../notify'
 import type { Invitation } from '../../types/api'
 
-/** My invitations list + accept/decline actions. */
+/**
+ * Authenticated `/invitations`: list mine + accept/decline by token.
+ * Highlights invite from deep-link storage; clears token on leave / after action.
+ */
 export function useInvitations() {
   const { t } = useTranslation()
   const { access } = useAuth()

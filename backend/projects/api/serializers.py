@@ -7,6 +7,8 @@ from projects.models import ProjectMembership, ResearchProject
 
 
 class ResearchProjectSerializer(serializers.ModelSerializer):
+    """Client project payload — owner/status are read-only (set by server/workflows)."""
+
     owner_email = serializers.EmailField(source="owner.email", read_only=True)
 
     class Meta:
@@ -35,6 +37,8 @@ class ResearchProjectSerializer(serializers.ModelSerializer):
 
 
 class ProjectMembershipSerializer(serializers.ModelSerializer):
+    """Read-only collaborator row for project membership lists."""
+
     user_email = serializers.EmailField(source="user.email", read_only=True)
 
     class Meta:

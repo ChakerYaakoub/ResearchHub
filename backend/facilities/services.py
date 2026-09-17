@@ -1,4 +1,4 @@
-"""Facility catalog rules."""
+"""Facility catalog rules (instrument availability for experiments)."""
 
 from facilities.models import (
     InstallationStatus,
@@ -8,6 +8,8 @@ from facilities.models import (
 
 
 class FacilityError(Exception):
+    """Invalid facility/instrument selection for an experiment."""
+
     def __init__(self, detail: str):
         self.detail = detail
         super().__init__(detail)

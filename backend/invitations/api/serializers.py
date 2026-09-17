@@ -6,6 +6,8 @@ from invitations.models import Invitation, InvitationRole
 
 
 class InvitationCreateSerializer(serializers.Serializer):
+    """Owner create body — email + EDITOR/VIEWER role (never OWNER)."""
+
     email = serializers.EmailField()
     role = serializers.ChoiceField(choices=InvitationRole.choices)
 

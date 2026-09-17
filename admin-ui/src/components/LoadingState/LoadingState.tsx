@@ -1,6 +1,7 @@
 import { useLoadingState, type LoadingStateProps } from './useLoadingState'
 import './LoadingState.css'
 
+/** Loading spinner for admin list/detail fetches. */
 export function LoadingState(props: LoadingStateProps) {
   const vm = useLoadingState(props)
   const className = [

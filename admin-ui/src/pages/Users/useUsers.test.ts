@@ -1,3 +1,6 @@
+/**
+ * useUsers hook: loads researchers via listResearchers; empty list handling.
+ */
 import { renderHook, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { useUsers } from './useUsers'

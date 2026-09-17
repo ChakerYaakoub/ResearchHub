@@ -1,7 +1,10 @@
 import { Field } from 'formik'
 import './HoneypotField.css'
 
-/** CSS-hidden field bots often fill; leave empty for real users. */
+/**
+ * Hidden Formik field `company` — bots often fill it; humans leave it empty.
+ * Value is sent to login/register; backend rejects non-empty honeypot.
+ */
 export function HoneypotField() {
   return (
     <div className="rh-honeypot" aria-hidden="true">

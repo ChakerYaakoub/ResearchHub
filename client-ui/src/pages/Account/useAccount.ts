@@ -20,7 +20,10 @@ export type PasswordFormValues = {
   confirm_password: string
 }
 
-/** Account profile + password forms for the researcher dashboard. */
+/**
+ * Authenticated `/account`: profile PATCH, password change, optional reset-email confirm.
+ * Email is read-only in the form; platform `user.role` is not used for routing here.
+ */
 export function useAccount() {
   const { t } = useTranslation()
   const { access, user, setUser } = useAuth()

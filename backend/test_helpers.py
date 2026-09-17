@@ -1,4 +1,8 @@
-"""Shared helpers for Django/DRF API tests (not a Django app)."""
+"""Shared helpers for Django/DRF API tests (not a Django app).
+
+Prefer these factories over ad-hoc user/project setup so AuthZ and Origin
+headers stay consistent across the suite. See ``backend/docs/TESTING.md``.
+"""
 
 from django.conf import settings
 from rest_framework.test import APIClient
@@ -37,6 +41,7 @@ def make_admin(
     password: str = DEFAULT_PASSWORD,
     **extra,
 ) -> User:
+    """Create a platform ``ADMIN`` user (still needs Origin for admin API calls)."""
     return make_user(email, password=password, global_role=GlobalRole.ADMIN, **extra)
 
 
@@ -46,6 +51,7 @@ def make_super_admin(
     password: str = DEFAULT_PASSWORD,
     **extra,
 ) -> User:
+    """Create a platform ``SUPER_ADMIN`` (can create other admins)."""
     return make_user(
         email, password=password, global_role=GlobalRole.SUPER_ADMIN, **extra
     )
@@ -60,7 +66,7 @@ def auth_client(user: User) -> APIClient:
 
 
 def admin_client(user: User) -> APIClient:
-    """Authenticated client plus admin-ui Origin header."""
+    """Authenticated client plus admin-ui Origin header (``ADMIN_UI_ORIGINS[0]``)."""
     client = auth_client(user)
     origins = getattr(settings, "ADMIN_UI_ORIGINS", []) or ["http://localhost:5175"]
     client.defaults["HTTP_ORIGIN"] = origins[0].rstrip("/")
@@ -109,6 +115,7 @@ def add_member(
     user: User,
     role: str = MembershipRole.EDITOR,
 ) -> ProjectMembership:
+    """Add or update a collaborator membership on ``project``."""
     membership, _ = ProjectMembership.objects.update_or_create(
         project=project,
         user=user,

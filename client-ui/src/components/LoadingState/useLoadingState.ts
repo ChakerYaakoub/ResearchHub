@@ -9,6 +9,7 @@ export type LoadingStateProps = {
   overlay?: boolean
 }
 
+/** Pass-through props for LoadingState (spinner / overlay variants). */
 export function useLoadingState(props: LoadingStateProps) {
   return {
     label: props.label,

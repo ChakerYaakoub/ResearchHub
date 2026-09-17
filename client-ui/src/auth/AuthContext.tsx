@@ -1,3 +1,7 @@
+/**
+ * Auth session context: JWT user/access, login/register/logout.
+ * Tokens persist in localStorage (this origin only). Route protection is UX-only.
+ */
 import {
   createContext,
   useCallback,

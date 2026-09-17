@@ -62,7 +62,11 @@ function canMutateKind(
   return status === 'APPROVED' || status === 'IN_PROGRESS'
 }
 
-/** Experiments list + create/edit/delete (planned vs executed). */
+/**
+ * Experiments tab: list + CRUD.
+ * UI gates: PLANNED when DRAFT/REJECTED; EXECUTED when APPROVED/IN_PROGRESS.
+ * Facilities catalogs load for installation/instrument selects. Backend enforces kinds.
+ */
 export function useExperimentsSection({
   projectId,
   project,

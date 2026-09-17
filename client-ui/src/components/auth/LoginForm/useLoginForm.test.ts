@@ -1,3 +1,6 @@
+/**
+ * LoginForm hook: successful submit calls AuthContext.login; ApiError surfaces via toast.
+ */
 import { act, renderHook } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { ApiError } from '../../../api/client'

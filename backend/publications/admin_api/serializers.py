@@ -6,6 +6,8 @@ from publications.models import Publication
 
 
 class AdminPublicationSerializer(serializers.ModelSerializer):
+    """Read-only admin publication row with project title."""
+
     project_title = serializers.CharField(source="project.title", read_only=True)
 
     class Meta:

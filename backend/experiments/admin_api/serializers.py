@@ -6,6 +6,8 @@ from experiments.models import Experiment
 
 
 class AdminExperimentSerializer(serializers.ModelSerializer):
+    """Read-only admin experiment row with project and instrument labels."""
+
     project_title = serializers.CharField(source="project.title", read_only=True)
     instrument_code = serializers.CharField(source="instrument.code", read_only=True)
     instrument_name = serializers.CharField(source="instrument.name", read_only=True)

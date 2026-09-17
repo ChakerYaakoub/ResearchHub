@@ -23,6 +23,10 @@ export type TeamSectionProps = {
   showTitle?: boolean
 }
 
+/**
+ * Team panel: collaborators + non-accepted invitations.
+ * Invite/cancel actions are owned by useProjectDetails (owner-only UI).
+ */
 export function useTeamSection(props: TeamSectionProps) {
   // Accepted invites already appear under Collaborators — omit them here.
   const projectInvitations = props.projectInvitations.filter(

@@ -5,7 +5,7 @@ import './HowItWorks.css'
 type TextBlock = { title: string; body: string }
 type WorkflowStep = TextBlock & { status: string; items?: string[] }
 
-/** Commercial overview of the researcher project journey. */
+/** Public `/how-it-works`: commercial overview from i18n only (no API). */
 export function HowItWorksPage() {
   const { t } = useTranslation()
   const meta = usePageMeta({ pageKey: 'howItWorks' })

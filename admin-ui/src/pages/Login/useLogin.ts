@@ -10,6 +10,10 @@ export type LoginFormValues = {
   password: string
 }
 
+/**
+ * `/login` Formik wiring: Yup UX validation + AuthContext.login.
+ * On success navigates to `/`. Backend + Origin remain authoritative.
+ */
 export function useLogin() {
   const { login, isAuthenticated } = useAuth()
   const navigate = useNavigate()

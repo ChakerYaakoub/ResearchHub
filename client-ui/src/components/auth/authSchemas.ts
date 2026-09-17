@@ -1,7 +1,10 @@
 import type { TFunction } from 'i18next'
 import * as Yup from 'yup'
 
-/** Shared Yup schemas; messages come from i18n via `t`. */
+/**
+ * Client-side Yup schemas for auth forms (UX only).
+ * Backend still validates credentials, password policy, and honeypot.
+ */
 export function loginSchema(t: TFunction) {
   return Yup.object({
     email: Yup.string()

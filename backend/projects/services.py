@@ -1,4 +1,8 @@
-"""Project lifecycle transitions (Phase 6)."""
+"""Project lifecycle transitions (Phase 6).
+
+Directed status graph + experiment/publication mutate gates. Views call these
+after AuthZ; invalid edges raise ``WorkflowError`` → HTTP 400.
+"""
 
 from django.db import transaction
 

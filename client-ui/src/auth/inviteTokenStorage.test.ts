@@ -1,3 +1,6 @@
+/**
+ * Unit tests for invite token in sessionStorage (email deep-link → invitations page).
+ */
 import { beforeEach, describe, expect, it } from 'vitest'
 import {
   clearInviteToken,
