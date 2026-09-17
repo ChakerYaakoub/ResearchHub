@@ -1,4 +1,8 @@
-"""Project visibility and role lookup (AuthZ helpers)."""
+"""Project visibility and role lookup (AuthZ helpers).
+
+IDOR defense: list/detail always go through ``projects_visible_to`` /
+``get_visible_project`` so outsiders never see soft-deleted or non-member rows.
+"""
 import uuid
 
 from django.db.models import Q, QuerySet

@@ -9,6 +9,8 @@ from test_helpers import add_member, auth_client, make_project, make_user
 
 
 class PublicationApiTests(TestCase):
+    """Member vs viewer AuthZ, outsider 404, and EXISTING/RESULTING mutate gates."""
+
     def setUp(self):
         self.owner = make_user("owner@example.com")
         self.viewer = make_user("viewer@example.com")

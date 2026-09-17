@@ -14,6 +14,8 @@ from core.validation import (
 
 
 class ValidationHelpersTests(SimpleTestCase):
+    """Unit tests for ``core.validation`` (HTML reject, charset, titles, codes)."""
+
     def test_sanitize_rejects_html_tags(self):
         with self.assertRaises(ValidationError):
             sanitize_plain_text('<script>alert(1)</script>')

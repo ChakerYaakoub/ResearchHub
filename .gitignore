@@ -45,7 +45,10 @@ Thumbs.db
 
 # Local AI / agent scaffolding (not part of the public repo)
 .cursor/
-docs/
+# Root-only local docs (agent specs). Nested docs like backend/docs/ stay tracked.
+/docs/
+!/backend/docs/
+!/backend/docs/**
 AGENTS.md
 
 # Local phase task plans (never commit)

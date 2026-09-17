@@ -8,6 +8,7 @@ from test_helpers import add_member, auth_client, make_admin, make_project, make
 
 
 class ProjectIdorTests(TestCase):
+    """Outsider 404, viewer/editor limits, invite AuthZ, platform admin visibility."""
     def setUp(self):
         self.owner = make_user("owner@example.com")
         self.editor = make_user("editor@example.com")

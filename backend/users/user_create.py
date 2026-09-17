@@ -18,6 +18,7 @@ def generate_temporary_password(length: int = 8) -> str:
 
 
 def normalize_unique_email(value: str) -> str:
+    """Lower/strip email and reject if already registered (case-insensitive)."""
     email = value.lower().strip()
     if User.objects.filter(email__iexact=email).exists():
         raise serializers.ValidationError("A user with this email already exists.")
@@ -25,6 +26,7 @@ def normalize_unique_email(value: str) -> str:
 
 
 def validate_user_password(value: str) -> str:
+    """Run Django password validators; raise ValidationError on weak passwords."""
     validate_password(value)
     return value
 

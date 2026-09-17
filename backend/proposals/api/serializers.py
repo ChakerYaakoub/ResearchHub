@@ -7,6 +7,8 @@ from proposals.models import Proposal
 
 
 class ProposalSerializer(serializers.ModelSerializer):
+    """Client proposal body — status/timestamps/review fields are workflow-owned (read-only)."""
+
     class Meta:
         model = Proposal
         fields = (

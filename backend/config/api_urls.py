@@ -1,4 +1,8 @@
-"""Aggregate `/api/` URL includes for ResearchHub domain apps."""
+"""Aggregate `/api/` URL includes for ResearchHub domain apps.
+
+Mounted at `/api/` from `config.urls`. Auth and admin user routes come from
+`users`; remaining domain apps include their own `urls.py` (client + admin).
+"""
 
 from django.urls import include, path
 

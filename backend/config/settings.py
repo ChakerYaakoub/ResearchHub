@@ -2,8 +2,12 @@
 ResearchHub Django settings.
 
 Secrets and env-specific values come from environment variables
-(see repo root `.env.example`). Compose injects them in Docker; `load_dotenv`
-also reads a local `.env` for tooling outside Compose.
+(see repo root `.env.example` and `backend/.env.example`). Compose injects
+them in Docker; `load_dotenv` also reads a local `.env` for tooling outside
+Compose.
+
+Backend developer docs: `backend/docs/` (architecture, auth, AuthZ, workflows).
+Security rules: `backend/docs/SECURITY.md`.
 """
 
 import os

@@ -12,6 +12,8 @@ from users.models import GlobalRole, User
 
 @override_settings(RATELIMIT_ENABLE=False)
 class AuthApiTests(TestCase):
+    """Register/login/me/refresh/logout, password reset, and honeypot (rate limit off)."""
+
     def setUp(self):
         self.client = APIClient()
 

@@ -13,6 +13,8 @@ from users.user_create import (
 
 
 class AdminUserSerializer(serializers.ModelSerializer):
+    """Admin-panel user row (includes ``is_active`` / ``date_joined``; no password)."""
+
     class Meta:
         model = User
         fields = (

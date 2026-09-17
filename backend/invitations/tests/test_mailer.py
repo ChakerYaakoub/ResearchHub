@@ -15,6 +15,8 @@ from test_helpers import auth_client, make_project, make_user
     CLIENT_UI_ORIGIN="http://client.test",
 )
 class InvitationMailerTests(TestCase):
+    """Invitation email content (login vs register link) and SMTP-failure resilience."""
+
     def setUp(self):
         self.owner = make_user("owner@example.com")
         self.existing = make_user("existing@example.com")
@@ -22,6 +24,7 @@ class InvitationMailerTests(TestCase):
         self.owner_client = auth_client(self.owner)
 
     def _create_invite(self, email: str, role="EDITOR"):
+        """Create invitation and return response data (asserts 201)."""
         response = self.owner_client.post(
             f"/api/projects/{self.project.id}/invitations/",
             {"email": email, "role": role},

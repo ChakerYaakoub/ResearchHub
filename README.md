@@ -91,9 +91,7 @@ PostgreSQL
 User → DuckDNS → Nginx → client-ui | admin-ui | Django API → PostgreSQL
 ```
 
-## Project status
-
-**Phase 9 complete** — public `client-ui` marketing pages + JWT login/register (brand tokens, responsive).  
+## Project layout
 
 ```text
 backend/          # Django domain apps + /api/
@@ -106,7 +104,43 @@ deploy/           # Google Cloud / production helpers (Phase 17)
 docker-compose.yml# Local Docker Compose
 ```
 
-Next: **Phase 10** — Researcher dashboard (`client-ui`).
+Phase status: see `docs/PROGRESS.md` (currently Phase 15 — CI/CD is next after Mailer).
+
+## Backend
+
+The Django API is the system of record for users, projects, proposals, experiments, publications, invitations, and facilities. It enforces authentication, authorization (including IDOR-safe querysets), validation, and business workflows. **client-ui** and **admin-ui** are separate origins and must not be trusted for security.
+
+| Area | Summary |
+|------|---------|
+| Stack | Python, Django, DRF, PostgreSQL, SimpleJWT |
+| Auth | JWT access + refresh; register/login/me/logout/password-reset |
+| AuthZ | Project OWNER/EDITOR/VIEWER + platform SUPER_ADMIN/ADMIN/RESEARCHER; admin routes need Origin ∈ `ADMIN_UI_ORIGINS` |
+| Workflows | Proposal submit/approve/reject; experiment & publication kind gates; invitations (7-day token, email match) |
+| Security | Server-side validation, rate limits, honeypot, no invitation tokens on project lists |
+
+```text
+client-ui / admin-ui
+        │  REST + JWT
+        ▼
+Django + DRF  →  PostgreSQL
+```
+
+Useful commands (Docker-first):
+
+```bash
+make start
+make migrate
+make test-backend
+make shell-backend
+```
+
+**Documentation**
+
+| Doc | Purpose |
+|-----|---------|
+| [`backend/README.md`](backend/README.md) | Backend entry point |
+| [`backend/docs/`](backend/docs/) | Architecture, AuthN/AuthZ, security, workflows, API map, testing, deploy |
+| [`backend/docs/SECURITY.md`](backend/docs/SECURITY.md) | Security & validation |
 
 ## API authentication
 

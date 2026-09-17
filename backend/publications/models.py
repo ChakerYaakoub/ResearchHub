@@ -15,6 +15,8 @@ class PublicationKind(models.TextChoices):
 
 
 class Publication(models.Model):
+    """Linked publication; ``kind`` drives lifecycle mutate gates (see projects.services)."""
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     project = models.ForeignKey(
         ResearchProject,

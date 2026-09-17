@@ -17,6 +17,8 @@ from test_helpers import (
 
 
 class ExperimentApiTests(TestCase):
+    """Member vs viewer AuthZ, outsider 404, and PLANNED/EXECUTED mutate gates."""
+
     def setUp(self):
         self.owner = make_user("owner@example.com")
         self.viewer = make_user("viewer@example.com")
@@ -119,6 +121,8 @@ class ExperimentApiTests(TestCase):
 
 @override_settings(ADMIN_UI_ORIGINS=["http://localhost:5175"])
 class ExperimentAfterApproveTests(TestCase):
+    """Full approve flow then EXECUTED create (starts IN_PROGRESS)."""
+
     def setUp(self):
         self.owner = make_user("eowner@example.com")
         self.admin = make_admin("eadmin@example.com")

@@ -8,6 +8,7 @@ from test_helpers import admin_client, auth_client, make_admin, make_project, ma
 
 @override_settings(ADMIN_UI_ORIGINS=["http://localhost:5175"])
 class AdminPendingProposalsTests(TestCase):
+    """Admin proposal queue listing gated by Origin + platform admin role."""
     def setUp(self):
         self.owner = make_user("owner@example.com")
         self.admin = make_admin()

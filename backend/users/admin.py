@@ -8,6 +8,8 @@ from .models import GlobalRole, User
 
 @admin.register(User)
 class UserAdmin(DjangoUserAdmin):
+    """Django admin for User; SUPER_ADMIN role/active/superuser fields are protected."""
+
     list_display = ("email", "username", "role", "is_staff", "is_active")
     list_filter = ("role", "is_staff", "is_active")
     search_fields = ("email", "username", "first_name", "last_name")

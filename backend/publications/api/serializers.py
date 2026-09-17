@@ -11,6 +11,8 @@ from publications.models import Publication
 
 
 class PublicationSerializer(serializers.ModelSerializer):
+    """Publication payload — title/authors required plain text; project is URL-bound."""
+
     class Meta:
         model = Publication
         fields = (

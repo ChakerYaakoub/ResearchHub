@@ -21,6 +21,7 @@ from users.models import GlobalRole, User
 
 @override_settings(ADMIN_UI_ORIGINS=["http://localhost:5175"])
 class AdminPanelApiTests(TestCase):
+    """Admin users/admins/projects CRUD gates, filters, soft/hard delete, createsuperuser."""
     def setUp(self):
         self.owner = make_user("owner@example.com")
         self.admin = make_admin()

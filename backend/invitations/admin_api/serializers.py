@@ -6,6 +6,8 @@ from invitations.models import Invitation
 
 
 class AdminInvitationSerializer(serializers.ModelSerializer):
+    """Admin invitation row — never includes token."""
+
     project_title = serializers.CharField(source="project.title", read_only=True)
     invited_by_email = serializers.EmailField(source="invited_by.email", read_only=True)
 

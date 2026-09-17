@@ -23,6 +23,8 @@ class ExperimentStatus(models.TextChoices):
 
 
 class Experiment(models.Model):
+    """Scheduled experiment; ``kind`` drives lifecycle mutate gates (see projects.services)."""
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     project = models.ForeignKey(
         ResearchProject,

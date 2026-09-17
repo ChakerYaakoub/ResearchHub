@@ -30,6 +30,8 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class RegisterSerializer(serializers.Serializer):
+    """Public registration — always creates ``GlobalRole.RESEARCHER`` (role not client-settable)."""
+
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True, style={"input_type": "password"})
     username = serializers.CharField(required=False, allow_blank=True, max_length=150)
@@ -70,6 +72,8 @@ class RegisterSerializer(serializers.Serializer):
 
 
 class LoginSerializer(serializers.Serializer):
+    """Email/password login; rejects inactive accounts (no token issued)."""
+
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True, style={"input_type": "password"})
 

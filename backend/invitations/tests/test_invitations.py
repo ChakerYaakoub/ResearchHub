@@ -12,6 +12,8 @@ from test_helpers import auth_client, make_project, make_user
 
 
 class InvitationApiTests(TestCase):
+    """Create/accept/decline/cancel, token exposure rules, email match, expiry, IDOR."""
+
     def setUp(self):
         self.owner = make_user("owner@example.com")
         self.invitee = make_user("invitee@example.com")
@@ -20,6 +22,7 @@ class InvitationApiTests(TestCase):
         self.owner_client = auth_client(self.owner)
 
     def _create_invite(self, email="invitee@example.com", role="EDITOR"):
+        """Create a pending invitation as the project owner."""
         response = self.owner_client.post(
             f"/api/projects/{self.project.id}/invitations/",
             {"email": email, "role": role},

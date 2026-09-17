@@ -8,6 +8,8 @@ from .models import Installation, Instrument
 
 
 class InstallationSerializer(serializers.ModelSerializer):
+    """Installation catalog row (admin write + researcher read of ACTIVE)."""
+
     class Meta:
         model = Installation
         fields = (
@@ -32,6 +34,8 @@ class InstallationSerializer(serializers.ModelSerializer):
 
 
 class InstrumentSerializer(serializers.ModelSerializer):
+    """Instrument catalog row; code unique per installation."""
+
     installation_name = serializers.CharField(
         source="installation.name", read_only=True
     )

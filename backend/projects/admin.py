@@ -13,6 +13,8 @@ class ProjectMembershipInline(admin.TabularInline):
 
 @admin.register(ResearchProject)
 class ResearchProjectAdmin(admin.ModelAdmin):
+    """Staff admin for projects with inline memberships."""
+
     list_display = ("title", "status", "owner", "created_at", "updated_at")
     list_filter = ("status",)
     search_fields = ("title", "description", "owner__email")

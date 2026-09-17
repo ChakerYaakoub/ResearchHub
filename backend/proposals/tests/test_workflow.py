@@ -18,6 +18,8 @@ from test_helpers import (
 
 @override_settings(ADMIN_UI_ORIGINS=["http://localhost:5175"])
 class WorkflowApiTests(TestCase):
+    """Submit/approve/reject/resubmit, complete, and experiment kind gates across lifecycle."""
+
     def setUp(self):
         self.owner = make_user("owner@example.com")
         self.admin = make_admin()
@@ -26,6 +28,7 @@ class WorkflowApiTests(TestCase):
         self.admin_api = admin_client(self.admin)
 
     def _create_proposal(self):
+        """Create draft proposal text for the owner project (helper for submit tests)."""
         response = self.owner_client.post(
             f"/api/projects/{self.project.id}/proposal/",
             {"methodology": "XAS", "expected_results": "spectra"},

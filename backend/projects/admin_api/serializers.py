@@ -10,6 +10,8 @@ from publications.admin_api.serializers import AdminPublicationSerializer
 
 
 class AdminProjectListSerializer(serializers.ModelSerializer):
+    """Compact admin project row (includes soft-deleted; no nested resources)."""
+
     owner_email = serializers.EmailField(source="owner.email", read_only=True)
 
     class Meta:
@@ -36,6 +38,8 @@ class AdminProjectMemberSerializer(serializers.ModelSerializer):
 
 
 class AdminProjectDetailSerializer(serializers.ModelSerializer):
+    """Full admin project detail with nested proposal, members, experiments, pubs, invites."""
+
     owner_email = serializers.EmailField(source="owner.email", read_only=True)
     member_count = serializers.IntegerField(read_only=True)
     proposal_status = serializers.SerializerMethodField()
