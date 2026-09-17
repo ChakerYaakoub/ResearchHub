@@ -26,7 +26,11 @@ export type ProposalFormValues = {
   expected_results: string
 }
 
-/** Load/save proposal for a project (submit lives on draft Submit step). */
+/**
+ * Proposal tab: GET/create/update methodology + expected results.
+ * Editable only when canEdit and project is DRAFT or REJECTED (UI gate).
+ * Formal submit is on SubmitSection, not here.
+ */
 export function useProposalSection({
   projectId,
   project,

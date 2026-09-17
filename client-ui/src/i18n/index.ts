@@ -1,3 +1,7 @@
+/**
+ * i18next bootstrap for client-ui.
+ * Locales: en.json / fr.json only. Language persisted as `rh_lang` in localStorage.
+ */
 import i18n from 'i18next'
 import { initReactI18next } from 'react-i18next'
 import {
@@ -27,6 +31,10 @@ i18n.on('languageChanged', (lng) => {
   }
 })
 
+/**
+ * Persist language choice and change i18n instance.
+ * Used by PublicLayout / DashboardLayout language switchers.
+ */
 export async function setAppLanguage(lng: AppLanguage): Promise<void> {
   await i18n.changeLanguage(lng)
   localStorage.setItem(I18N_STORAGE_KEY, lng)

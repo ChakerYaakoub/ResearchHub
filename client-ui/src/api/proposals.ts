@@ -1,7 +1,8 @@
+/**
+ * Proposal REST helpers. GET returns null on 404 (no proposal yet).
+ */
 import { apiFetch, ApiError } from './client'
 import type { Proposal, ProposalInput } from '../types/api'
-
-/** Paths relative to VITE_API_BASE_URL (/api). */
 
 export async function getProposal(
   token: string,

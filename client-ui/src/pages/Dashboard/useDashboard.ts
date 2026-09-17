@@ -33,7 +33,10 @@ async function countAcrossProjects(
   return results.reduce((sum, n) => sum + n, 0)
 }
 
-/** Aggregate real project, invitation, experiment, and publication counts. */
+/**
+ * Authenticated `/dashboard`: summary cards from projects + invitations APIs.
+ * Experiment/publication totals are counted by listing each project (N+1 style).
+ */
 export function useDashboard() {
   const { t } = useTranslation()
   const { access } = useAuth()

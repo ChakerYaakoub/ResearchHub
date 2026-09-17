@@ -1,3 +1,6 @@
+/**
+ * InviteDeepLink: ?auth=login|register|reset query params → storage + modal / invitations.
+ */
 import { renderHook } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { getInviteToken } from '../../auth/inviteTokenStorage'

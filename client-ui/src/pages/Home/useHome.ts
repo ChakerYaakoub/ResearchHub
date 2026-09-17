@@ -4,7 +4,10 @@ import { useAuthUi } from '../../components/AuthUi'
 
 export type HomeCard = { title: string; body: string }
 
-/** Home marketing copy + auth CTA handlers (static i18n only). */
+/**
+ * Public `/` marketing page: i18n cards + openRegister CTA.
+ * No API calls; authenticated users still see the page under PublicLayout.
+ */
 export function useHome() {
   const { t } = useTranslation()
   const { isAuthenticated } = useAuth()

@@ -9,7 +9,11 @@ function postAuthPath(): string {
   return getInviteToken() ? '/invitations' : '/dashboard'
 }
 
-/** Renders AuthModal from context; consumes RequireAuth login flag. */
+/**
+ * Bridges AuthUi context → AuthModal.
+ * Hook is colocated in this `.tsx` (other units use useX.ts + X.tsx).
+ * After login/register, routes to `/invitations` if an invite token is pending, else `/dashboard`.
+ */
 export function useAuthModalHost() {
   const { open, mode, close, openLogin, switchMode } = useAuthUi()
   const { isAuthenticated } = useAuth()

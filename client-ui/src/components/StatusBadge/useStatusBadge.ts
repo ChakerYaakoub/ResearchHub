@@ -25,6 +25,10 @@ const KNOWN = new Set([
   'RESEARCHER',
 ])
 
+/**
+ * Maps status strings to CSS tone classes (`rh-status-badge--draft`, etc.).
+ * Unknown statuses fall back to `--unknown`; label text comes from the caller (i18n).
+ */
 export function useStatusBadge(props: StatusBadgeProps) {
   const key = props.status.toUpperCase()
   const toneKey = KNOWN.has(key) ? key.toLowerCase() : 'unknown'

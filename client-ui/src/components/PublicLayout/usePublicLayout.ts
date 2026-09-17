@@ -10,7 +10,10 @@ export const NAV_LINKS = [
   { to: '/documentation', key: 'nav.documentation' },
 ] as const
 
-/** Public marketing shell — auth via modal buttons only. */
+/**
+ * Marketing shell state: nav links, language, mobile menu, modal login/register.
+ * Authenticated users still see this shell on public routes; logout clears JWT.
+ */
 export function usePublicLayout() {
   const { t, i18n } = useTranslation()
   const location = useLocation()

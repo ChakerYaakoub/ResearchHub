@@ -40,7 +40,11 @@ function canMutateKind(
   return status === 'IN_PROGRESS' || status === 'COMPLETED'
 }
 
-/** Publications list + create/edit/delete (existing vs resulting). */
+/**
+ * Publications tab: list + CRUD.
+ * UI gates: EXISTING when DRAFT/REJECTED; RESULTING when IN_PROGRESS/COMPLETED.
+ * Backend remains authoritative for kind/status rules.
+ */
 export function usePublicationsSection({
   projectId,
   project,

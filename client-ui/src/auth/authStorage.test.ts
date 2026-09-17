@@ -1,3 +1,6 @@
+/**
+ * Unit tests for JWT/user persistence in localStorage (`rh_access`, `rh_refresh`, `rh_user`).
+ */
 import { beforeEach, describe, expect, it } from 'vitest'
 import {
   clearAuth,

@@ -2,7 +2,10 @@ import { Navigate, Outlet } from 'react-router-dom'
 import { requestLoginModal } from '../AuthUi'
 import { useRequireAuth } from './useRequireAuth'
 
-/** Redirect unauthenticated users to public home and request login modal. */
+/**
+ * UX-only route gate: if no JWT session, flag login modal and Navigate to `/`.
+ * Does not enforce project roles — backend AuthZ remains authoritative.
+ */
 export function RequireAuth() {
   const vm = useRequireAuth()
 

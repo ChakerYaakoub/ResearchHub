@@ -142,6 +142,40 @@ make shell-backend
 | [`backend/docs/`](backend/docs/) | Architecture, AuthN/AuthZ, security, workflows, API map, testing, deploy |
 | [`backend/docs/SECURITY.md`](backend/docs/SECURITY.md) | Security & validation |
 
+## Client UI
+
+The researcher SPA: public marketing pages, **modal-only** authentication (no `/login` routes), and a dashboard for projects, proposals, experiments, publications, and invitations. JWT is stored per origin in `localStorage`. Route guards and Yup validation are **UX only** — the Django API is authoritative.
+
+| Area | Summary |
+|------|---------|
+| Stack | React 19, TypeScript, Vite, React Router 7, Bootstrap 5, Formik, Yup, i18next (en/fr) |
+| Auth | Modal login/register/forgot/reset; access + refresh JWT; deep links for invite/reset |
+| API | Native `fetch` via `apiFetch` + domain modules; Bearer token from `useAuth()` |
+| State | React Context only (`AuthProvider`, `AuthUiProvider`) |
+| AuthZ UI | Membership `canEdit` / `isOwner` + status/kind gates on Project Details (UX only) |
+
+```text
+Browser → client-ui (:5173)
+              │  REST + JWT
+              ▼
+         Django + DRF  →  PostgreSQL
+```
+
+Useful commands (Docker-first):
+
+```bash
+make start
+make test-client-ui
+make shell-client-ui
+```
+
+**Documentation**
+
+| Doc | Purpose |
+|-----|---------|
+| [`client-ui/README.md`](client-ui/README.md) | Client UI entry point |
+| [`client-ui/docs/`](client-ui/docs/) | Architecture, routing, auth, API, forms, testing, development, deployment |
+
 ## API authentication
 
 Private endpoints use **JWT** (`djangorestframework-simplejwt`).

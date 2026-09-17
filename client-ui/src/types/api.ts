@@ -1,4 +1,4 @@
-/** Shared API types for researcher dashboard. */
+/** Shared API TypeScript types aligned with the ResearchHub REST responses. */
 
 export type ProjectStatus =
   | 'DRAFT'

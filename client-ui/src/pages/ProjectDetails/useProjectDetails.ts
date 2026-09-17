@@ -58,7 +58,13 @@ const NORMAL_SECTIONS: {
   { id: 'publications', labelKey: 'publications.title' },
 ]
 
-/** Project detail shell: metadata, collaborators, owner invite, complete. */
+/**
+ * Authenticated `/projects/:id` shell.
+ *
+ * Loads project + collaborators; owner also loads project invitations.
+ * UI membership gates (`canEdit` / `isOwner`) hide actions — backend AuthZ is authoritative.
+ * Draft/REJECTED + canEdit shows draft-prep steps including Submit; other statuses use proposal/experiments/publications tabs.
+ */
 export function useProjectDetails() {
   const { t } = useTranslation()
   const navigate = useNavigate()

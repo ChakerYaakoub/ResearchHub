@@ -1,10 +1,11 @@
+/**
+ * Invitation REST helpers (my list, project invites, accept/decline by token).
+ */
 import { apiFetch } from './client'
 import type {
   Invitation,
   InvitationCreateInput,
 } from '../types/api'
-
-/** Paths are relative to VITE_API_BASE_URL (already ends with /api). */
 
 export function listMyInvitations(token: string) {
   return apiFetch<Invitation[]>('/invitations/', { token })

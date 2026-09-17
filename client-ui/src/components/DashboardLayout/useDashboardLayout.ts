@@ -11,7 +11,10 @@ export const SIDEBAR_LINKS = [
   { to: '/account', key: 'nav.account' },
 ] as const
 
-/** Sidebar shell state for the researcher dashboard. */
+/**
+ * Authenticated app chrome: sidebar links, page title from path, language, logout.
+ * Mounted only under RequireAuth; does not re-check tokens beyond AuthContext.
+ */
 export function useDashboardLayout() {
   const { t, i18n } = useTranslation()
   const location = useLocation()

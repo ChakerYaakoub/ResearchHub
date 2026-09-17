@@ -1,3 +1,5 @@
+/** Publication REST helpers nested under projects + detail by id. */
+
 import { apiFetch } from './client'
 import type { Publication, PublicationInput } from '../types/api'
 

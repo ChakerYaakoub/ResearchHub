@@ -1,7 +1,9 @@
+/**
+ * Thin fetch wrapper for ResearchHub REST API.
+ * Pass Bearer `token` from useAuth(); on 401, silently refreshes once then retries.
+ */
 import i18n from '../i18n'
 import { ensureFreshAccess, isAuthPath } from '../auth/tokenSession'
-
-/** Thin fetch wrapper for ResearchHub REST API. */
 
 const baseUrl = (import.meta.env.VITE_API_BASE_URL ?? '').replace(/\/$/, '')
 

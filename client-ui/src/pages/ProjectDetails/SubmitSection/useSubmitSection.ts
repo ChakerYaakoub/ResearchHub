@@ -15,7 +15,10 @@ export type SubmitSectionProps = {
   onProjectChanged: () => void
 }
 
-/** Draft submit step: checklist, freeze warning, confirm + submit. */
+/**
+ * Draft-prep Submit step: checklist counts + confirm → submitProposal.
+ * Shown only while preparing (DRAFT/REJECTED) and canEdit; requires a proposal.
+ */
 export function useSubmitSection({
   projectId,
   project,

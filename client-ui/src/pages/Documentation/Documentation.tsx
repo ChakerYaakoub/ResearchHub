@@ -4,7 +4,7 @@ import './Documentation.css'
 
 type DocSection = { title: string; body: string; items?: string[] }
 
-/** Commercial learn-more overview for researchers. */
+/** Public `/documentation`: learn-more sections from i18n only (no API). */
 export function DocumentationPage() {
   const { t } = useTranslation()
   const meta = usePageMeta({ pageKey: 'documentation' })

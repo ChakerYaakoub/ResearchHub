@@ -1,3 +1,5 @@
+/** Toast helpers (react-toastify) for success/error feedback after API actions. */
+
 import { toast } from 'react-toastify'
 
 export function notifySuccess(message: string): void {

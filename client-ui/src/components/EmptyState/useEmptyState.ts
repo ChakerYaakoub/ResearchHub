@@ -11,6 +11,7 @@ export type EmptyStateProps = {
   className?: string
 }
 
+/** Pass-through props for EmptyState (centered no-data placeholder). */
 export function useEmptyState(props: EmptyStateProps) {
   return {
     message: props.message,

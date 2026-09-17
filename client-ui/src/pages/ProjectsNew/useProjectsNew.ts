@@ -13,7 +13,10 @@ export type ProjectFormValues = {
   scientific_objective: string
 }
 
-/** Create-project form state and submit. */
+/**
+ * Authenticated `/projects/new`: Formik create → POST `/projects/` → navigate to detail.
+ * Yup title required is UX only; backend validates fields.
+ */
 export function useProjectsNew() {
   const { t } = useTranslation()
   const { access } = useAuth()
