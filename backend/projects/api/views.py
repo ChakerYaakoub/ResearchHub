@@ -1,28 +1,21 @@
-"""Project REST viewsets and nested collaborator/admin helpers."""
+"""Project REST viewsets and nested collaborator helpers."""
 
 from rest_framework import status, viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from experiments.models import Experiment, ExperimentStatus
-from invitations.models import Invitation, InvitationStatus
-from proposals.models import Proposal, ProposalStatus
-from publications.models import Publication
-from users.models import GlobalRole, User
-
-from .models import MembershipRole, ProjectMembership, ProjectStatus, ResearchProject
 from core.api import api_error
 from core.permissions import (
-    IsAdminUiOrigin,
-    IsPlatformAdmin,
     IsProjectEditor,
     IsProjectMember,
     IsProjectOwnerOrAdmin,
 )
-from .selectors import get_visible_project, projects_visible_to
+from projects.models import MembershipRole, ProjectMembership
+from projects.selectors import get_visible_project, projects_visible_to
+from projects.services import WorkflowError, complete_project, soft_delete_project
+
 from .serializers import ProjectMembershipSerializer, ResearchProjectSerializer
-from .services import WorkflowError, complete_project, soft_delete_project
 
 
 class ResearchProjectViewSet(viewsets.ModelViewSet):
@@ -105,34 +98,3 @@ class ProjectCompleteView(APIView):
         except WorkflowError as exc:
             return api_error(exc.detail)
         return Response(ResearchProjectSerializer(project).data)
-
-
-class AdminStatsView(APIView):
-    """GET `/api/admin/stats/` — platform ADMIN from admin-ui origin only."""
-
-    permission_classes = [IsAuthenticated, IsAdminUiOrigin, IsPlatformAdmin]
-
-    def get(self, request):
-        data = {
-            "total_projects": ResearchProject.objects.exclude(
-                status=ProjectStatus.SOFT_DELETED
-            ).count(),
-            "pending_proposals": Proposal.objects.filter(
-                status=ProposalStatus.PENDING,
-                project__status=ProjectStatus.UNDER_REVIEW,
-            ).count(),
-            "scheduled_experiments": Experiment.objects.filter(
-                status=ExperimentStatus.SCHEDULED
-            ).count(),
-            "completed_projects": ResearchProject.objects.filter(
-                status=ProjectStatus.COMPLETED
-            ).count(),
-            "researchers": User.objects.filter(role=GlobalRole.RESEARCHER).count(),
-            "pending_invitations": Invitation.objects.filter(
-                status=InvitationStatus.PENDING
-            ).count(),
-            "publications": Publication.objects.count(),
-        }
-        return Response(data)
-
-

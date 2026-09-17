@@ -3,7 +3,7 @@
 from django.urls import path
 from rest_framework.routers import DefaultRouter
 
-from .admin_views import (
+from projects.admin_api.views import (
     AdminAdminListView,
     AdminExperimentListView,
     AdminInvitationCancelView,
@@ -12,11 +12,11 @@ from .admin_views import (
     AdminProjectListView,
     AdminProposalListView,
     AdminPublicationListView,
+    AdminStatsView,
     AdminUserDetailView,
     AdminUserListView,
 )
-from .views import (
-    AdminStatsView,
+from projects.api.views import (
     ProjectCollaboratorDeleteView,
     ProjectCollaboratorListView,
     ProjectCompleteView,

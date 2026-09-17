@@ -6,7 +6,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from experiments.models import Experiment
+from experiments.models import Experiment, ExperimentStatus
 from invitations.models import Invitation, InvitationStatus
 from invitations.services import InvitationError, cancel_invitation
 from proposals.models import Proposal, ProposalStatus
@@ -21,7 +21,10 @@ from core.admin_filters import (
     query_search,
 )
 from core.api import ADMIN_PERMS, SUPER_ADMIN_PERMS, api_error
-from .admin_serializers import (
+from projects.models import ProjectMembership, ProjectStatus, ResearchProject
+from projects.selectors import is_super_admin
+
+from .serializers import (
     AdminCreateAdminSerializer,
     AdminExperimentSerializer,
     AdminInvitationSerializer,
@@ -32,8 +35,6 @@ from .admin_serializers import (
     AdminUserPatchSerializer,
     AdminUserSerializer,
 )
-from .models import ProjectMembership, ProjectStatus, ResearchProject
-from .selectors import is_super_admin
 
 
 class AdminUserListView(APIView):
@@ -306,3 +307,32 @@ class AdminInvitationCancelView(APIView):
         except InvitationError as exc:
             return api_error(exc.detail)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class AdminStatsView(APIView):
+    """GET `/api/admin/stats/` — platform ADMIN from admin-ui origin only."""
+
+    permission_classes = ADMIN_PERMS
+
+    def get(self, request):
+        data = {
+            "total_projects": ResearchProject.objects.exclude(
+                status=ProjectStatus.SOFT_DELETED
+            ).count(),
+            "pending_proposals": Proposal.objects.filter(
+                status=ProposalStatus.PENDING,
+                project__status=ProjectStatus.UNDER_REVIEW,
+            ).count(),
+            "scheduled_experiments": Experiment.objects.filter(
+                status=ExperimentStatus.SCHEDULED
+            ).count(),
+            "completed_projects": ResearchProject.objects.filter(
+                status=ProjectStatus.COMPLETED
+            ).count(),
+            "researchers": User.objects.filter(role=GlobalRole.RESEARCHER).count(),
+            "pending_invitations": Invitation.objects.filter(
+                status=InvitationStatus.PENDING
+            ).count(),
+            "publications": Publication.objects.count(),
+        }
+        return Response(data)

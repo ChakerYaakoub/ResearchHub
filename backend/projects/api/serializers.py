@@ -2,7 +2,7 @@
 
 from rest_framework import serializers
 
-from .models import ProjectMembership, ResearchProject
+from projects.models import ProjectMembership, ResearchProject
 
 
 class ResearchProjectSerializer(serializers.ModelSerializer):
