@@ -26,8 +26,8 @@ type AuthContextValue = {
   user: AuthUser | null
   access: string | null
   isAuthenticated: boolean
-  login: (email: string, password: string) => Promise<void>
-  register: (email: string, password: string) => Promise<void>
+  login: (email: string, password: string, company?: string) => Promise<void>
+  register: (email: string, password: string, company?: string) => Promise<void>
   logout: () => Promise<void>
   setUser: (user: AuthUser) => void
 }
@@ -53,21 +53,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     })
   }, [])
 
-  const login = useCallback(async (email: string, password: string) => {
-    const tokens = await loginRequest(email, password)
-    saveAuth(tokens)
-    setUser(tokens.user)
-    setAccess(tokens.access)
-    setRefresh(tokens.refresh)
-  }, [])
+  const login = useCallback(
+    async (email: string, password: string, company = '') => {
+      const tokens = await loginRequest(email, password, company)
+      saveAuth(tokens)
+      setUser(tokens.user)
+      setAccess(tokens.access)
+      setRefresh(tokens.refresh)
+    },
+    [],
+  )
 
-  const register = useCallback(async (email: string, password: string) => {
-    const tokens = await registerRequest(email, password)
-    saveAuth(tokens)
-    setUser(tokens.user)
-    setAccess(tokens.access)
-    setRefresh(tokens.refresh)
-  }, [])
+  const register = useCallback(
+    async (email: string, password: string, company = '') => {
+      const tokens = await registerRequest(email, password, company)
+      saveAuth(tokens)
+      setUser(tokens.user)
+      setAccess(tokens.access)
+      setRefresh(tokens.refresh)
+    },
+    [],
+  )
 
   const logout = useCallback(async () => {
     if (access && refresh) {

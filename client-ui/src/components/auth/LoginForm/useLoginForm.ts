@@ -20,7 +20,7 @@ export function useLoginForm({
   const { t } = useTranslation()
   const { login } = useAuth()
 
-  const initialValues: AuthFormValues = { email: '', password: '' }
+  const initialValues: AuthFormValues = { email: '', password: '', company: '' }
   const validationSchema = loginSchema(t)
 
   async function onSubmit(
@@ -28,7 +28,7 @@ export function useLoginForm({
     helpers: FormikHelpers<AuthFormValues>,
   ) {
     try {
-      await login(values.email.trim(), values.password)
+      await login(values.email.trim(), values.password, values.company)
       onSuccess()
     } catch (err) {
       notifyError(

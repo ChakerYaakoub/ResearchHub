@@ -336,6 +336,37 @@ class AuthApiTests(TestCase):
         user.refresh_from_db()
         self.assertTrue(user.check_password(DEFAULT_PASSWORD))
 
+    def test_login_honeypot_filled_is_ignored(self):
+        make_user("hp-login@example.com")
+        response = self.client.post(
+            "/api/auth/login/",
+            {
+                "email": "hp-login@example.com",
+                "password": DEFAULT_PASSWORD,
+                "company": "Acme Bot Ltd",
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertNotIn("access", response.data)
+
+    @override_settings(
+        EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend",
+    )
+    def test_register_honeypot_filled_is_ignored(self):
+        response = self.client.post(
+            "/api/auth/register/",
+            {
+                "email": "hp-reg@example.com",
+                "password": DEFAULT_PASSWORD,
+                "company": "Bot Co",
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertFalse(User.objects.filter(email="hp-reg@example.com").exists())
+        self.assertEqual(len(mail.outbox), 0)
+
 
 class AuthRateLimitTests(TestCase):
     """Public auth endpoints: login/register 5/min, password-reset 2/min (per IP)."""

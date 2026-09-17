@@ -11,6 +11,7 @@ from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenRefreshView
 
+from core.honeypot import honeypot_filled
 from core.ratelimit import RatelimitedAPIView
 from users.api.serializers import (
     LoginSerializer,
@@ -43,6 +44,14 @@ def _tokens_for_user(user) -> dict:
     }
 
 
+def _ignored_auth_response():
+    """Generic rejection when the honeypot was filled — no side effects."""
+    return Response(
+        {"detail": "Invalid request."},
+        status=status.HTTP_400_BAD_REQUEST,
+    )
+
+
 @method_decorator(
     ratelimit(key="ip", rate=_auth_rate, method="POST", block=True),
     name="post",
@@ -53,6 +62,8 @@ class RegisterView(RatelimitedAPIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
+        if honeypot_filled(request.data):
+            return _ignored_auth_response()
         serializer = RegisterSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
@@ -72,6 +83,8 @@ class LoginView(RatelimitedAPIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
+        if honeypot_filled(request.data):
+            return _ignored_auth_response()
         serializer = LoginSerializer(data=request.data, context={"request": request})
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data["user"]

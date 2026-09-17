@@ -18,7 +18,7 @@ export function useRegisterForm({
   const { t } = useTranslation()
   const { register } = useAuth()
 
-  const initialValues: AuthFormValues = { email: '', password: '' }
+  const initialValues: AuthFormValues = { email: '', password: '', company: '' }
   const validationSchema = registerSchema(t)
 
   async function onSubmit(
@@ -26,7 +26,7 @@ export function useRegisterForm({
     helpers: FormikHelpers<AuthFormValues>,
   ) {
     try {
-      await register(values.email.trim(), values.password)
+      await register(values.email.trim(), values.password, values.company)
       onSuccess()
     } catch (err) {
       notifyError(

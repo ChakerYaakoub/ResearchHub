@@ -1,5 +1,6 @@
 import { Form, Formik } from 'formik'
 import { TextInput } from '../../form/TextInput'
+import { HoneypotField } from '../HoneypotField'
 import type { AuthFormValues } from '../authSchemas'
 import { useRegisterForm, type RegisterFormProps } from './useRegisterForm'
 
@@ -17,6 +18,7 @@ export function RegisterForm(props: RegisterFormProps) {
         <>
           <p className="text-muted small mb-3">{vm.t('register.subtitle')}</p>
           <Form noValidate>
+            <HoneypotField />
             <TextInput
               name="email"
               label={vm.t('common.email')}

@@ -1,5 +1,6 @@
 export { AuthModal, type AuthModalMode } from './AuthModal'
 export { ForgotPasswordForm } from './ForgotPasswordForm'
+export { HoneypotField } from './HoneypotField'
 export { LoginForm } from './LoginForm'
 export { RegisterForm } from './RegisterForm'
 export { ResetPasswordForm } from './ResetPasswordForm'
