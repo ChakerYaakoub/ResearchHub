@@ -7,6 +7,7 @@ const loginMock = vi.fn()
 const notifyErrorMock = vi.fn()
 const onSuccess = vi.fn()
 const onSwitchToRegister = vi.fn()
+const onSwitchToForgot = vi.fn()
 
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({ t: (key: string) => key }),
@@ -31,7 +32,7 @@ describe('useLoginForm', () => {
   it('calls login and onSuccess on submit', async () => {
     loginMock.mockResolvedValue(undefined)
     const { result } = renderHook(() =>
-      useLoginForm({ onSuccess, onSwitchToRegister }),
+      useLoginForm({ onSuccess, onSwitchToRegister, onSwitchToForgot }),
     )
     const helpers = { setSubmitting: vi.fn() }
 
@@ -50,7 +51,7 @@ describe('useLoginForm', () => {
   it('notifies on ApiError and does not call onSuccess', async () => {
     loginMock.mockRejectedValue(new ApiError(401, {}, 'bad creds'))
     const { result } = renderHook(() =>
-      useLoginForm({ onSuccess, onSwitchToRegister }),
+      useLoginForm({ onSuccess, onSwitchToRegister, onSwitchToForgot }),
     )
 
     await act(async () => {

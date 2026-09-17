@@ -7,7 +7,7 @@ import {
   type ReactNode,
 } from 'react'
 
-export type AuthModalMode = 'login' | 'register'
+export type AuthModalMode = 'login' | 'register' | 'forgot' | 'reset'
 
 const OPEN_LOGIN_FLAG = 'rh_open_login'
 
@@ -16,6 +16,8 @@ type AuthUiValue = {
   mode: AuthModalMode
   openLogin: () => void
   openRegister: () => void
+  openForgot: () => void
+  openReset: () => void
   close: () => void
   switchMode: (mode: AuthModalMode) => void
 }
@@ -47,6 +49,16 @@ export function AuthUiProvider({ children }: { children: ReactNode }) {
     setOpen(true)
   }, [])
 
+  const openForgot = useCallback(() => {
+    setMode('forgot')
+    setOpen(true)
+  }, [])
+
+  const openReset = useCallback(() => {
+    setMode('reset')
+    setOpen(true)
+  }, [])
+
   const close = useCallback(() => {
     setOpen(false)
   }, [])
@@ -56,8 +68,26 @@ export function AuthUiProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const value = useMemo(
-    () => ({ open, mode, openLogin, openRegister, close, switchMode }),
-    [open, mode, openLogin, openRegister, close, switchMode],
+    () => ({
+      open,
+      mode,
+      openLogin,
+      openRegister,
+      openForgot,
+      openReset,
+      close,
+      switchMode,
+    }),
+    [
+      open,
+      mode,
+      openLogin,
+      openRegister,
+      openForgot,
+      openReset,
+      close,
+      switchMode,
+    ],
   )
 
   return (

@@ -1,11 +1,13 @@
 import { renderHook } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { getInviteToken } from '../../auth/inviteTokenStorage'
+import { getResetCredentials } from '../../auth/resetTokenStorage'
 import { useInviteDeepLink } from './useInviteDeepLink'
 
 const navigateMock = vi.fn()
 const openLoginMock = vi.fn()
 const openRegisterMock = vi.fn()
+const openResetMock = vi.fn()
 let searchParams = new URLSearchParams()
 let isAuthenticated = false
 
@@ -22,6 +24,7 @@ vi.mock('../AuthUi', () => ({
   useAuthUi: () => ({
     openLogin: openLoginMock,
     openRegister: openRegisterMock,
+    openReset: openResetMock,
   }),
 }))
 
@@ -31,6 +34,7 @@ describe('useInviteDeepLink', () => {
     navigateMock.mockReset()
     openLoginMock.mockReset()
     openRegisterMock.mockReset()
+    openResetMock.mockReset()
     searchParams = new URLSearchParams()
     isAuthenticated = false
   })
@@ -55,6 +59,21 @@ describe('useInviteDeepLink', () => {
     expect(getInviteToken()).toBe('tok-2')
     expect(openRegisterMock).toHaveBeenCalled()
     expect(openLoginMock).not.toHaveBeenCalled()
+  })
+
+  it('stores reset credentials and opens reset modal', () => {
+    searchParams = new URLSearchParams(
+      'auth=reset&uid=uid-1&token=reset-tok',
+    )
+    renderHook(() => useInviteDeepLink())
+
+    expect(getResetCredentials()).toEqual({
+      uid: 'uid-1',
+      token: 'reset-tok',
+    })
+    expect(openResetMock).toHaveBeenCalled()
+    expect(openLoginMock).not.toHaveBeenCalled()
+    expect(getInviteToken()).toBeNull()
   })
 
   it('navigates to invitations when already authenticated', () => {

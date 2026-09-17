@@ -22,11 +22,12 @@ export function useAuthModalHost() {
   }, [openLogin])
 
   useEffect(() => {
-    if (isAuthenticated && open) {
+    // Keep forgot/reset open even if a session exists (email deep link).
+    if (isAuthenticated && open && mode !== 'reset' && mode !== 'forgot') {
       close()
       navigate(postAuthPath(), { replace: true })
     }
-  }, [isAuthenticated, open, close, navigate])
+  }, [isAuthenticated, open, mode, close, navigate])
 
   function onAuthSuccess() {
     close()
@@ -46,7 +47,13 @@ export function useAuthModalHost() {
 export function AuthModalHost() {
   const vm = useAuthModalHost()
 
-  if (vm.isAuthenticated) return null
+  if (
+    vm.isAuthenticated &&
+    vm.mode !== 'reset' &&
+    vm.mode !== 'forgot'
+  ) {
+    return null
+  }
 
   return (
     <AuthModal

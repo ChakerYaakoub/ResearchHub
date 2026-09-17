@@ -2,24 +2,34 @@ import { useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../../auth'
 import { setInviteToken } from '../../auth/inviteTokenStorage'
+import { setResetCredentials } from '../../auth/resetTokenStorage'
 import { useAuthUi } from '../AuthUi'
 
 /**
- * Email deep link: ?auth=login|register&token=… → sessionStorage + auth modal
- * (or /invitations if already signed in), then strip query.
+ * Email deep links:
+ * - ?auth=login|register&token=… → invite session + auth modal
+ * - ?auth=reset&uid=…&token=… → reset session + reset modal
  */
 export function useInviteDeepLink() {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
   const { isAuthenticated } = useAuth()
-  const { openLogin, openRegister } = useAuthUi()
+  const { openLogin, openRegister, openReset } = useAuthUi()
 
   useEffect(() => {
     const auth = searchParams.get('auth')
     const token = searchParams.get('token')
-    if (!auth && !token) return
+    const uid = searchParams.get('uid')
+    if (!auth && !token && !uid) return
 
-    if (token) {
+    if (auth === 'reset' && uid && token) {
+      setResetCredentials(uid, token)
+      navigate({ pathname: '/', search: '' }, { replace: true })
+      openReset()
+      return
+    }
+
+    if (token && auth !== 'reset') {
       setInviteToken(token)
     }
 
@@ -31,7 +41,7 @@ export function useInviteDeepLink() {
       return
     }
 
-    if (token) {
+    if (token && auth !== 'reset') {
       navigate('/invitations', { replace: true })
     }
   }, [
@@ -40,5 +50,6 @@ export function useInviteDeepLink() {
     navigate,
     openLogin,
     openRegister,
+    openReset,
   ])
 }

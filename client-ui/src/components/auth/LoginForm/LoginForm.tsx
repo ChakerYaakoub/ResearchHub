@@ -29,6 +29,15 @@ export function LoginForm(props: LoginFormProps) {
               type="password"
               autoComplete="current-password"
             />
+            <div className="mb-3 text-end">
+              <button
+                type="button"
+                className="btn btn-link btn-sm p-0"
+                onClick={vm.onSwitchToForgot}
+              >
+                {vm.t('login.forgotPassword')}
+              </button>
+            </div>
             <button
               className="btn btn-primary w-100"
               type="submit"

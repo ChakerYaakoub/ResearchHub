@@ -38,7 +38,9 @@
     "inviteFailed": "Could not send invitation.",
     "acceptFailed": "Could not accept invitation.",
     "declineFailed": "Could not decline invitation.",
-    "saveFailed": "Could not save changes."
+    "saveFailed": "Could not save changes.",
+    "resetFailed": "Could not reset password.",
+    "resetLinkInvalid": "This reset link is missing or invalid. Request a new one."
   },
   "toast": {
     "saved": "Saved.",
@@ -52,7 +54,9 @@
     "completed": "Project marked complete.",
     "projectDeleted": "Project removed from your workspace.",
     "profileSaved": "Profile updated.",
-    "passwordChanged": "Password changed."
+    "passwordChanged": "Password changed.",
+    "resetEmailSent": "If an account exists for that email, a reset link was sent.",
+    "passwordReset": "Password updated. You can log in."
   },
   "nav": {
     "brand": "ResearchHub",
@@ -324,7 +328,8 @@
     "submit": "Log in",
     "submitting": "Signing in…",
     "noAccount": "No account?",
-    "registerLink": "Register"
+    "registerLink": "Register",
+    "forgotPassword": "Forgot password?"
   },
   "register": {
     "title": "Register",
@@ -334,6 +339,22 @@
     "submitting": "Creating account…",
     "haveAccount": "Already registered?",
     "loginLink": "Log in"
+  },
+  "forgot": {
+    "title": "Forgot password",
+    "subtitle": "Enter your email and we will send a reset link if an account exists.",
+    "submit": "Send reset link",
+    "submitting": "Sending…",
+    "backToLogin": "Back to log in"
+  },
+  "reset": {
+    "title": "Set new password",
+    "subtitle": "Choose a new password for your ResearchHub account.",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm new password",
+    "submit": "Update password",
+    "submitting": "Updating…",
+    "backToLogin": "Back to log in"
   },
   "status": {
     "DRAFT": "Draft",
