@@ -12,6 +12,7 @@ const KNOWN = new Set([
   'RESUBMITTED',
   'IN_PROGRESS',
   'COMPLETED',
+  'SOFT_DELETED',
   'PENDING',
   'PLANNED',
   'SCHEDULED',

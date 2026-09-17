@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404
 
 from users.models import GlobalRole
 
-from .models import MembershipRole, ProjectMembership, ResearchProject
+from .models import MembershipRole, ProjectMembership, ProjectStatus, ResearchProject
 
 
 def is_platform_admin(user) -> bool:
@@ -27,11 +27,15 @@ def is_super_admin(user) -> bool:
 
 
 def projects_visible_to(user) -> QuerySet[ResearchProject]:
-    """Projects the user may see: all if admin, else owner ∪ membership."""
+    """Projects the user may see: all if admin, else owner ∪ membership (no soft-deleted)."""
     qs = ResearchProject.objects.select_related("owner")
     if is_platform_admin(user):
         return qs.all()
-    return qs.filter(Q(owner=user) | Q(memberships__user=user)).distinct()
+    return (
+        qs.filter(Q(owner=user) | Q(memberships__user=user))
+        .exclude(status=ProjectStatus.SOFT_DELETED)
+        .distinct()
+    )
 
 
 def get_visible_project(user, pk: int) -> ResearchProject:

@@ -9,6 +9,7 @@ export type ProjectStatus =
   | 'RESUBMITTED'
   | 'IN_PROGRESS'
   | 'COMPLETED'
+  | 'SOFT_DELETED'
 
 /** Project is open for draft-like prep (first submit or revise after reject). */
 export function isPreparingStatus(status: ProjectStatus): boolean {

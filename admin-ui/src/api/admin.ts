@@ -200,7 +200,7 @@ export function getProject(token: string, id: number) {
 }
 
 export function deleteProject(token: string, id: number) {
-  return apiFetch<void>(`/projects/${id}/`, {
+  return apiFetch<void>(`/admin/projects/${id}/`, {
     method: 'DELETE',
     token,
   })

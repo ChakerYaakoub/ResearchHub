@@ -300,6 +300,7 @@
     "RESUBMITTED": "Resubmitted",
     "IN_PROGRESS": "In progress",
     "COMPLETED": "Completed",
+    "SOFT_DELETED": "Deleted",
     "PENDING": "Pending",
     "ACCEPTED": "Accepted",
     "DECLINED": "Declined",
@@ -366,7 +367,7 @@
     "delete": "Delete project",
     "deleting": "Deleting…",
     "deleteTitle": "Delete project",
-    "confirmDelete": "Delete this project permanently? This cannot be undone.",
+    "confirmDelete": "Remove this project from your workspace? An administrator can permanently delete it later.",
     "cancelInviteTitle": "Cancel invitation",
     "draftPrep": {
       "title": "Prepare your project",

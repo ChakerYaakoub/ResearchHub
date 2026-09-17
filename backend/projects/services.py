@@ -16,6 +16,7 @@ ALLOWED_TRANSITIONS: dict[str, frozenset[str]] = {
     ProjectStatus.REJECTED: frozenset({ProjectStatus.RESUBMITTED}),
     ProjectStatus.RESUBMITTED: frozenset({ProjectStatus.UNDER_REVIEW}),
     ProjectStatus.COMPLETED: frozenset(),
+    ProjectStatus.SOFT_DELETED: frozenset(),
 }
 
 # Draft-like statuses: revise proposal / planned experiments / existing pubs.
@@ -60,6 +61,16 @@ def start_project(project: ResearchProject) -> ResearchProject:
 def complete_project(project: ResearchProject) -> ResearchProject:
     """IN_PROGRESS → COMPLETED."""
     return transition_project(project, ProjectStatus.COMPLETED)
+
+
+@transaction.atomic
+def soft_delete_project(project: ResearchProject) -> ResearchProject:
+    """Mark project SOFT_DELETED (client delete). Already soft-deleted is a no-op."""
+    if project.status == ProjectStatus.SOFT_DELETED:
+        return project
+    project.status = ProjectStatus.SOFT_DELETED
+    project.save(update_fields=["status", "updated_at"])
+    return project
 
 
 def assert_can_mutate_experiments(project: ResearchProject, kind: str) -> None:

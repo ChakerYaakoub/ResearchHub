@@ -21,7 +21,7 @@ from .permissions import (
 )
 from .selectors import get_visible_project, projects_visible_to
 from .serializers import ProjectMembershipSerializer, ResearchProjectSerializer
-from .services import WorkflowError, complete_project
+from .services import WorkflowError, complete_project, soft_delete_project
 
 
 class ResearchProjectViewSet(viewsets.ModelViewSet):
@@ -50,6 +50,12 @@ class ResearchProjectViewSet(viewsets.ModelViewSet):
             user=self.request.user,
             defaults={"role": MembershipRole.OWNER},
         )
+
+    def destroy(self, request, *args, **kwargs):
+        """Owner soft-delete — row kept as SOFT_DELETED; admin hard-deletes separately."""
+        project = self.get_object()
+        soft_delete_project(project)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class ProjectCollaboratorListView(APIView):
@@ -110,7 +116,9 @@ class AdminStatsView(APIView):
 
     def get(self, request):
         data = {
-            "total_projects": ResearchProject.objects.count(),
+            "total_projects": ResearchProject.objects.exclude(
+                status=ProjectStatus.SOFT_DELETED
+            ).count(),
             "pending_proposals": Proposal.objects.filter(
                 status=ProposalStatus.PENDING,
                 project__status=ProjectStatus.UNDER_REVIEW,

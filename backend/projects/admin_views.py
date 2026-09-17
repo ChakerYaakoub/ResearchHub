@@ -150,7 +150,7 @@ class AdminProjectListView(APIView):
 
 
 class AdminProjectDetailView(APIView):
-    """GET `/api/admin/projects/{id}/` — overview counts + nested sections."""
+    """GET/DELETE `/api/admin/projects/{id}/` — detail or permanent remove."""
 
     permission_classes = _ADMIN_PERMS
 
@@ -187,6 +187,11 @@ class AdminProjectDetailView(APIView):
         )
         project = get_object_or_404(qs, pk=project_id)
         return Response(AdminProjectDetailSerializer(project).data)
+
+    def delete(self, request, project_id: int):
+        project = get_object_or_404(ResearchProject, pk=project_id)
+        project.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class AdminProposalListView(APIView):

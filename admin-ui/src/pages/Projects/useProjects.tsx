@@ -15,6 +15,7 @@ const PROJECT_STATUSES = [
   'RESUBMITTED',
   'IN_PROGRESS',
   'COMPLETED',
+  'SOFT_DELETED',
 ]
 
 export function useProjects() {
