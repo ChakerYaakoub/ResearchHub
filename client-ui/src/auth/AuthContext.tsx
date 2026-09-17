@@ -2,6 +2,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
   type ReactNode,
@@ -18,6 +19,7 @@ import {
   logoutRequest,
   registerRequest,
 } from './authApi'
+import { onAuthTokensChange } from './tokenSession'
 
 type AuthContextValue = {
   user: AuthUser | null
@@ -35,6 +37,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(initial?.user ?? null)
   const [access, setAccess] = useState<string | null>(initial?.access ?? null)
   const [refresh, setRefresh] = useState<string | null>(initial?.refresh ?? null)
+
+  useEffect(() => {
+    return onAuthTokensChange((tokens) => {
+      if (!tokens) {
+        setUser(null)
+        setAccess(null)
+        setRefresh(null)
+        return
+      }
+      setAccess(tokens.access)
+      setRefresh(tokens.refresh)
+    })
+  }, [])
 
   const login = useCallback(async (email: string, password: string) => {
     const tokens = await loginRequest(email, password)

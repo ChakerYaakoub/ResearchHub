@@ -1,4 +1,5 @@
 import i18n from '../i18n'
+import { ensureFreshAccess, isAuthPath } from '../auth/tokenSession'
 
 /** Thin fetch wrapper for ResearchHub REST API. */
 
@@ -30,22 +31,13 @@ export function formatApiError(body: unknown, fallback?: string): string {
   return parts.length ? parts.join(' ') : fb
 }
 
-export async function apiFetch<T>(
-  path: string,
-  options: RequestInit & { token?: string | null } = {},
-): Promise<T> {
-  const { token, headers: initHeaders, ...rest } = options
-  const headers = new Headers(initHeaders)
-  if (!headers.has('Content-Type') && rest.body) {
-    headers.set('Content-Type', 'application/json')
-  }
-  if (token) {
-    headers.set('Authorization', `Bearer ${token}`)
-  }
+type ApiFetchOptions = RequestInit & {
+  token?: string | null
+  /** Skip 401 → refresh → retry (auth endpoints / already-retried). */
+  skipAuthRefresh?: boolean
+}
 
-  const url = `${baseUrl}${path.startsWith('/') ? path : `/${path}`}`
-  const response = await fetch(url, { ...rest, headers })
-
+async function parseResponse<T>(response: Response): Promise<T> {
   if (response.status === 204) {
     return undefined as T
   }
@@ -69,4 +61,41 @@ export async function apiFetch<T>(
   }
 
   return body as T
+}
+
+export async function apiFetch<T>(
+  path: string,
+  options: ApiFetchOptions = {},
+): Promise<T> {
+  const { token, headers: initHeaders, skipAuthRefresh, ...rest } = options
+  const headers = new Headers(initHeaders)
+  if (!headers.has('Content-Type') && rest.body) {
+    headers.set('Content-Type', 'application/json')
+  }
+  if (token) {
+    headers.set('Authorization', `Bearer ${token}`)
+  }
+
+  const url = `${baseUrl}${path.startsWith('/') ? path : `/${path}`}`
+  const response = await fetch(url, { ...rest, headers })
+
+  if (
+    response.status === 401 &&
+    token &&
+    !skipAuthRefresh &&
+    !isAuthPath(path)
+  ) {
+    try {
+      const access = await ensureFreshAccess()
+      return apiFetch<T>(path, {
+        ...options,
+        token: access,
+        skipAuthRefresh: true,
+      })
+    } catch {
+      // Fall through with original 401 body.
+    }
+  }
+
+  return parseResponse<T>(response)
 }
