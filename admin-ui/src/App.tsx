@@ -6,6 +6,7 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import { DashboardLayout } from './components/DashboardLayout'
 import { RequireAuth } from './components/RequireAuth'
 import { RequireSuperAdmin } from './components/RequireSuperAdmin'
+import { AccountPage } from './pages/Account'
 import { AdminsPage } from './pages/Admins'
 import { DashboardPage } from './pages/Dashboard'
 import { InstallationsPage } from './pages/Installations'
@@ -36,6 +37,7 @@ function App() {
           <Route path="/instruments" element={<InstrumentsPage />} />
           <Route path="/publications" element={<PublicationsPage />} />
           <Route path="/invitations" element={<InvitationsPage />} />
+          <Route path="/account" element={<AccountPage />} />
         </Route>
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />

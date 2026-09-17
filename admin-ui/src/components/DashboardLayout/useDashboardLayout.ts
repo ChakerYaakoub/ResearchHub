@@ -20,7 +20,10 @@ type NavSection = {
 const NAV_SECTIONS: NavSection[] = [
   {
     id: "overview",
-    items: [{ to: "/", label: copy.dashboard }],
+    items: [
+      { to: "/", label: copy.dashboard },
+      { to: "/account", label: copy.account },
+    ],
   },
 
   {
@@ -58,6 +61,7 @@ const NAV_SECTIONS: NavSection[] = [
 ];
 
 function titleForPath(pathname: string): string {
+  if (pathname.startsWith("/account")) return copy.account;
   if (pathname.startsWith("/admins")) return copy.admins;
   if (pathname.startsWith("/users")) return copy.users;
   if (pathname.startsWith("/projects")) return copy.projects;

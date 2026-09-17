@@ -53,6 +53,11 @@ export function updateStoredTokens(access: string, refresh: string): void {
   localStorage.setItem(REFRESH_KEY, refresh)
 }
 
+/** Keep JWT pair; replace stored user after profile update. */
+export function updateStoredUser(user: AuthUser): void {
+  localStorage.setItem(USER_KEY, JSON.stringify(user))
+}
+
 export function clearAuth(): void {
   localStorage.removeItem(ACCESS_KEY)
   localStorage.removeItem(REFRESH_KEY)
