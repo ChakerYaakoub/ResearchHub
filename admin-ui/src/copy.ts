@@ -17,6 +17,7 @@ export const copy = {
   navContent: 'Content',
   logIn: 'Log in',
   logOut: 'Log out',
+  accountMenu: 'Account menu',
   email: 'Email',
   password: 'Password',
   showPassword: 'Show password',
