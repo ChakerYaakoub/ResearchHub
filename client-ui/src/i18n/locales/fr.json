@@ -41,7 +41,8 @@
     "declineFailed": "Impossible de refuser l'invitation.",
     "saveFailed": "Impossible d'enregistrer les modifications.",
     "resetFailed": "Impossible de réinitialiser le mot de passe.",
-    "resetLinkInvalid": "Ce lien de réinitialisation est manquant ou invalide. Demandez-en un nouveau."
+    "resetLinkInvalid": "Ce lien de réinitialisation est manquant ou invalide. Demandez-en un nouveau.",
+    "rateLimited": "Trop de tentatives. Veuillez attendre une minute et réessayer."
   },
   "toast": {
     "saved": "Enregistré.",

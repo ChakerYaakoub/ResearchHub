@@ -34,6 +34,7 @@ export const copy = {
   loginFailed: 'Login failed.',
   adminOnly: 'This app is for platform administrators only.',
   requestFailed: 'Request failed',
+  rateLimited: 'Too many attempts. Please wait a minute and try again.',
   loadFailed: 'Could not load data.',
   dashboardSubtitle: 'Platform overview and proposal review.',
   totalProjects: 'Total projects',

@@ -41,7 +41,8 @@
     "declineFailed": "Could not decline invitation.",
     "saveFailed": "Could not save changes.",
     "resetFailed": "Could not reset password.",
-    "resetLinkInvalid": "This reset link is missing or invalid. Request a new one."
+    "resetLinkInvalid": "This reset link is missing or invalid. Request a new one.",
+    "rateLimited": "Too many attempts. Please wait a minute and try again."
   },
   "toast": {
     "saved": "Saved.",

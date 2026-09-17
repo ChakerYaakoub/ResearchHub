@@ -155,6 +155,18 @@ CLIENT_UI_ORIGIN = os.environ.get("CLIENT_UI_ORIGIN", "http://localhost:5173").r
     "/"
 )
 
+# LocMem supports atomic incr (required by django-ratelimit). Fine for single-process Docker.
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "researchhub-ratelimit",
+    }
+}
+
+# Public auth abuse limits (django-ratelimit rate strings, e.g. "5/m").
+AUTH_RATE_LIMIT = os.environ.get("AUTH_RATE_LIMIT", "5/m")
+PASSWORD_RESET_RATE_LIMIT = os.environ.get("PASSWORD_RESET_RATE_LIMIT", "2/m")
+
 # JWT for SPA clients; Session keeps browsable API usable.
 # AuthN = JWT; AuthZ = DRF permissions + filtered querysets (Phase 5).
 REST_FRAMEWORK = {
