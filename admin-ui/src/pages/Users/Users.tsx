@@ -24,6 +24,8 @@ export function UsersPage() {
         </div>
       ) : null}
 
+      {vm.filtersUi}
+
       {vm.loading ? (
         <LoadingState label={vm.copy.loading} />
       ) : vm.users.length === 0 ? (

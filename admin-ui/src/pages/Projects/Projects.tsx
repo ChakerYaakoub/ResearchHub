@@ -16,6 +16,8 @@ export function ProjectsPage() {
         </div>
       ) : null}
 
+      {vm.filtersUi}
+
       {vm.loading ? (
         <LoadingState label={vm.copy.loading} />
       ) : vm.projects.length === 0 ? (

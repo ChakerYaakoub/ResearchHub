@@ -41,6 +41,8 @@ export function ProposalsPage() {
         ))}
       </div>
 
+      {vm.searchUi}
+
       {vm.error ? (
         <div className="alert alert-danger" role="alert">
           {vm.error}

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+﻿import { useCallback, useEffect, useState } from 'react'
 import {
   createInstallation,
   deleteInstallation,
@@ -7,8 +7,10 @@ import {
   type AdminInstallation,
 } from '../../api/admin'
 import { ApiError } from '../../api/client'
+import { AdminListFilters } from '../../components/AdminListFilters'
 import { useAuth } from '../../auth'
 import { copy } from '../../copy'
+import { useAdminListParams } from '../../hooks/useAdminListParams'
 
 export type InstallationFormValues = {
   name: string
@@ -26,6 +28,7 @@ const blank: InstallationFormValues = {
 
 export function useInstallations() {
   const { access } = useAuth()
+  const listParams = useAdminListParams()
   const [items, setItems] = useState<AdminInstallation[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -42,14 +45,19 @@ export function useInstallations() {
     setLoading(true)
     setError(null)
     try {
-      setItems(await listInstallations(access))
+      setItems(
+        await listInstallations(access, {
+          status: listParams.filters.status,
+          search: listParams.filters.search,
+        }),
+      )
     } catch (err) {
       setError(err instanceof ApiError ? err.message : copy.loadFailed)
       setItems([])
     } finally {
       setLoading(false)
     }
-  }, [access])
+  }, [access, listParams.filters.search, listParams.filters.status])
 
   useEffect(() => {
     void reload()
@@ -119,6 +127,27 @@ export function useInstallations() {
     }
   }
 
+  const filtersUi = (
+    <AdminListFilters
+      searchInput={listParams.searchInput}
+      onSearchChange={listParams.setSearchInput}
+      searchPlaceholder={copy.searchInstallations}
+      selects={[
+        {
+          id: 'installation-status',
+          label: copy.status,
+          value: listParams.status,
+          onChange: listParams.setStatus,
+          options: [
+            { value: '', label: copy.filterAll },
+            { value: 'ACTIVE', label: copy.filterActive },
+            { value: 'INACTIVE', label: copy.filterInactive },
+          ],
+        },
+      ]}
+    />
+  )
+
   return {
     copy,
     items,
@@ -141,5 +170,6 @@ export function useInstallations() {
     closeDelete: () => {
       if (!deleting) setPendingDeleteId(null)
     },
+    filtersUi,
   }
 }

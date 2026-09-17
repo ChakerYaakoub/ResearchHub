@@ -6,15 +6,18 @@ import {
   type AdminProposal,
 } from '../../api/admin'
 import { ApiError } from '../../api/client'
+import { AdminListFilters } from '../../components/AdminListFilters'
 import { useAuth } from '../../auth'
 import { copy } from '../../copy'
+import { useAdminListParams } from '../../hooks/useAdminListParams'
 
 export type ReviewKind = 'approve' | 'reject'
 export type ProposalFilter = '' | 'DRAFT' | 'PENDING' | 'APPROVED' | 'REJECTED'
 
 export function useProposals() {
   const { access } = useAuth()
-  const [filter, setFilter] = useState<ProposalFilter>('PENDING')
+  const listParams = useAdminListParams({ status: 'PENDING' })
+  const filter = (listParams.status || '') as ProposalFilter
   const [proposals, setProposals] = useState<AdminProposal[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -29,14 +32,19 @@ export function useProposals() {
     setLoading(true)
     setError(null)
     try {
-      setProposals(await listProposals(access, filter || undefined))
+      setProposals(
+        await listProposals(access, {
+          status: listParams.filters.status,
+          search: listParams.filters.search,
+        }),
+      )
     } catch (err) {
       setError(err instanceof ApiError ? err.message : copy.loadFailed)
       setProposals([])
     } finally {
       setLoading(false)
     }
-  }, [access, filter])
+  }, [access, listParams.filters.search, listParams.filters.status])
 
   useEffect(() => {
     void reload()
@@ -77,10 +85,18 @@ export function useProposals() {
     }
   }
 
+  const searchUi = (
+    <AdminListFilters
+      searchInput={listParams.searchInput}
+      onSearchChange={listParams.setSearchInput}
+      searchPlaceholder={copy.searchProposals}
+    />
+  )
+
   return {
     copy,
     filter,
-    setFilter,
+    setFilter: (v: ProposalFilter) => listParams.setStatus(v),
     proposals,
     loading,
     error,
@@ -93,5 +109,6 @@ export function useProposals() {
     openReview,
     closeReview,
     confirmReview,
+    searchUi,
   }
 }

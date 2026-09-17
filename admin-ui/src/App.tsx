@@ -8,7 +8,6 @@ import { RequireAuth } from './components/RequireAuth'
 import { RequireSuperAdmin } from './components/RequireSuperAdmin'
 import { AdminsPage } from './pages/Admins'
 import { DashboardPage } from './pages/Dashboard'
-import { ExperimentsPage } from './pages/Experiments'
 import { InstallationsPage } from './pages/Installations'
 import { InstrumentsPage } from './pages/Instruments'
 import { InvitationsPage } from './pages/Invitations'
@@ -33,7 +32,6 @@ function App() {
           <Route path="/projects" element={<ProjectsPage />} />
           <Route path="/projects/:id" element={<ProjectDetailPage />} />
           <Route path="/proposals" element={<ProposalsPage />} />
-          <Route path="/experiments" element={<ExperimentsPage />} />
           <Route path="/installations" element={<InstallationsPage />} />
           <Route path="/instruments" element={<InstrumentsPage />} />
           <Route path="/publications" element={<PublicationsPage />} />

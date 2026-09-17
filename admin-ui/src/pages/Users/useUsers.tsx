@@ -1,11 +1,14 @@
 import { useCallback, useEffect, useState } from 'react'
 import { listResearchers, patchUser, type AdminUser } from '../../api/admin'
 import { ApiError } from '../../api/client'
+import { AdminListFilters } from '../../components/AdminListFilters'
 import { useAuth } from '../../auth'
 import { copy } from '../../copy'
+import { useAdminListParams } from '../../hooks/useAdminListParams'
 
 export function useUsers() {
   const { access, user: me } = useAuth()
+  const listParams = useAdminListParams()
   const [users, setUsers] = useState<AdminUser[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -17,14 +20,25 @@ export function useUsers() {
     setLoading(true)
     setError(null)
     try {
-      setUsers(await listResearchers(access))
+      const active =
+        listParams.filters.is_active === 'true'
+          ? true
+          : listParams.filters.is_active === 'false'
+            ? false
+            : undefined
+      setUsers(
+        await listResearchers(access, {
+          search: listParams.filters.search,
+          is_active: active,
+        }),
+      )
     } catch (err) {
       setError(err instanceof ApiError ? err.message : copy.loadFailed)
       setUsers([])
     } finally {
       setLoading(false)
     }
-  }, [access])
+  }, [access, listParams.filters.search, listParams.filters.is_active])
 
   useEffect(() => {
     void reload()
@@ -44,6 +58,27 @@ export function useUsers() {
     }
   }
 
+  const filtersUi = (
+    <AdminListFilters
+      searchInput={listParams.searchInput}
+      onSearchChange={listParams.setSearchInput}
+      searchPlaceholder={copy.searchUsers}
+      selects={[
+        {
+          id: 'user-active',
+          label: copy.setActive,
+          value: listParams.isActive,
+          onChange: listParams.setIsActive,
+          options: [
+            { value: '', label: copy.filterAll },
+            { value: 'true', label: copy.filterActive },
+            { value: 'false', label: copy.filterInactive },
+          ],
+        },
+      ]}
+    />
+  )
+
   return {
     copy,
     users,
@@ -53,5 +88,6 @@ export function useUsers() {
     busyId,
     meId: me?.id ?? null,
     setActive,
+    filtersUi,
   }
 }

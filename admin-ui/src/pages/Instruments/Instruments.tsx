@@ -24,24 +24,7 @@ export function InstrumentsPage() {
         </button>
       </div>
 
-      <div className="mb-3" style={{ maxWidth: '16rem' }}>
-        <label className="form-label" htmlFor="filter-installation">
-          {vm.copy.installation}
-        </label>
-        <select
-          id="filter-installation"
-          className="form-select form-select-sm"
-          value={vm.filterInstallation}
-          onChange={(e) => vm.setFilterInstallation(e.target.value)}
-        >
-          <option value="">{vm.copy.filterAll}</option>
-          {vm.installations.map((i) => (
-            <option key={i.id} value={i.id}>
-              {i.name}
-            </option>
-          ))}
-        </select>
-      </div>
+      {vm.filtersUi}
 
       {vm.error ? (
         <div className="alert alert-danger" role="alert">

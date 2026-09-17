@@ -8,8 +8,10 @@ import {
   type AdminUser,
 } from '../../api/admin'
 import { ApiError } from '../../api/client'
+import { AdminListFilters } from '../../components/AdminListFilters'
 import { useAuth } from '../../auth'
 import { copy } from '../../copy'
+import { useAdminListParams } from '../../hooks/useAdminListParams'
 
 const createSchema = Yup.object({
   email: Yup.string()
@@ -26,6 +28,7 @@ const createSchema = Yup.object({
 
 export function useAdmins() {
   const { access, user: me } = useAuth()
+  const listParams = useAdminListParams()
   const [users, setUsers] = useState<AdminUser[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -40,14 +43,25 @@ export function useAdmins() {
     setLoading(true)
     setError(null)
     try {
-      setUsers(await listAdmins(access))
+      const active =
+        listParams.filters.is_active === 'true'
+          ? true
+          : listParams.filters.is_active === 'false'
+            ? false
+            : undefined
+      setUsers(
+        await listAdmins(access, {
+          search: listParams.filters.search,
+          is_active: active,
+        }),
+      )
     } catch (err) {
       setError(err instanceof ApiError ? err.message : copy.loadFailed)
       setUsers([])
     } finally {
       setLoading(false)
     }
-  }, [access])
+  }, [access, listParams.filters.search, listParams.filters.is_active])
 
   useEffect(() => {
     void reload()
@@ -115,6 +129,27 @@ export function useAdmins() {
     setCreateOpen(false)
   }
 
+  const filtersUi = (
+    <AdminListFilters
+      searchInput={listParams.searchInput}
+      onSearchChange={listParams.setSearchInput}
+      searchPlaceholder={copy.searchUsers}
+      selects={[
+        {
+          id: 'admin-active',
+          label: copy.setActive,
+          value: listParams.isActive,
+          onChange: listParams.setIsActive,
+          options: [
+            { value: '', label: copy.filterAll },
+            { value: 'true', label: copy.filterActive },
+            { value: 'false', label: copy.filterInactive },
+          ],
+        },
+      ]}
+    />
+  )
+
   return {
     copy,
     users,
@@ -130,5 +165,6 @@ export function useAdmins() {
     closeCreate,
     formik,
     creating,
+    filtersUi,
   }
 }

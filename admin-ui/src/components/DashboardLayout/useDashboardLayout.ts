@@ -8,7 +8,6 @@ const BASE_LINKS = [
   { to: '/users', label: copy.users },
   { to: '/projects', label: copy.projects },
   { to: '/proposals', label: copy.proposals },
-  { to: '/experiments', label: copy.experiments },
   { to: '/installations', label: copy.installations },
   { to: '/instruments', label: copy.instruments },
   { to: '/publications', label: copy.publications },
@@ -20,7 +19,6 @@ function titleForPath(pathname: string): string {
   if (pathname.startsWith('/users')) return copy.users
   if (pathname.startsWith('/projects')) return copy.projects
   if (pathname.startsWith('/proposals')) return copy.proposals
-  if (pathname.startsWith('/experiments')) return copy.experiments
   if (pathname.startsWith('/installations')) return copy.installations
   if (pathname.startsWith('/instruments')) return copy.instruments
   if (pathname.startsWith('/publications')) return copy.publications
