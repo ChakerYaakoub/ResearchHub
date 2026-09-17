@@ -4,20 +4,22 @@ import type { AuthTokens, AuthUser } from './authStorage'
 export async function registerRequest(
   email: string,
   password: string,
+  company = '',
 ): Promise<AuthTokens> {
   return apiFetch<AuthTokens>('/auth/register/', {
     method: 'POST',
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({ email, password, company }),
   })
 }
 
 export async function loginRequest(
   email: string,
   password: string,
+  company = '',
 ): Promise<AuthTokens> {
   return apiFetch<AuthTokens>('/auth/login/', {
     method: 'POST',
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({ email, password, company }),
   })
 }
 

@@ -34,4 +34,6 @@ Django-first: thin views, domain logic, small `services.py` / `selectors.py` onl
 - Explain *why* / project-specific rules across **settings, models, admin, apps, Docker, Compose, UI entry** — not only settings.
 - Do **not** comment every line or restate the obvious.
 
+**Security & validation:** see [`SECURITY.md`](./SECURITY.md) (12-layer checklist, HTML/username rules, AuthZ/IDOR, where helpers live).
+
 See `AGENTS.md`, `.cursor/rules/backend.mdc`, `docs/ARCHITECTURE.md`.

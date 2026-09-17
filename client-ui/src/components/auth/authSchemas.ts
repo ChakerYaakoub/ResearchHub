@@ -21,4 +21,6 @@ export function registerSchema(t: TFunction) {
 export type AuthFormValues = {
   email: string
   password: string
+  /** Honeypot — must stay empty for humans. */
+  company: string
 }

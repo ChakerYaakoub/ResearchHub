@@ -71,11 +71,11 @@ async function parseResponse<T>(response: Response): Promise<T> {
   }
 
   if (!response.ok) {
-    throw new ApiError(
-      response.status,
-      body,
-      formatApiError(body, `HTTP ${response.status}`),
-    )
+    const message =
+      response.status === 429
+        ? copy.rateLimited
+        : formatApiError(body, `HTTP ${response.status}`)
+    throw new ApiError(response.status, body, message)
   }
 
   return body as T

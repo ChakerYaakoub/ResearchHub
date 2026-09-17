@@ -38,12 +38,12 @@ describe('useLoginForm', () => {
 
     await act(async () => {
       await result.current.onSubmit(
-        { email: ' a@example.com ', password: 'secret' },
+        { email: ' a@example.com ', password: 'secret', company: '' },
         helpers as never,
       )
     })
 
-    expect(loginMock).toHaveBeenCalledWith('a@example.com', 'secret')
+    expect(loginMock).toHaveBeenCalledWith('a@example.com', 'secret', '')
     expect(onSuccess).toHaveBeenCalled()
     expect(helpers.setSubmitting).toHaveBeenCalledWith(false)
   })
@@ -56,7 +56,7 @@ describe('useLoginForm', () => {
 
     await act(async () => {
       await result.current.onSubmit(
-        { email: 'a@example.com', password: 'x' },
+        { email: 'a@example.com', password: 'x', company: '' },
         { setSubmitting: vi.fn() } as never,
       )
     })

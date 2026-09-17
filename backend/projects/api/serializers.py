@@ -2,6 +2,7 @@
 
 from rest_framework import serializers
 
+from core.validation import validate_optional_text, validate_title
 from projects.models import ProjectMembership, ResearchProject
 
 
@@ -22,6 +23,15 @@ class ResearchProjectSerializer(serializers.ModelSerializer):
             "updated_at",
         )
         read_only_fields = ("id", "owner", "status", "created_at", "updated_at")
+
+    def validate_title(self, value: str) -> str:
+        return validate_title(value)
+
+    def validate_description(self, value: str) -> str:
+        return validate_optional_text(value)
+
+    def validate_scientific_objective(self, value: str) -> str:
+        return validate_optional_text(value)
 
 
 class ProjectMembershipSerializer(serializers.ModelSerializer):

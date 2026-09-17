@@ -2,6 +2,7 @@
 
 from rest_framework import serializers
 
+from core.validation import validate_optional_text
 from facilities.services import FacilityError, assert_instrument_selectable
 
 from experiments.models import Experiment
@@ -40,6 +41,9 @@ class ExperimentSerializer(serializers.ModelSerializer):
             "installation_id",
             "installation_name",
         )
+
+    def validate_notes(self, value: str) -> str:
+        return validate_optional_text(value)
 
     def validate_instrument(self, instrument):
         # Creating always validates; updating only when instrument changes.

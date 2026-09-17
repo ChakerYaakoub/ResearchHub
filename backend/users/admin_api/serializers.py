@@ -2,6 +2,7 @@
 
 from rest_framework import serializers
 
+from core.validation import validate_username
 from users.mail import send_admin_welcome_email
 from users.models import GlobalRole, User
 from users.user_create import (
@@ -39,6 +40,11 @@ class AdminCreateAdminSerializer(serializers.Serializer):
 
     def validate_email(self, value: str) -> str:
         return normalize_unique_email(value)
+
+    def validate_username(self, value: str) -> str:
+        if not (value or "").strip():
+            return ""
+        return validate_username(value)
 
     def create(self, validated_data: dict) -> User:
         email = validated_data["email"]

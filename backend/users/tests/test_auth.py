@@ -1,6 +1,7 @@
 """Authentication API tests (`/api/auth/`)."""
 
 from django.core import mail
+from django.core.cache import cache
 from django.test import TestCase, override_settings
 from rest_framework import status
 from rest_framework.test import APIClient
@@ -9,6 +10,7 @@ from test_helpers import DEFAULT_PASSWORD, auth_client, make_user
 from users.models import GlobalRole, User
 
 
+@override_settings(RATELIMIT_ENABLE=False)
 class AuthApiTests(TestCase):
     def setUp(self):
         self.client = APIClient()
@@ -333,3 +335,101 @@ class AuthApiTests(TestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         user.refresh_from_db()
         self.assertTrue(user.check_password(DEFAULT_PASSWORD))
+
+    def test_login_honeypot_filled_is_ignored(self):
+        make_user("hp-login@example.com")
+        response = self.client.post(
+            "/api/auth/login/",
+            {
+                "email": "hp-login@example.com",
+                "password": DEFAULT_PASSWORD,
+                "company": "Acme Bot Ltd",
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertNotIn("access", response.data)
+
+    @override_settings(
+        EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend",
+    )
+    def test_register_honeypot_filled_is_ignored(self):
+        response = self.client.post(
+            "/api/auth/register/",
+            {
+                "email": "hp-reg@example.com",
+                "password": DEFAULT_PASSWORD,
+                "company": "Bot Co",
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertFalse(User.objects.filter(email="hp-reg@example.com").exists())
+        self.assertEqual(len(mail.outbox), 0)
+
+
+class AuthRateLimitTests(TestCase):
+    """Public auth endpoints: login/register 5/min, password-reset 2/min (per IP)."""
+
+    def setUp(self):
+        cache.clear()
+        self.client = APIClient()
+
+    def test_login_blocks_after_five_attempts(self):
+        make_user("rl-login@example.com")
+        for _ in range(5):
+            response = self.client.post(
+                "/api/auth/login/",
+                {"email": "rl-login@example.com", "password": "WrongPass999!"},
+                format="json",
+            )
+            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        blocked = self.client.post(
+            "/api/auth/login/",
+            {"email": "rl-login@example.com", "password": "WrongPass999!"},
+            format="json",
+        )
+        self.assertEqual(blocked.status_code, status.HTTP_429_TOO_MANY_REQUESTS)
+        self.assertIn("detail", blocked.data)
+
+    @override_settings(
+        EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend",
+    )
+    def test_register_blocks_after_five_attempts(self):
+        for i in range(5):
+            response = self.client.post(
+                "/api/auth/register/",
+                {
+                    "email": f"rl-reg-{i}@example.com",
+                    "password": DEFAULT_PASSWORD,
+                },
+                format="json",
+            )
+            self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        blocked = self.client.post(
+            "/api/auth/register/",
+            {
+                "email": "rl-reg-block@example.com",
+                "password": DEFAULT_PASSWORD,
+            },
+            format="json",
+        )
+        self.assertEqual(blocked.status_code, status.HTTP_429_TOO_MANY_REQUESTS)
+
+    def test_password_reset_blocks_after_two_attempts(self):
+        for i in range(2):
+            response = self.client.post(
+                "/api/auth/password-reset/",
+                {"email": f"rl-reset-{i}@example.com"},
+                format="json",
+            )
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        blocked = self.client.post(
+            "/api/auth/password-reset/",
+            {"email": "rl-reset-block@example.com"},
+            format="json",
+        )
+        self.assertEqual(blocked.status_code, status.HTTP_429_TOO_MANY_REQUESTS)
