@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next'
+import { PageMeta, usePageMeta } from '../../components/PageMeta'
 import './Documentation.css'
 
 type DocSection = { title: string; body: string; items?: string[] }
@@ -6,12 +7,14 @@ type DocSection = { title: string; body: string; items?: string[] }
 /** Commercial learn-more overview for researchers. */
 export function DocumentationPage() {
   const { t } = useTranslation()
+  const meta = usePageMeta({ pageKey: 'documentation' })
   const sections = t('documentation.sections', {
     returnObjects: true,
   }) as DocSection[]
 
   return (
     <>
+      <PageMeta {...meta} />
       <header className="page-header py-4">
         <div className="container">
           <h1 className="page-title h2 mb-2">{t('documentation.title')}</h1>

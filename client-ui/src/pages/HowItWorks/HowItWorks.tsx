@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next'
+import { PageMeta, usePageMeta } from '../../components/PageMeta'
 import './HowItWorks.css'
 
 type TextBlock = { title: string; body: string }
@@ -7,12 +8,14 @@ type WorkflowStep = TextBlock & { status: string; items?: string[] }
 /** Commercial overview of the researcher project journey. */
 export function HowItWorksPage() {
   const { t } = useTranslation()
+  const meta = usePageMeta({ pageKey: 'howItWorks' })
   const phases = t('howItWorks.phases', { returnObjects: true }) as TextBlock[]
   const steps = t('howItWorks.steps', { returnObjects: true }) as WorkflowStep[]
   const roles = t('howItWorks.roles', { returnObjects: true }) as TextBlock[]
 
   return (
     <>
+      <PageMeta {...meta} />
       <header className="page-header py-4">
         <div className="container">
           <h1 className="page-title h2 mb-2">{t('howItWorks.title')}</h1>

@@ -1,4 +1,5 @@
 import { Link, NavLink, Outlet } from 'react-router-dom'
+import { DocumentTitle } from '../DocumentTitle'
 import { useDashboardLayout } from './useDashboardLayout'
 import './DashboardLayout.css'
 
@@ -8,6 +9,7 @@ export function DashboardLayout() {
 
   return (
     <div className={`rh-dash${vm.sidebarOpen ? ' is-open' : ''}`}>
+      <DocumentTitle title={`${vm.pageTitle} — ResearchHub Admin`} />
       <button
         type="button"
         className="rh-dash-backdrop"

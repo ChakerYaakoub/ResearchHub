@@ -48,6 +48,13 @@ export function useDashboardLayout() {
       ? 'nav.invitations'
       : 'nav.dashboard'
 
+  const seoKey = activePath.startsWith('/projects')
+    ? 'projects'
+    : activePath.startsWith('/invitations')
+      ? 'invitations'
+      : 'dashboard'
+  const documentTitle = t(`seo.${seoKey}.title`)
+
   return {
     t,
     user,
@@ -60,5 +67,6 @@ export function useDashboardLayout() {
     activePath,
     links: SIDEBAR_LINKS,
     pageTitleKey,
+    documentTitle,
   }
 }

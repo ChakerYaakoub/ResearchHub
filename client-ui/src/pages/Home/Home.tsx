@@ -1,13 +1,16 @@
 import { Link } from 'react-router-dom'
+import { PageMeta, usePageMeta } from '../../components/PageMeta'
 import { useHome } from './useHome'
 import './Home.css'
 
 /** Marketing home — brand-first hero and commercial product overview. */
 export function HomePage() {
   const vm = useHome()
+  const meta = usePageMeta({ pageKey: 'home' })
 
   return (
     <>
+      <PageMeta {...meta} />
       <section className="home-hero py-5">
         <div className="container py-lg-4">
           <p className="home-hero-brand display-4 fw-bold mb-3">
