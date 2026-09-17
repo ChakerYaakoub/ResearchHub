@@ -19,7 +19,9 @@
     "back": "Back",
     "edit": "Edit",
     "delete": "Delete",
-    "deleting": "Deleting…"
+    "deleting": "Deleting…",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password"
   },
   "validation": {
     "emailRequired": "Email is required.",
@@ -36,6 +38,18 @@
     "inviteFailed": "Could not send invitation.",
     "acceptFailed": "Could not accept invitation.",
     "declineFailed": "Could not decline invitation."
+  },
+  "toast": {
+    "saved": "Saved.",
+    "deleted": "Deleted.",
+    "created": "Created.",
+    "submitted": "Submitted for review.",
+    "inviteSent": "Invitation sent.",
+    "inviteCancelled": "Invitation cancelled.",
+    "accepted": "Invitation accepted.",
+    "declined": "Invitation declined.",
+    "completed": "Project marked complete.",
+    "projectDeleted": "Project removed from your workspace."
   },
   "nav": {
     "brand": "ResearchHub",
@@ -349,9 +363,11 @@
     "inviteSent": "Invitation created.",
     "sentInvitations": "Sent invitations",
     "sentInvitationsEmpty": "No invitations sent yet.",
-    "cancelInvite": "Cancel",
-    "cancellingInvite": "Cancelling…",
-    "confirmCancelInvite": "Cancel this invitation?",
+    "cancelInvite": "Revoke",
+    "cancellingInvite": "Revoking…",
+    "confirmCancelInvite": "Revoke this pending invitation? The invite link will stop working.",
+    "cancelInviteConfirm": "Revoke invitation",
+    "cancelInviteKeep": "Keep invitation",
     "roleEditor": "Editor",
     "roleViewer": "Viewer",
     "sectionProposal": "Proposal",
@@ -368,7 +384,7 @@
     "deleting": "Deleting…",
     "deleteTitle": "Delete project",
     "confirmDelete": "Remove this project from your workspace? An administrator can permanently delete it later.",
-    "cancelInviteTitle": "Cancel invitation",
+    "cancelInviteTitle": "Revoke invitation",
     "draftPrep": {
       "title": "Prepare your project",
       "intro": "Complete these steps before submitting for scientific review. After submit, you cannot add planned experiments or related publications while waiting for a decision.",

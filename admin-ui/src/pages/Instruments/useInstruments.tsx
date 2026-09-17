@@ -13,6 +13,7 @@ import { AdminListFilters } from '../../components/AdminListFilters'
 import { useAuth } from '../../auth'
 import { copy } from '../../copy'
 import { useAdminListParams } from '../../hooks/useAdminListParams'
+import { notifyError, notifySuccess } from '../../notify'
 
 export type InstrumentFormValues = {
   installation: string
@@ -39,7 +40,6 @@ export function useInstruments() {
   const [installations, setInstallations] = useState<AdminInstallation[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [actionError, setActionError] = useState<string | null>(null)
   const [showForm, setShowForm] = useState(false)
   const [editingId, setEditingId] = useState<number | null>(null)
   const [form, setForm] = useState<InstrumentFormValues>(blank)
@@ -85,7 +85,6 @@ export function useInstruments() {
       ...blank,
       installation: listParams.installation || '',
     })
-    setActionError(null)
     setShowForm(true)
   }
 
@@ -99,7 +98,6 @@ export function useInstruments() {
       description: row.description,
       status: row.status,
     })
-    setActionError(null)
     setShowForm(true)
   }
 
@@ -112,7 +110,6 @@ export function useInstruments() {
   async function onSave() {
     if (!access || !form.installation) return
     setSaving(true)
-    setActionError(null)
     const body = {
       installation: Number(form.installation),
       code: form.code.trim(),
@@ -127,10 +124,11 @@ export function useInstruments() {
       } else {
         await createInstrument(access, body)
       }
+      notifySuccess(copy.saved)
       closeForm()
       await reload()
     } catch (err) {
-      setActionError(err instanceof ApiError ? err.message : copy.requestFailed)
+      notifyError(err instanceof ApiError ? err.message : copy.requestFailed)
     } finally {
       setSaving(false)
     }
@@ -138,19 +136,18 @@ export function useInstruments() {
 
   function requestDelete(id: number) {
     setPendingDeleteId(id)
-    setActionError(null)
   }
 
   async function confirmDelete() {
     if (!access || pendingDeleteId == null) return
     setDeleting(true)
-    setActionError(null)
     try {
       await deleteInstrument(access, pendingDeleteId)
       setPendingDeleteId(null)
+      notifySuccess(copy.deleted)
       await reload()
     } catch (err) {
-      setActionError(err instanceof ApiError ? err.message : copy.requestFailed)
+      notifyError(err instanceof ApiError ? err.message : copy.requestFailed)
     } finally {
       setDeleting(false)
     }
@@ -197,7 +194,6 @@ export function useInstruments() {
     installations,
     loading,
     error,
-    actionError,
     showForm,
     editingId,
     form,

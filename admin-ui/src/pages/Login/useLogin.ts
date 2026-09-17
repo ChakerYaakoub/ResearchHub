@@ -3,6 +3,7 @@ import * as Yup from 'yup'
 import { ApiError } from '../../api/client'
 import { useAuth } from '../../auth'
 import { copy } from '../../copy'
+import { notifyError } from '../../notify'
 
 export type LoginFormValues = {
   email: string
@@ -27,16 +28,13 @@ export function useLogin() {
 
   async function onSubmit(
     values: LoginFormValues,
-    helpers: { setSubmitting: (v: boolean) => void; setStatus: (s: string | null) => void },
+    helpers: { setSubmitting: (v: boolean) => void },
   ) {
-    helpers.setStatus(null)
     try {
       await login(values.email.trim().toLowerCase(), values.password)
       navigate('/', { replace: true })
     } catch (err) {
-      helpers.setStatus(
-        err instanceof ApiError ? err.message : copy.loginFailed,
-      )
+      notifyError(err instanceof ApiError ? err.message : copy.loginFailed)
     } finally {
       helpers.setSubmitting(false)
     }

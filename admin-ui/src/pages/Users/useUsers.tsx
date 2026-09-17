@@ -5,6 +5,7 @@ import { AdminListFilters } from '../../components/AdminListFilters'
 import { useAuth } from '../../auth'
 import { copy } from '../../copy'
 import { useAdminListParams } from '../../hooks/useAdminListParams'
+import { notifyError, notifySuccess } from '../../notify'
 
 export function useUsers() {
   const { access, user: me } = useAuth()
@@ -12,7 +13,6 @@ export function useUsers() {
   const [users, setUsers] = useState<AdminUser[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [actionError, setActionError] = useState<string | null>(null)
   const [busyId, setBusyId] = useState<number | null>(null)
 
   const reload = useCallback(async () => {
@@ -47,12 +47,12 @@ export function useUsers() {
   async function setActive(id: number, is_active: boolean) {
     if (!access) return
     setBusyId(id)
-    setActionError(null)
     try {
       const updated = await patchUser(access, id, { is_active })
       setUsers((prev) => prev.map((u) => (u.id === id ? updated : u)))
+      notifySuccess(is_active ? copy.userActivated : copy.userDeactivated)
     } catch (err) {
-      setActionError(err instanceof ApiError ? err.message : copy.requestFailed)
+      notifyError(err instanceof ApiError ? err.message : copy.requestFailed)
     } finally {
       setBusyId(null)
     }
@@ -85,7 +85,6 @@ export function useUsers() {
     users,
     loading,
     error,
-    actionError,
     busyId,
     meId: me?.id ?? null,
     setActive,

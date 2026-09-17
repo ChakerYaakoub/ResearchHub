@@ -24,11 +24,6 @@ export function SubmitSection(props: SubmitSectionProps) {
           {vm.error}
         </div>
       ) : null}
-      {vm.actionError ? (
-        <div className="alert alert-danger py-2" role="alert">
-          {vm.actionError}
-        </div>
-      ) : null}
 
       {!vm.loading && !vm.error ? (
         <>

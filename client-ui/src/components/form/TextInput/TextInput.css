@@ -7,10 +7,42 @@
   margin-bottom: 0.35rem;
 }
 
+.rh-text-input-wrap {
+  position: relative;
+}
+
+.rh-text-input-password {
+  padding-right: 2.5rem;
+}
+
+.rh-text-input-toggle {
+  position: absolute;
+  top: 50%;
+  right: 0.35rem;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: 0;
+  border-radius: 0.25rem;
+  background: transparent;
+  color: var(--rh-text-muted, #6c757d);
+  cursor: pointer;
+}
+
+.rh-text-input-toggle:hover,
+.rh-text-input-toggle:focus-visible {
+  color: var(--rh-accent, #328ba0);
+  outline: none;
+}
+
 /* Keep control size stable: no Bootstrap invalid icon / padding jump. */
 .rh-text-input .form-control.is-invalid {
   background-image: none;
-  padding-right: 0.75rem;
+  padding-right: 2.5rem;
 }
 
 .rh-text-input .form-control:focus {

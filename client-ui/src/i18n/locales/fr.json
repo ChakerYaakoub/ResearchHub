@@ -19,7 +19,9 @@
     "back": "Retour",
     "edit": "Modifier",
     "delete": "Supprimer",
-    "deleting": "Suppression…"
+    "deleting": "Suppression…",
+    "showPassword": "Afficher le mot de passe",
+    "hidePassword": "Masquer le mot de passe"
   },
   "validation": {
     "emailRequired": "L'e-mail est obligatoire.",
@@ -36,6 +38,18 @@
     "inviteFailed": "Impossible d'envoyer l'invitation.",
     "acceptFailed": "Impossible d'accepter l'invitation.",
     "declineFailed": "Impossible de refuser l'invitation."
+  },
+  "toast": {
+    "saved": "Enregistré.",
+    "deleted": "Supprimé.",
+    "created": "Créé.",
+    "submitted": "Soumis pour revue.",
+    "inviteSent": "Invitation envoyée.",
+    "inviteCancelled": "Invitation annulée.",
+    "accepted": "Invitation acceptée.",
+    "declined": "Invitation refusée.",
+    "completed": "Projet marqué comme terminé.",
+    "projectDeleted": "Projet retiré de votre espace de travail."
   },
   "nav": {
     "brand": "ResearchHub",
@@ -349,9 +363,11 @@
     "inviteSent": "Invitation créée.",
     "sentInvitations": "Invitations envoyées",
     "sentInvitationsEmpty": "Aucune invitation envoyée.",
-    "cancelInvite": "Annuler",
-    "cancellingInvite": "Annulation…",
-    "confirmCancelInvite": "Annuler cette invitation ?",
+    "cancelInvite": "Révoquer",
+    "cancellingInvite": "Révocation…",
+    "confirmCancelInvite": "Révoquer cette invitation en attente ? Le lien d'invitation ne fonctionnera plus.",
+    "cancelInviteConfirm": "Révoquer l'invitation",
+    "cancelInviteKeep": "Conserver l'invitation",
     "roleEditor": "Éditeur",
     "roleViewer": "Lecteur",
     "sectionProposal": "Proposition",
@@ -368,7 +384,7 @@
     "deleting": "Suppression…",
     "deleteTitle": "Supprimer le projet",
     "confirmDelete": "Retirer ce projet de votre espace de travail ? Un administrateur pourra le supprimer définitivement plus tard.",
-    "cancelInviteTitle": "Annuler l'invitation",
+    "cancelInviteTitle": "Révoquer l'invitation",
     "draftPrep": {
       "title": "Préparez votre projet",
       "intro": "Complétez ces étapes avant de soumettre pour revue scientifique. Après la soumission, vous ne pourrez plus ajouter d'expériences planifiées ni de publications associées en attendant la décision.",

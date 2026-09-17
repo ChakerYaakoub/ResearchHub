@@ -2,6 +2,7 @@ import type { FormikHelpers } from 'formik'
 import { useTranslation } from 'react-i18next'
 import { ApiError } from '../../../api/client'
 import { useAuth } from '../../../auth'
+import { notifyError } from '../../../notify'
 import { loginSchema, type AuthFormValues } from '../authSchemas'
 
 export type LoginFormProps = {
@@ -21,14 +22,15 @@ export function useLoginForm({ onSuccess, onSwitchToRegister }: LoginFormProps) 
     values: AuthFormValues,
     helpers: FormikHelpers<AuthFormValues>,
   ) {
-    helpers.setStatus(undefined)
     try {
       await login(values.email.trim(), values.password)
       onSuccess()
     } catch (err) {
-      helpers.setStatus(
+      notifyError(
         err instanceof ApiError ? err.message : t('errors.loginFailed'),
       )
+    } finally {
+      helpers.setSubmitting(false)
     }
   }
 

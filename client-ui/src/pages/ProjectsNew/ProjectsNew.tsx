@@ -18,12 +18,6 @@ export function ProjectsNewPage() {
         }
       />
 
-      {vm.formError ? (
-        <div className="alert alert-danger" role="alert">
-          {vm.formError}
-        </div>
-      ) : null}
-
       <Formik<ProjectFormValues>
         initialValues={vm.initialValues}
         validationSchema={vm.validationSchema}

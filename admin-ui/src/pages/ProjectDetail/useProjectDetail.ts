@@ -8,6 +8,7 @@ import {
 import { ApiError } from '../../api/client'
 import { useAuth } from '../../auth'
 import { copy } from '../../copy'
+import { notifyError, notifySuccess } from '../../notify'
 
 export function useProjectDetail() {
   const { id } = useParams()
@@ -17,7 +18,6 @@ export function useProjectDetail() {
   const [project, setProject] = useState<AdminProjectDetail | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [actionError, setActionError] = useState<string | null>(null)
   const [confirmOpen, setConfirmOpen] = useState(false)
   const [busy, setBusy] = useState(false)
 
@@ -42,12 +42,12 @@ export function useProjectDetail() {
   async function confirmDelete() {
     if (!access || !project) return
     setBusy(true)
-    setActionError(null)
     try {
       await deleteProject(access, project.id)
+      notifySuccess(copy.projectDeleted)
       navigate('/projects', { replace: true })
     } catch (err) {
-      setActionError(err instanceof ApiError ? err.message : copy.requestFailed)
+      notifyError(err instanceof ApiError ? err.message : copy.requestFailed)
     } finally {
       setBusy(false)
       setConfirmOpen(false)
@@ -59,7 +59,6 @@ export function useProjectDetail() {
     project,
     loading,
     error,
-    actionError,
     confirmOpen,
     setConfirmOpen,
     busy,

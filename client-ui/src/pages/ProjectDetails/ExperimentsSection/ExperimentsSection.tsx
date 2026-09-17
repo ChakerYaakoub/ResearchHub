@@ -153,11 +153,6 @@ export function ExperimentsSection(props: ExperimentsSectionProps) {
           {vm.error}
         </div>
       ) : null}
-      {vm.actionError && !vm.showForm ? (
-        <div className="alert alert-danger py-2" role="alert">
-          {vm.actionError}
-        </div>
-      ) : null}
 
       {!vm.loading && !vm.error ? (
         <>
@@ -190,11 +185,6 @@ export function ExperimentsSection(props: ExperimentsSectionProps) {
         title={vm.formTitle}
         size="md"
       >
-        {vm.actionError ? (
-          <div className="alert alert-danger py-2" role="alert">
-            {vm.actionError}
-          </div>
-        ) : null}
         <Formik<ExperimentFormValues>
           enableReinitialize
           initialValues={vm.initialValues}

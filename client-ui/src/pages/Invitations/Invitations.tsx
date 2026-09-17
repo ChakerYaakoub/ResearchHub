@@ -20,11 +20,6 @@ export function InvitationsPage() {
           {vm.error}
         </div>
       ) : null}
-      {vm.actionError ? (
-        <div className="alert alert-danger" role="alert">
-          {vm.actionError}
-        </div>
-      ) : null}
 
       {vm.loading ? (
         <div className="position-relative">

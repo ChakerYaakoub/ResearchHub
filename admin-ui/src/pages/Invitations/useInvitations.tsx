@@ -9,6 +9,7 @@ import { AdminListFilters } from '../../components/AdminListFilters'
 import { useAuth } from '../../auth'
 import { copy } from '../../copy'
 import { useAdminListParams } from '../../hooks/useAdminListParams'
+import { notifyError, notifySuccess } from '../../notify'
 
 export function useInvitations() {
   const { access } = useAuth()
@@ -16,7 +17,6 @@ export function useInvitations() {
   const [items, setItems] = useState<AdminInvitation[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [actionError, setActionError] = useState<string | null>(null)
   const [pending, setPending] = useState<AdminInvitation | null>(null)
   const [busy, setBusy] = useState(false)
 
@@ -46,13 +46,13 @@ export function useInvitations() {
   async function confirmCancel() {
     if (!access || !pending) return
     setBusy(true)
-    setActionError(null)
     try {
       await cancelInvitation(access, pending.id)
       setPending(null)
+      notifySuccess(copy.inviteCancelled)
       await reload()
     } catch (err) {
-      setActionError(err instanceof ApiError ? err.message : copy.requestFailed)
+      notifyError(err instanceof ApiError ? err.message : copy.requestFailed)
     } finally {
       setBusy(false)
     }
@@ -86,7 +86,6 @@ export function useInvitations() {
     items,
     loading,
     error,
-    actionError,
     pending,
     setPending,
     busy,

@@ -2,6 +2,7 @@ import type { FormikHelpers } from 'formik'
 import { useTranslation } from 'react-i18next'
 import { ApiError } from '../../../api/client'
 import { useAuth } from '../../../auth'
+import { notifyError } from '../../../notify'
 import { registerSchema, type AuthFormValues } from '../authSchemas'
 
 export type RegisterFormProps = {
@@ -24,14 +25,15 @@ export function useRegisterForm({
     values: AuthFormValues,
     helpers: FormikHelpers<AuthFormValues>,
   ) {
-    helpers.setStatus(undefined)
     try {
       await register(values.email.trim(), values.password)
       onSuccess()
     } catch (err) {
-      helpers.setStatus(
+      notifyError(
         err instanceof ApiError ? err.message : t('errors.registerFailed'),
       )
+    } finally {
+      helpers.setSubmitting(false)
     }
   }
 

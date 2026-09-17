@@ -10,6 +10,7 @@ import {
 import { ApiError } from '../../api/client'
 import { useAuth } from '../../auth'
 import { copy } from '../../copy'
+import { notifyError, notifySuccess } from '../../notify'
 
 const createSchema = Yup.object({
   email: Yup.string()
@@ -29,8 +30,6 @@ export function useAdmins() {
   const [users, setUsers] = useState<AdminUser[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [actionError, setActionError] = useState<string | null>(null)
-  const [success, setSuccess] = useState<string | null>(null)
   const [busyId, setBusyId] = useState<number | null>(null)
   const [createOpen, setCreateOpen] = useState(false)
   const [creating, setCreating] = useState(false)
@@ -64,8 +63,6 @@ export function useAdmins() {
     onSubmit: async (values, helpers) => {
       if (!access) return
       setCreating(true)
-      setActionError(null)
-      setSuccess(null)
       try {
         await createAdmin(access, {
           email: values.email.trim(),
@@ -74,10 +71,10 @@ export function useAdmins() {
         })
         helpers.resetForm()
         setCreateOpen(false)
-        setSuccess(copy.createAdminSuccess)
+        notifySuccess(copy.createAdminSuccess)
         await reload()
       } catch (err) {
-        setActionError(
+        notifyError(
           err instanceof ApiError ? err.message : copy.requestFailed,
         )
       } finally {
@@ -91,21 +88,18 @@ export function useAdmins() {
     const target = users.find((u) => u.id === id)
     if (!target || target.role === 'SUPER_ADMIN') return
     setBusyId(id)
-    setActionError(null)
-    setSuccess(null)
     try {
       const updated = await patchUser(access, id, { is_active })
       setUsers((prev) => prev.map((u) => (u.id === id ? updated : u)))
+      notifySuccess(is_active ? copy.userActivated : copy.userDeactivated)
     } catch (err) {
-      setActionError(err instanceof ApiError ? err.message : copy.requestFailed)
+      notifyError(err instanceof ApiError ? err.message : copy.requestFailed)
     } finally {
       setBusyId(null)
     }
   }
 
   function openCreate() {
-    setActionError(null)
-    setSuccess(null)
     formik.resetForm()
     setCreateOpen(true)
   }
@@ -120,8 +114,6 @@ export function useAdmins() {
     users,
     loading,
     error,
-    actionError,
-    success,
     busyId,
     meId: me?.id ?? null,
     setActive,

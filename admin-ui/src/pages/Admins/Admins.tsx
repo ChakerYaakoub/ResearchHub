@@ -1,6 +1,7 @@
 import { Popup } from '../../components/Popup'
 import { EmptyState } from '../../components/EmptyState'
 import { LoadingState } from '../../components/LoadingState'
+import { PasswordField } from '../../components/PasswordField'
 import { StatusBadge } from '../../components/StatusBadge'
 import { useAdmins } from './useAdmins'
 import '../../styles/adminLists.css'
@@ -27,16 +28,6 @@ export function AdminsPage() {
       {vm.error ? (
         <div className="alert alert-danger" role="alert">
           {vm.error}
-        </div>
-      ) : null}
-      {vm.actionError ? (
-        <div className="alert alert-danger" role="alert">
-          {vm.actionError}
-        </div>
-      ) : null}
-      {vm.success ? (
-        <div className="alert alert-success" role="alert">
-          {vm.success}
         </div>
       ) : null}
 
@@ -173,54 +164,40 @@ export function AdminsPage() {
               autoComplete="off"
             />
           </div>
-          <div className="mb-3">
-            <label className="form-label" htmlFor="create_admin_password">
-              {vm.copy.password}
-            </label>
-            <input
-              id="create_admin_password"
-              name="password"
-              type="password"
-              className={`form-control${
-                formik.touched.password && formik.errors.password
-                  ? ' is-invalid'
-                  : ''
-              }`}
-              value={formik.values.password}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              disabled={vm.creating}
-              autoComplete="new-password"
-            />
-            {formik.touched.password && formik.errors.password ? (
-              <div className="invalid-feedback">{formik.errors.password}</div>
-            ) : null}
-          </div>
-          <div className="mb-3">
-            <label className="form-label" htmlFor="create_admin_password_confirm">
-              {vm.copy.passwordConfirm}
-            </label>
-            <input
-              id="create_admin_password_confirm"
-              name="passwordConfirm"
-              type="password"
-              className={`form-control${
-                formik.touched.passwordConfirm && formik.errors.passwordConfirm
-                  ? ' is-invalid'
-                  : ''
-              }`}
-              value={formik.values.passwordConfirm}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              disabled={vm.creating}
-              autoComplete="new-password"
-            />
-            {formik.touched.passwordConfirm && formik.errors.passwordConfirm ? (
-              <div className="invalid-feedback">
-                {formik.errors.passwordConfirm}
-              </div>
-            ) : null}
-          </div>
+          <PasswordField
+            id="create_admin_password"
+            name="password"
+            label={vm.copy.password}
+            value={formik.values.password}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            autoComplete="new-password"
+            disabled={vm.creating}
+            invalid={Boolean(formik.touched.password && formik.errors.password)}
+            error={
+              formik.touched.password && formik.errors.password
+                ? formik.errors.password
+                : undefined
+            }
+          />
+          <PasswordField
+            id="create_admin_password_confirm"
+            name="passwordConfirm"
+            label={vm.copy.passwordConfirm}
+            value={formik.values.passwordConfirm}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            autoComplete="new-password"
+            disabled={vm.creating}
+            invalid={Boolean(
+              formik.touched.passwordConfirm && formik.errors.passwordConfirm,
+            )}
+            error={
+              formik.touched.passwordConfirm && formik.errors.passwordConfirm
+                ? formik.errors.passwordConfirm
+                : undefined
+            }
+          />
           <div className="d-flex flex-wrap justify-content-end gap-2">
             <button
               type="button"

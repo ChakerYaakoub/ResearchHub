@@ -31,11 +31,6 @@ export function InstrumentsPage() {
           {vm.error}
         </div>
       ) : null}
-      {vm.actionError && !vm.showForm ? (
-        <div className="alert alert-danger" role="alert">
-          {vm.actionError}
-        </div>
-      ) : null}
 
       {vm.loading ? (
         <LoadingState label={vm.copy.loading} />
@@ -97,11 +92,6 @@ export function InstrumentsPage() {
         }
         size="md"
       >
-        {vm.actionError ? (
-          <div className="alert alert-danger py-2" role="alert">
-            {vm.actionError}
-          </div>
-        ) : null}
         <div className="mb-3">
           <label className="form-label" htmlFor="instr-installation">
             {vm.copy.installation}

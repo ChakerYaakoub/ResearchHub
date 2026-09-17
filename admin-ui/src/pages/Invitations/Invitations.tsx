@@ -16,11 +16,6 @@ export function InvitationsPage() {
           {vm.error}
         </div>
       ) : null}
-      {vm.actionError ? (
-        <div className="alert alert-danger" role="alert">
-          {vm.actionError}
-        </div>
-      ) : null}
 
       {vm.filtersUi}
 
@@ -104,8 +99,8 @@ export function InvitationsPage() {
         open={vm.pending != null}
         title={vm.copy.cancelInviteTitle}
         message={vm.copy.cancelInviteMessage}
-        confirmLabel={vm.copy.cancelInvite}
-        cancelLabel={vm.copy.cancel}
+        confirmLabel={vm.copy.cancelInviteConfirm}
+        cancelLabel={vm.copy.cancelInviteKeep}
         busy={vm.busy}
         busyLabel={vm.copy.cancelling}
         danger

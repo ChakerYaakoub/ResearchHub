@@ -10,6 +10,7 @@ import {
   updatePublication,
 } from '../../../api/publications'
 import { useAuth } from '../../../auth'
+import { notifyError, notifySuccess } from '../../../notify'
 import type { Project, Publication, PublicationKind } from '../../../types/api'
 
 export type PublicationsSectionProps = {
@@ -53,7 +54,6 @@ export function usePublicationsSection({
   const [items, setItems] = useState<Publication[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [actionError, setActionError] = useState<string | null>(null)
   const [editingId, setEditingId] = useState<number | null>(null)
   const [createKind, setCreateKind] = useState<PublicationKind | null>(null)
   const [showForm, setShowForm] = useState(false)
@@ -117,14 +117,12 @@ export function usePublicationsSection({
     setEditingId(null)
     setCreateKind(kind)
     setShowForm(true)
-    setActionError(null)
   }
 
   function openEdit(id: number) {
     setEditingId(id)
     setCreateKind(null)
     setShowForm(true)
-    setActionError(null)
   }
 
   function closeForm() {
@@ -142,7 +140,6 @@ export function usePublicationsSection({
     helpers: FormikHelpers<PublicationFormValues>,
   ) {
     if (!access || !canEdit || !formKind) return
-    setActionError(null)
     const body = {
       kind: formKind,
       title: values.title.trim(),
@@ -155,13 +152,15 @@ export function usePublicationsSection({
     try {
       if (editingId) {
         await updatePublication(access, editingId, body)
+        notifySuccess(t('toast.saved'))
       } else {
         await createPublication(access, projectId, body)
+        notifySuccess(t('toast.created'))
       }
       closeForm()
       await reload()
     } catch (err) {
-      setActionError(
+      notifyError(
         err instanceof ApiError ? err.message : t('errors.createFailed'),
       )
     } finally {
@@ -170,7 +169,6 @@ export function usePublicationsSection({
   }
 
   function requestDelete(id: number) {
-    setActionError(null)
     setPendingDeleteId(id)
   }
 
@@ -182,14 +180,14 @@ export function usePublicationsSection({
   async function confirmDelete() {
     if (!access || !canEdit || pendingDeleteId == null) return
     setDeleting(true)
-    setActionError(null)
     try {
       await deletePublication(access, pendingDeleteId)
+      notifySuccess(t('toast.deleted'))
       if (editingId === pendingDeleteId) closeForm()
       setPendingDeleteId(null)
       await reload()
     } catch (err) {
-      setActionError(
+      notifyError(
         err instanceof ApiError ? err.message : t('errors.requestFailed'),
       )
     } finally {
@@ -235,7 +233,6 @@ export function usePublicationsSection({
     resultingEmpty,
     loading,
     error,
-    actionError,
     canAddExisting,
     canAddResulting,
     canMutateItem,
