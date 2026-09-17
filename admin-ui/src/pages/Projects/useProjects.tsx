@@ -15,6 +15,7 @@ const PROJECT_STATUSES = [
   'RESUBMITTED',
   'IN_PROGRESS',
   'COMPLETED',
+  'SOFT_DELETED',
 ]
 
 export function useProjects() {
@@ -47,7 +48,8 @@ export function useProjects() {
     void reload()
   }, [reload])
 
-  const filtersUi = (
+  const filtersUi =
+    !loading && (projects.length > 0 || listParams.hasActiveFilters) ? (
     <AdminListFilters
       searchInput={listParams.searchInput}
       onSearchChange={listParams.setSearchInput}
@@ -65,7 +67,7 @@ export function useProjects() {
         },
       ]}
     />
-  )
+  ) : null
 
   return { copy, projects, loading, error, filtersUi }
 }

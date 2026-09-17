@@ -47,6 +47,12 @@ export function saveAuth(tokens: AuthTokens): void {
   localStorage.setItem(USER_KEY, JSON.stringify(tokens.user))
 }
 
+/** Update JWT pair after silent refresh (keeps stored user). */
+export function updateStoredTokens(access: string, refresh: string): void {
+  localStorage.setItem(ACCESS_KEY, access)
+  localStorage.setItem(REFRESH_KEY, refresh)
+}
+
 export function clearAuth(): void {
   localStorage.removeItem(ACCESS_KEY)
   localStorage.removeItem(REFRESH_KEY)

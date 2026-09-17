@@ -85,13 +85,14 @@ export function useProposals() {
     }
   }
 
-  const searchUi = (
+  const searchUi =
+    !loading && (proposals.length > 0 || listParams.hasActiveFilters) ? (
     <AdminListFilters
       searchInput={listParams.searchInput}
       onSearchChange={listParams.setSearchInput}
       searchPlaceholder={copy.searchProposals}
     />
-  )
+  ) : null
 
   return {
     copy,

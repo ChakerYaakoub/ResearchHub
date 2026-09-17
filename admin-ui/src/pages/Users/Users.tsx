@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { EmptyState } from '../../components/EmptyState'
 import { LoadingState } from '../../components/LoadingState'
 import { StatusBadge } from '../../components/StatusBadge'
@@ -48,6 +49,7 @@ export function UsersPage() {
                 {vm.users.map((u) => {
                   const isSelf = u.id === vm.meId
                   const busy = vm.busyId === u.id
+                  const projectsTo = `/projects?search=${encodeURIComponent(u.email)}`
                   return (
                     <tr key={u.id}>
                       <td>{u.email}</td>
@@ -60,20 +62,28 @@ export function UsersPage() {
                       </td>
                       <td>{new Date(u.date_joined).toLocaleDateString()}</td>
                       <td>
-                        {!isSelf ? (
-                          <button
-                            type="button"
-                            className="btn btn-outline-secondary btn-sm"
-                            disabled={busy}
-                            onClick={() =>
-                              void vm.setActive(u.id, !u.is_active)
-                            }
+                        <div className="d-flex flex-wrap gap-2">
+                          <Link
+                            className="btn btn-outline-primary btn-sm"
+                            to={projectsTo}
                           >
-                            {u.is_active
-                              ? vm.copy.deactivate
-                              : vm.copy.activate}
-                          </button>
-                        ) : null}
+                            {vm.copy.viewUserProjects}
+                          </Link>
+                          {!isSelf ? (
+                            <button
+                              type="button"
+                              className="btn btn-outline-secondary btn-sm"
+                              disabled={busy}
+                              onClick={() =>
+                                void vm.setActive(u.id, !u.is_active)
+                              }
+                            >
+                              {u.is_active
+                                ? vm.copy.deactivate
+                                : vm.copy.activate}
+                            </button>
+                          ) : null}
+                        </div>
                       </td>
                     </tr>
                   )
@@ -86,6 +96,7 @@ export function UsersPage() {
             {vm.users.map((u) => {
               const isSelf = u.id === vm.meId
               const busy = vm.busyId === u.id
+              const projectsTo = `/projects?search=${encodeURIComponent(u.email)}`
               return (
                 <article key={u.id} className="rh-admin-item-card">
                   <div className="d-flex justify-content-between gap-2 mb-2">
@@ -96,16 +107,24 @@ export function UsersPage() {
                     {u.username} ·{' '}
                     {u.is_active ? vm.copy.active : vm.copy.inactive}
                   </p>
-                  {!isSelf ? (
-                    <button
-                      type="button"
-                      className="btn btn-outline-secondary btn-sm"
-                      disabled={busy}
-                      onClick={() => void vm.setActive(u.id, !u.is_active)}
+                  <div className="d-flex flex-wrap gap-2">
+                    <Link
+                      className="btn btn-outline-primary btn-sm"
+                      to={projectsTo}
                     >
-                      {u.is_active ? vm.copy.deactivate : vm.copy.activate}
-                    </button>
-                  ) : null}
+                      {vm.copy.viewUserProjects}
+                    </Link>
+                    {!isSelf ? (
+                      <button
+                        type="button"
+                        className="btn btn-outline-secondary btn-sm"
+                        disabled={busy}
+                        onClick={() => void vm.setActive(u.id, !u.is_active)}
+                      >
+                        {u.is_active ? vm.copy.deactivate : vm.copy.activate}
+                      </button>
+                    ) : null}
+                  </div>
                 </article>
               )
             })}

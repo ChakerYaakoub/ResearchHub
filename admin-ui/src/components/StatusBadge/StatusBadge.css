@@ -72,7 +72,8 @@
 }
 
 /* —— Dead —— */
-.rh-status-badge--expired {
+.rh-status-badge--expired,
+.rh-status-badge--soft_deleted {
   background-color: #1e293b;
   color: #fff;
 }

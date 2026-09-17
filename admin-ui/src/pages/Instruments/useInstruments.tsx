@@ -156,7 +156,8 @@ export function useInstruments() {
     }
   }
 
-  const filtersUi = (
+  const filtersUi =
+    !loading && (items.length > 0 || listParams.hasActiveFilters) ? (
     <AdminListFilters
       searchInput={listParams.searchInput}
       onSearchChange={listParams.setSearchInput}
@@ -188,7 +189,7 @@ export function useInstruments() {
         },
       ]}
     />
-  )
+  ) : null
 
   return {
     copy,

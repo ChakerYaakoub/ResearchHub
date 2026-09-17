@@ -4,7 +4,7 @@ from rest_framework import serializers
 
 from experiments.models import Experiment
 from invitations.models import Invitation
-from projects.models import ResearchProject
+from projects.models import ProjectMembership, ResearchProject
 from proposals.models import Proposal
 from publications.models import Publication
 from users.models import GlobalRole, User
@@ -83,39 +83,6 @@ class AdminProjectListSerializer(serializers.ModelSerializer):
             "updated_at",
         )
         read_only_fields = fields
-
-
-class AdminProjectDetailSerializer(serializers.ModelSerializer):
-    owner_email = serializers.EmailField(source="owner.email", read_only=True)
-    member_count = serializers.IntegerField(read_only=True)
-    proposal_status = serializers.SerializerMethodField()
-    experiment_count = serializers.IntegerField(read_only=True)
-    publication_count = serializers.IntegerField(read_only=True)
-    pending_invitation_count = serializers.IntegerField(read_only=True)
-
-    class Meta:
-        model = ResearchProject
-        fields = (
-            "id",
-            "title",
-            "description",
-            "scientific_objective",
-            "status",
-            "owner",
-            "owner_email",
-            "created_at",
-            "updated_at",
-            "member_count",
-            "proposal_status",
-            "experiment_count",
-            "publication_count",
-            "pending_invitation_count",
-        )
-        read_only_fields = fields
-
-    def get_proposal_status(self, obj: ResearchProject) -> str | None:
-        proposal = getattr(obj, "proposal", None)
-        return proposal.status if proposal else None
 
 
 class AdminProposalSerializer(serializers.ModelSerializer):
@@ -205,3 +172,57 @@ class AdminInvitationSerializer(serializers.ModelSerializer):
             "accepted_at",
         )
         read_only_fields = fields
+
+
+class AdminProjectMemberSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(source="user.email", read_only=True)
+
+    class Meta:
+        model = ProjectMembership
+        fields = ("email", "role")
+        read_only_fields = fields
+
+
+class AdminProjectDetailSerializer(serializers.ModelSerializer):
+    owner_email = serializers.EmailField(source="owner.email", read_only=True)
+    member_count = serializers.IntegerField(read_only=True)
+    proposal_status = serializers.SerializerMethodField()
+    experiment_count = serializers.IntegerField(read_only=True)
+    publication_count = serializers.IntegerField(read_only=True)
+    pending_invitation_count = serializers.IntegerField(read_only=True)
+    proposal = AdminProposalSerializer(read_only=True, allow_null=True)
+    members = AdminProjectMemberSerializer(
+        source="memberships", many=True, read_only=True
+    )
+    experiments = AdminExperimentSerializer(many=True, read_only=True)
+    publications = AdminPublicationSerializer(many=True, read_only=True)
+    invitations = AdminInvitationSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = ResearchProject
+        fields = (
+            "id",
+            "title",
+            "description",
+            "scientific_objective",
+            "status",
+            "owner",
+            "owner_email",
+            "created_at",
+            "updated_at",
+            "member_count",
+            "proposal_status",
+            "experiment_count",
+            "publication_count",
+            "pending_invitation_count",
+            "proposal",
+            "members",
+            "experiments",
+            "publications",
+            "invitations",
+        )
+        read_only_fields = fields
+
+    def get_proposal_status(self, obj: ResearchProject) -> str | None:
+        proposal = getattr(obj, "proposal", None)
+        return proposal.status if proposal else None

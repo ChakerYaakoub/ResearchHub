@@ -15,6 +15,7 @@ class ProjectStatus(models.TextChoices):
     RESUBMITTED = "RESUBMITTED", "Resubmitted"
     IN_PROGRESS = "IN_PROGRESS", "In progress"
     COMPLETED = "COMPLETED", "Completed"
+    SOFT_DELETED = "SOFT_DELETED", "Soft deleted"
 
 
 class MembershipRole(models.TextChoices):

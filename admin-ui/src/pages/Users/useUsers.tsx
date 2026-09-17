@@ -58,7 +58,8 @@ export function useUsers() {
     }
   }
 
-  const filtersUi = (
+  const filtersUi =
+    !loading && (users.length > 0 || listParams.hasActiveFilters) ? (
     <AdminListFilters
       searchInput={listParams.searchInput}
       onSearchChange={listParams.setSearchInput}
@@ -77,7 +78,7 @@ export function useUsers() {
         },
       ]}
     />
-  )
+  ) : null
 
   return {
     copy,

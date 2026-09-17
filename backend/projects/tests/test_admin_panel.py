@@ -160,6 +160,37 @@ class AdminPanelApiTests(TestCase):
         self.assertEqual(detail.data["title"], "Beam study")
         self.assertEqual(detail.data["owner_email"], self.owner.email)
         self.assertGreaterEqual(detail.data["member_count"], 1)
+        for key in (
+            "proposal",
+            "members",
+            "experiments",
+            "publications",
+            "invitations",
+        ):
+            self.assertIn(key, detail.data)
+        self.assertIsInstance(detail.data["members"], list)
+        self.assertIsInstance(detail.data["experiments"], list)
+        self.assertIsInstance(detail.data["publications"], list)
+        self.assertIsInstance(detail.data["invitations"], list)
+
+    def test_soft_deleted_visible_to_admin_and_hard_delete(self):
+        soft = self.owner_client.delete(f"/api/projects/{self.project.id}/")
+        self.assertEqual(soft.status_code, status.HTTP_204_NO_CONTENT)
+
+        listed = self.admin_api.get("/api/admin/projects/")
+        self.assertEqual(listed.status_code, status.HTTP_200_OK)
+        row = next(p for p in listed.data if p["id"] == self.project.id)
+        self.assertEqual(row["status"], "SOFT_DELETED")
+
+        detail = self.admin_api.get(f"/api/admin/projects/{self.project.id}/")
+        self.assertEqual(detail.status_code, status.HTTP_200_OK)
+        self.assertEqual(detail.data["status"], "SOFT_DELETED")
+
+        hard = self.admin_api.delete(f"/api/admin/projects/{self.project.id}/")
+        self.assertEqual(hard.status_code, status.HTTP_204_NO_CONTENT)
+        from projects.models import ResearchProject
+
+        self.assertFalse(ResearchProject.objects.filter(pk=self.project.id).exists())
 
     def test_proposals_default_and_status_filter(self):
         created = self.owner_client.post(

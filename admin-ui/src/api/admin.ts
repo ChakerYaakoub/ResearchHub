@@ -47,6 +47,16 @@ export type AdminProjectDetail = AdminProject & {
   experiment_count: number
   publication_count: number
   pending_invitation_count: number
+  proposal: AdminProposal | null
+  members: AdminProjectMember[]
+  experiments: AdminExperiment[]
+  publications: AdminPublication[]
+  invitations: AdminInvitation[]
+}
+
+export type AdminProjectMember = {
+  email: string
+  role: string
 }
 
 export type AdminProposal = {
@@ -190,7 +200,7 @@ export function getProject(token: string, id: number) {
 }
 
 export function deleteProject(token: string, id: number) {
-  return apiFetch<void>(`/projects/${id}/`, {
+  return apiFetch<void>(`/admin/projects/${id}/`, {
     method: 'DELETE',
     token,
   })

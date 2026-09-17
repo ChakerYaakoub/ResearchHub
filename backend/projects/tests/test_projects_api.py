@@ -57,7 +57,13 @@ class ProjectCrudApiTests(TestCase):
 
         del_r = client.delete(f"/api/projects/{project.id}/")
         self.assertEqual(del_r.status_code, status.HTTP_204_NO_CONTENT)
-        self.assertFalse(ResearchProject.objects.filter(pk=project.id).exists())
+        project.refresh_from_db()
+        self.assertEqual(project.status, "SOFT_DELETED")
+        listed = client.get("/api/projects/")
+        self.assertEqual(listed.status_code, status.HTTP_200_OK)
+        self.assertFalse(any(row["id"] == project.id for row in listed.data))
+        gone = client.get(f"/api/projects/{project.id}/")
+        self.assertEqual(gone.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_collaborators_list_and_remove(self):
         owner = make_user("owner@example.com")

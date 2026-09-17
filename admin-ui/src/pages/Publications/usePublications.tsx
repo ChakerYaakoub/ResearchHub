@@ -12,6 +12,7 @@ export function usePublications() {
   const [items, setItems] = useState<AdminPublication[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [selected, setSelected] = useState<AdminPublication | null>(null)
 
   const reload = useCallback(async () => {
     if (!access) return
@@ -36,7 +37,8 @@ export function usePublications() {
     void reload()
   }, [reload])
 
-  const filtersUi = (
+  const filtersUi =
+    !loading && (items.length > 0 || listParams.hasActiveFilters) ? (
     <AdminListFilters
       searchInput={listParams.searchInput}
       onSearchChange={listParams.setSearchInput}
@@ -55,7 +57,24 @@ export function usePublications() {
         },
       ]}
     />
-  )
+  ) : null
 
-  return { copy, items, loading, error, filtersUi }
+  function openDetail(pub: AdminPublication) {
+    setSelected(pub)
+  }
+
+  function closeDetail() {
+    setSelected(null)
+  }
+
+  return {
+    copy,
+    items,
+    loading,
+    error,
+    filtersUi,
+    selected,
+    openDetail,
+    closeDetail,
+  }
 }

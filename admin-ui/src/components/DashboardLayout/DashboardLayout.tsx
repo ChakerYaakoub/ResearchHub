@@ -23,22 +23,29 @@ export function DashboardLayout() {
           </Link>
         </div>
         <nav aria-label={vm.copy.dashboard}>
-          <ul className="rh-dash-nav list-unstyled mb-0">
-            {vm.links.map((item) => (
-              <li key={item.to}>
-                <NavLink
-                  to={item.to}
-                  end={item.to === '/'}
-                  className={({ isActive }) =>
-                    `rh-dash-link${isActive ? ' is-active' : ''}`
-                  }
-                  onClick={vm.closeSidebar}
-                >
-                  {item.label}
-                </NavLink>
-              </li>
-            ))}
-          </ul>
+          {vm.sections.map((section) => (
+            <div key={section.id} className="rh-dash-nav-section">
+              {section.label ? (
+                <p className="rh-dash-nav-heading">{section.label}</p>
+              ) : null}
+              <ul className="rh-dash-nav list-unstyled mb-0">
+                {section.items.map((item) => (
+                  <li key={item.to}>
+                    <NavLink
+                      to={item.to}
+                      end={item.to === '/'}
+                      className={({ isActive }) =>
+                        `rh-dash-link${isActive ? ' is-active' : ''}`
+                      }
+                      onClick={vm.closeSidebar}
+                    >
+                      {item.label}
+                    </NavLink>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </nav>
       </aside>
 
