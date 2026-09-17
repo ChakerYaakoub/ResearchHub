@@ -151,3 +151,57 @@ class MeUpdateSerializer(serializers.Serializer):
 
         instance.save()
         return instance
+
+
+class PasswordResetRequestSerializer(serializers.Serializer):
+    """Request a password-reset email (always succeeds from the client view)."""
+
+    email = serializers.EmailField()
+
+    def validate_email(self, value: str) -> str:
+        return value.lower().strip()
+
+
+class PasswordResetConfirmSerializer(serializers.Serializer):
+    """Confirm reset with uid + token from the email deep link."""
+
+    uid = serializers.CharField()
+    token = serializers.CharField()
+    new_password = serializers.CharField(
+        write_only=True, style={"input_type": "password"}
+    )
+
+    def validate_new_password(self, value: str) -> str:
+        return validate_user_password(value)
+
+    def validate(self, attrs: dict) -> dict:
+        from django.contrib.auth.tokens import PasswordResetTokenGenerator
+        from django.utils.encoding import force_str
+        from django.utils.http import urlsafe_base64_decode
+
+        try:
+            uid = force_str(urlsafe_base64_decode(attrs["uid"]))
+            user = User.objects.get(pk=uid)
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist) as exc:
+            raise serializers.ValidationError(
+                {"token": "Invalid or expired reset link."}
+            ) from exc
+
+        if not user.is_active:
+            raise serializers.ValidationError(
+                {"token": "Invalid or expired reset link."}
+            )
+
+        if not PasswordResetTokenGenerator().check_token(user, attrs["token"]):
+            raise serializers.ValidationError(
+                {"token": "Invalid or expired reset link."}
+            )
+
+        attrs["user"] = user
+        return attrs
+
+    def save(self, **kwargs) -> User:
+        user: User = self.validated_data["user"]
+        user.set_password(self.validated_data["new_password"])
+        user.save(update_fields=["password"])
+        return user

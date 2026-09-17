@@ -50,3 +50,24 @@ def send_registration_welcome_email(user: User) -> bool:
         to=user.email,
         purpose="registration welcome",
     )
+
+
+def send_password_reset_email(user: User, uid: str, token: str) -> bool:
+    """Email a one-time password-reset deep link for client-ui."""
+    from urllib.parse import urlencode
+
+    query = urlencode({"auth": "reset", "uid": uid, "token": token})
+    link = f"{settings.CLIENT_UI_ORIGIN}/?{query}"
+    subject = "Reset your ResearchHub password"
+    body = (
+        f"Dear {_greeting_name(user)},\n\n"
+        "We received a request to reset your ResearchHub password.\n\n"
+        f"Open this link to choose a new password:\n{link}\n\n"
+        "If you did not request this, you can ignore this email."
+    )
+    return send_app_email(
+        subject=subject,
+        message=body,
+        to=user.email,
+        purpose="password reset",
+    )
