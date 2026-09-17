@@ -17,8 +17,7 @@ def send_admin_welcome_email(user: User, plain_password: str) -> bool:
         f"Email: {user.email}\n"
         f"Temporary password: {plain_password}\n\n"
         f"Sign in at: {login_url}\n\n"
-        "Please change this password later (a change-password page will be "
-        "available in ResearchHub).\n\n"
+        "Please change this password on your account page.\n\n"
         "Do not reply to this email.\n"
     )
     return send_app_email(

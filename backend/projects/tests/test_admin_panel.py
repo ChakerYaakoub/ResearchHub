@@ -143,7 +143,7 @@ class AdminPanelApiTests(TestCase):
             self.assertIn("newadmin@example.com", message.to)
             self.assertIn("newadmin@example.com", message.body)
             self.assertIn("Temporary password:", message.body)
-            self.assertIn("change this password later", message.body.lower())
+            self.assertIn("change this password on your account page", message.body.lower())
             self.assertIn("http://localhost:5175", message.body)
             self.assertIn("Do not reply", message.body)
 
