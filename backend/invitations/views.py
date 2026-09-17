@@ -6,6 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from core.api import api_error
 from core.permissions import IsProjectOwnerOrAdmin
 from projects.selectors import get_visible_project
 
@@ -23,10 +24,6 @@ from .services import (
     create_project_invitation,
     decline_invitation,
 )
-
-
-def _invitation_error(exc: InvitationError) -> Response:
-    return Response({"detail": exc.detail}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ProjectInvitationListCreateView(APIView):
@@ -53,7 +50,7 @@ class ProjectInvitationListCreateView(APIView):
                 role=serializer.validated_data["role"],
             )
         except InvitationError as exc:
-            return _invitation_error(exc)
+            return api_error(exc.detail)
         return Response(
             InvitationCreatedSerializer(invitation).data,
             status=status.HTTP_201_CREATED,
@@ -72,7 +69,7 @@ class ProjectInvitationCancelView(APIView):
         try:
             cancel_invitation(invitation)
         except InvitationError as exc:
-            return _invitation_error(exc)
+            return api_error(exc.detail)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -100,7 +97,7 @@ class InvitationAcceptView(APIView):
         try:
             invitation = accept_invitation(token, request.user)
         except InvitationError as exc:
-            return _invitation_error(exc)
+            return api_error(exc.detail)
         return Response(InvitationListSerializer(invitation).data)
 
 
@@ -113,5 +110,5 @@ class InvitationDeclineView(APIView):
         try:
             invitation = decline_invitation(token, request.user)
         except InvitationError as exc:
-            return _invitation_error(exc)
+            return api_error(exc.detail)
         return Response(InvitationListSerializer(invitation).data)

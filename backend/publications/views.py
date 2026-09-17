@@ -5,6 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from core.api import api_error
 from core.permissions import IsProjectMemberReadEditorWrite
 from projects.selectors import get_visible_project, get_visible_publication
 from projects.services import WorkflowError, assert_can_mutate_publications
@@ -33,10 +34,7 @@ class ProjectPublicationListCreateView(APIView):
         try:
             assert_can_mutate_publications(project, kind)
         except WorkflowError as exc:
-            return Response(
-                {"detail": exc.detail},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            return api_error(exc.detail)
         publication = serializer.save(project=project)
         return Response(PublicationSerializer(publication).data, status=status.HTTP_201_CREATED)
 
@@ -60,10 +58,7 @@ class PublicationDetailView(APIView):
         try:
             assert_can_mutate_publications(publication.project, kind)
         except WorkflowError as exc:
-            return Response(
-                {"detail": exc.detail},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            return api_error(exc.detail)
         serializer.save()
         return Response(serializer.data)
 
@@ -76,10 +71,7 @@ class PublicationDetailView(APIView):
         try:
             assert_can_mutate_publications(publication.project, kind)
         except WorkflowError as exc:
-            return Response(
-                {"detail": exc.detail},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            return api_error(exc.detail)
         serializer.save()
         return Response(serializer.data)
 
@@ -89,9 +81,6 @@ class PublicationDetailView(APIView):
         try:
             assert_can_mutate_publications(publication.project, publication.kind)
         except WorkflowError as exc:
-            return Response(
-                {"detail": exc.detail},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            return api_error(exc.detail)
         publication.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

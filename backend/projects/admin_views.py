@@ -3,7 +3,6 @@
 from django.db.models import Count, Prefetch, Q
 from django.shortcuts import get_object_or_404
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -21,7 +20,7 @@ from core.admin_filters import (
     query_bool,
     query_search,
 )
-from core.permissions import IsAdminUiOrigin, IsPlatformAdmin, IsSuperAdmin
+from core.api import ADMIN_PERMS, SUPER_ADMIN_PERMS, api_error
 from .admin_serializers import (
     AdminCreateAdminSerializer,
     AdminExperimentSerializer,
@@ -36,17 +35,14 @@ from .admin_serializers import (
 from .models import ProjectMembership, ProjectStatus, ResearchProject
 from .selectors import is_super_admin
 
-_ADMIN_PERMS = [IsAuthenticated, IsAdminUiOrigin, IsPlatformAdmin]
-_SUPER_ADMIN_PERMS = [IsAuthenticated, IsAdminUiOrigin, IsSuperAdmin]
-
 
 class AdminUserListView(APIView):
     """GET researchers (default); POST create ADMIN (super admin only)."""
 
     def get_permissions(self):
         if self.request.method == "POST":
-            return [perm() for perm in _SUPER_ADMIN_PERMS]
-        return [perm() for perm in _ADMIN_PERMS]
+            return [perm() for perm in SUPER_ADMIN_PERMS]
+        return [perm() for perm in ADMIN_PERMS]
 
     def get(self, request):
         # Default / ?role=RESEARCHER → researchers only (Users page).
@@ -80,7 +76,7 @@ class AdminUserListView(APIView):
 class AdminAdminListView(APIView):
     """GET `/api/admin/admins/` — SUPER_ADMIN only; ADMIN + SUPER_ADMIN accounts."""
 
-    permission_classes = _SUPER_ADMIN_PERMS
+    permission_classes = SUPER_ADMIN_PERMS
 
     def get(self, request):
         is_active = query_bool(request, "is_active")
@@ -100,7 +96,7 @@ class AdminAdminListView(APIView):
 class AdminUserDetailView(APIView):
     """PATCH `/api/admin/users/{id}/` — is_active only (not self)."""
 
-    permission_classes = _ADMIN_PERMS
+    permission_classes = ADMIN_PERMS
 
     def patch(self, request, user_id: int):
         target = get_object_or_404(User, pk=user_id)
@@ -132,7 +128,7 @@ class AdminUserDetailView(APIView):
 class AdminProjectListView(APIView):
     """GET `/api/admin/projects/` — optional ?status= & ?search=."""
 
-    permission_classes = _ADMIN_PERMS
+    permission_classes = ADMIN_PERMS
 
     def get(self, request):
         qs = ResearchProject.objects.select_related("owner").order_by("-created_at")
@@ -152,7 +148,7 @@ class AdminProjectListView(APIView):
 class AdminProjectDetailView(APIView):
     """GET/DELETE `/api/admin/projects/{id}/` — detail or permanent remove."""
 
-    permission_classes = _ADMIN_PERMS
+    permission_classes = ADMIN_PERMS
 
     def get(self, request, project_id: int):
         qs = (
@@ -197,7 +193,7 @@ class AdminProjectDetailView(APIView):
 class AdminProposalListView(APIView):
     """GET `/api/admin/proposals/` — optional ?status=, ?queue=, ?search=."""
 
-    permission_classes = _ADMIN_PERMS
+    permission_classes = ADMIN_PERMS
 
     def get(self, request):
         status_filter = (request.query_params.get("status") or "").strip().upper()
@@ -234,7 +230,7 @@ class AdminProposalListView(APIView):
 class AdminExperimentListView(APIView):
     """GET `/api/admin/experiments/`."""
 
-    permission_classes = _ADMIN_PERMS
+    permission_classes = ADMIN_PERMS
 
     def get(self, request):
         qs = Experiment.objects.select_related(
@@ -248,7 +244,7 @@ class AdminExperimentListView(APIView):
 class AdminPublicationListView(APIView):
     """GET `/api/admin/publications/` — optional ?search= & ?kind=."""
 
-    permission_classes = _ADMIN_PERMS
+    permission_classes = ADMIN_PERMS
 
     def get(self, request):
         qs = Publication.objects.select_related("project").order_by(
@@ -273,7 +269,7 @@ class AdminPublicationListView(APIView):
 class AdminInvitationListView(APIView):
     """GET `/api/admin/invitations/` — optional ?status=, ?search=, ?project=."""
 
-    permission_classes = _ADMIN_PERMS
+    permission_classes = ADMIN_PERMS
 
     def get(self, request):
         qs = Invitation.objects.select_related("project", "invited_by").order_by(
@@ -301,15 +297,12 @@ class AdminInvitationListView(APIView):
 class AdminInvitationCancelView(APIView):
     """DELETE `/api/admin/invitations/{id}/` — cancel pending only."""
 
-    permission_classes = _ADMIN_PERMS
+    permission_classes = ADMIN_PERMS
 
     def delete(self, request, invitation_id: int):
         invitation = get_object_or_404(Invitation, pk=invitation_id)
         try:
             cancel_invitation(invitation)
         except InvitationError as exc:
-            return Response(
-                {"detail": str(exc)},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            return api_error(exc.detail)
         return Response(status=status.HTTP_204_NO_CONTENT)

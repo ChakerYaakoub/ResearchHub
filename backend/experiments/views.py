@@ -5,8 +5,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from projects.models import ProjectStatus
+from core.api import api_error
 from core.permissions import IsProjectMemberReadEditorWrite
+from projects.models import ProjectStatus
 from projects.selectors import get_visible_experiment, get_visible_project
 from projects.services import (
     WorkflowError,
@@ -40,10 +41,7 @@ class ProjectExperimentListCreateView(APIView):
         try:
             assert_can_mutate_experiments(project, kind)
         except WorkflowError as exc:
-            return Response(
-                {"detail": exc.detail},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            return api_error(exc.detail)
         experiment = serializer.save(project=project)
         # First executed experiment after approval starts the project.
         if (
@@ -53,10 +51,7 @@ class ProjectExperimentListCreateView(APIView):
             try:
                 start_project(project)
             except WorkflowError as exc:
-                return Response(
-                    {"detail": exc.detail},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
+                return api_error(exc.detail)
         return Response(ExperimentSerializer(experiment).data, status=status.HTTP_201_CREATED)
 
 
@@ -79,10 +74,7 @@ class ExperimentDetailView(APIView):
         try:
             assert_can_mutate_experiments(experiment.project, kind)
         except WorkflowError as exc:
-            return Response(
-                {"detail": exc.detail},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            return api_error(exc.detail)
         serializer.save()
         return Response(serializer.data)
 
@@ -95,10 +87,7 @@ class ExperimentDetailView(APIView):
         try:
             assert_can_mutate_experiments(experiment.project, kind)
         except WorkflowError as exc:
-            return Response(
-                {"detail": exc.detail},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            return api_error(exc.detail)
         serializer.save()
         return Response(serializer.data)
 
@@ -108,9 +97,6 @@ class ExperimentDetailView(APIView):
         try:
             assert_can_mutate_experiments(experiment.project, experiment.kind)
         except WorkflowError as exc:
-            return Response(
-                {"detail": exc.detail},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            return api_error(exc.detail)
         experiment.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

@@ -6,6 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from core.api import api_error
 from core.permissions import (
     IsAdminUiOrigin,
     IsPlatformAdmin,
@@ -18,10 +19,6 @@ from projects.services import WorkflowError, is_preparing
 from .models import Proposal
 from .serializers import ProposalReviewSerializer, ProposalSerializer
 from .services import approve_proposal, reject_proposal, submit_proposal
-
-
-def _workflow_error_response(exc: WorkflowError) -> Response:
-    return Response({"detail": exc.detail}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ProjectProposalView(APIView):
@@ -89,7 +86,7 @@ class ProjectProposalSubmitView(APIView):
         try:
             proposal = submit_proposal(project)
         except WorkflowError as exc:
-            return _workflow_error_response(exc)
+            return api_error(exc.detail)
         return Response(ProposalSerializer(proposal).data)
 
 
@@ -111,7 +108,7 @@ class ProposalApproveView(APIView):
                 review_comment=body.validated_data.get("review_comment", ""),
             )
         except WorkflowError as exc:
-            return _workflow_error_response(exc)
+            return api_error(exc.detail)
         return Response(ProposalSerializer(proposal).data)
 
 
@@ -133,5 +130,5 @@ class ProposalRejectView(APIView):
                 review_comment=body.validated_data.get("review_comment", ""),
             )
         except WorkflowError as exc:
-            return _workflow_error_response(exc)
+            return api_error(exc.detail)
         return Response(ProposalSerializer(proposal).data)

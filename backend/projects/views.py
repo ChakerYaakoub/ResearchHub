@@ -12,6 +12,7 @@ from publications.models import Publication
 from users.models import GlobalRole, User
 
 from .models import MembershipRole, ProjectMembership, ProjectStatus, ResearchProject
+from core.api import api_error
 from core.permissions import (
     IsAdminUiOrigin,
     IsPlatformAdmin,
@@ -102,10 +103,7 @@ class ProjectCompleteView(APIView):
         try:
             project = complete_project(project)
         except WorkflowError as exc:
-            return Response(
-                {"detail": exc.detail},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            return api_error(exc.detail)
         return Response(ResearchProjectSerializer(project).data)
 
 

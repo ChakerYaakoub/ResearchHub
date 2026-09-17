@@ -8,12 +8,10 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from core.admin_filters import invalid_choice_response, query_search
-from core.permissions import IsAdminUiOrigin, IsPlatformAdmin
+from core.api import ADMIN_PERMS
 
 from .models import Installation, InstallationStatus, Instrument, InstrumentStatus
 from .serializers import InstallationSerializer, InstrumentSerializer
-
-_ADMIN_PERMS = [IsAuthenticated, IsAdminUiOrigin, IsPlatformAdmin]
 
 
 # --- Researcher read (authenticated; active/available only) ---
@@ -51,7 +49,7 @@ class InstrumentListView(APIView):
 class AdminInstallationListCreateView(APIView):
     """GET/POST `/api/admin/installations/` — optional ?status= & ?search=."""
 
-    permission_classes = _ADMIN_PERMS
+    permission_classes = ADMIN_PERMS
 
     def get(self, request):
         qs = Installation.objects.all()
@@ -77,7 +75,7 @@ class AdminInstallationListCreateView(APIView):
 class AdminInstallationDetailView(APIView):
     """GET/PATCH/DELETE `/api/admin/installations/{id}/`."""
 
-    permission_classes = _ADMIN_PERMS
+    permission_classes = ADMIN_PERMS
 
     def get(self, request, pk: int):
         obj = get_object_or_404(Installation, pk=pk)
@@ -106,7 +104,7 @@ class AdminInstallationDetailView(APIView):
 class AdminInstrumentListCreateView(APIView):
     """GET/POST `/api/admin/instruments/` — ?installation=, ?status=, ?search=."""
 
-    permission_classes = _ADMIN_PERMS
+    permission_classes = ADMIN_PERMS
 
     def get(self, request):
         qs = Instrument.objects.select_related("installation").all()
@@ -137,7 +135,7 @@ class AdminInstrumentListCreateView(APIView):
 class AdminInstrumentDetailView(APIView):
     """GET/PATCH/DELETE `/api/admin/instruments/{id}/`."""
 
-    permission_classes = _ADMIN_PERMS
+    permission_classes = ADMIN_PERMS
 
     def get(self, request, pk: int):
         obj = get_object_or_404(Instrument.objects.select_related("installation"), pk=pk)
