@@ -2,7 +2,8 @@
 
 from django.urls import path
 
-from .views import (
+from invitations.admin_api.views import AdminInvitationCancelView, AdminInvitationListView
+from invitations.api.views import (
     InvitationAcceptView,
     InvitationDeclineView,
     MyInvitationListView,
@@ -12,12 +13,12 @@ from .views import (
 
 urlpatterns = [
     path(
-        "projects/<int:project_pk>/invitations/",
+        "projects/<uuid:project_pk>/invitations/",
         ProjectInvitationListCreateView.as_view(),
         name="project-invitations",
     ),
     path(
-        "projects/<int:project_pk>/invitations/<int:invitation_id>/",
+        "projects/<uuid:project_pk>/invitations/<uuid:invitation_id>/",
         ProjectInvitationCancelView.as_view(),
         name="project-invitation-cancel",
     ),
@@ -31,5 +32,15 @@ urlpatterns = [
         "invitations/<str:token>/decline/",
         InvitationDeclineView.as_view(),
         name="invitation-decline",
+    ),
+    path(
+        "admin/invitations/",
+        AdminInvitationListView.as_view(),
+        name="admin-invitations",
+    ),
+    path(
+        "admin/invitations/<uuid:invitation_id>/",
+        AdminInvitationCancelView.as_view(),
+        name="admin-invitation-cancel",
     ),
 ]

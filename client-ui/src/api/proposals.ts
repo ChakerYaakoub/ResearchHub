@@ -5,7 +5,7 @@ import type { Proposal, ProposalInput } from '../types/api'
 
 export async function getProposal(
   token: string,
-  projectId: number | string,
+  projectId: string,
 ): Promise<Proposal | null> {
   try {
     return await apiFetch<Proposal>(`/projects/${projectId}/proposal/`, {
@@ -19,7 +19,7 @@ export async function getProposal(
 
 export function createProposal(
   token: string,
-  projectId: number | string,
+  projectId: string,
   body: ProposalInput,
 ) {
   return apiFetch<Proposal>(`/projects/${projectId}/proposal/`, {
@@ -31,7 +31,7 @@ export function createProposal(
 
 export function updateProposal(
   token: string,
-  projectId: number | string,
+  projectId: string,
   body: ProposalInput,
 ) {
   return apiFetch<Proposal>(`/projects/${projectId}/proposal/`, {
@@ -41,7 +41,7 @@ export function updateProposal(
   })
 }
 
-export function submitProposal(token: string, projectId: number | string) {
+export function submitProposal(token: string, projectId: string) {
   return apiFetch<Proposal>(`/projects/${projectId}/proposal/submit/`, {
     method: 'POST',
     token,

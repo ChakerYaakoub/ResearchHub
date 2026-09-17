@@ -1,7 +1,7 @@
 /** Auth types and localStorage keys (admin-ui origin only). */
 
 export type AuthUser = {
-  id: number
+  id: string
   email: string
   username: string
   first_name: string

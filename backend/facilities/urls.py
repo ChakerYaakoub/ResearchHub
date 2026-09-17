@@ -20,7 +20,7 @@ urlpatterns = [
         name="admin-installation-list",
     ),
     path(
-        "admin/installations/<int:pk>/",
+        "admin/installations/<uuid:pk>/",
         AdminInstallationDetailView.as_view(),
         name="admin-installation-detail",
     ),
@@ -30,7 +30,7 @@ urlpatterns = [
         name="admin-instrument-list",
     ),
     path(
-        "admin/instruments/<int:pk>/",
+        "admin/instruments/<uuid:pk>/",
         AdminInstrumentDetailView.as_view(),
         name="admin-instrument-detail",
     ),

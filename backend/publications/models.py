@@ -1,5 +1,7 @@
 """Publications linked to a research project."""
 
+import uuid
+
 from django.db import models
 
 from projects.models import ResearchProject
@@ -13,6 +15,7 @@ class PublicationKind(models.TextChoices):
 
 
 class Publication(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     project = models.ForeignKey(
         ResearchProject,
         on_delete=models.CASCADE,

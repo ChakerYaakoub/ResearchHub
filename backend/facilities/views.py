@@ -1,4 +1,5 @@
 """Admin and researcher endpoints for installations / instruments."""
+import uuid
 
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
@@ -7,13 +8,11 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from projects.admin_filters import invalid_choice_response, query_search
-from projects.permissions import IsAdminUiOrigin, IsPlatformAdmin
+from core.admin_filters import invalid_choice_response, query_search
+from core.api import ADMIN_PERMS
 
 from .models import Installation, InstallationStatus, Instrument, InstrumentStatus
 from .serializers import InstallationSerializer, InstrumentSerializer
-
-_ADMIN_PERMS = [IsAuthenticated, IsAdminUiOrigin, IsPlatformAdmin]
 
 
 # --- Researcher read (authenticated; active/available only) ---
@@ -51,7 +50,7 @@ class InstrumentListView(APIView):
 class AdminInstallationListCreateView(APIView):
     """GET/POST `/api/admin/installations/` — optional ?status= & ?search=."""
 
-    permission_classes = _ADMIN_PERMS
+    permission_classes = ADMIN_PERMS
 
     def get(self, request):
         qs = Installation.objects.all()
@@ -77,20 +76,20 @@ class AdminInstallationListCreateView(APIView):
 class AdminInstallationDetailView(APIView):
     """GET/PATCH/DELETE `/api/admin/installations/{id}/`."""
 
-    permission_classes = _ADMIN_PERMS
+    permission_classes = ADMIN_PERMS
 
-    def get(self, request, pk: int):
+    def get(self, request, pk: uuid.UUID):
         obj = get_object_or_404(Installation, pk=pk)
         return Response(InstallationSerializer(obj).data)
 
-    def patch(self, request, pk: int):
+    def patch(self, request, pk: uuid.UUID):
         obj = get_object_or_404(Installation, pk=pk)
         ser = InstallationSerializer(obj, data=request.data, partial=True)
         ser.is_valid(raise_exception=True)
         ser.save()
         return Response(ser.data)
 
-    def delete(self, request, pk: int):
+    def delete(self, request, pk: uuid.UUID):
         obj = get_object_or_404(Installation, pk=pk)
         if obj.instruments.exists():
             return Response(
@@ -106,7 +105,7 @@ class AdminInstallationDetailView(APIView):
 class AdminInstrumentListCreateView(APIView):
     """GET/POST `/api/admin/instruments/` — ?installation=, ?status=, ?search=."""
 
-    permission_classes = _ADMIN_PERMS
+    permission_classes = ADMIN_PERMS
 
     def get(self, request):
         qs = Instrument.objects.select_related("installation").all()
@@ -137,20 +136,20 @@ class AdminInstrumentListCreateView(APIView):
 class AdminInstrumentDetailView(APIView):
     """GET/PATCH/DELETE `/api/admin/instruments/{id}/`."""
 
-    permission_classes = _ADMIN_PERMS
+    permission_classes = ADMIN_PERMS
 
-    def get(self, request, pk: int):
+    def get(self, request, pk: uuid.UUID):
         obj = get_object_or_404(Instrument.objects.select_related("installation"), pk=pk)
         return Response(InstrumentSerializer(obj).data)
 
-    def patch(self, request, pk: int):
+    def patch(self, request, pk: uuid.UUID):
         obj = get_object_or_404(Instrument, pk=pk)
         ser = InstrumentSerializer(obj, data=request.data, partial=True)
         ser.is_valid(raise_exception=True)
         ser.save()
         return Response(ser.data)
 
-    def delete(self, request, pk: int):
+    def delete(self, request, pk: uuid.UUID):
         obj = get_object_or_404(Instrument, pk=pk)
         if obj.experiments.exists():
             return Response(

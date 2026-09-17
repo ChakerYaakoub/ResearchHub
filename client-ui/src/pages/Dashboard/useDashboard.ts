@@ -17,7 +17,7 @@ export type DashboardCard = {
 async function countAcrossProjects(
   token: string,
   projects: Project[],
-  listFn: (token: string, projectId: number) => Promise<unknown[]>,
+  listFn: (token: string, projectId: string) => Promise<unknown[]>,
 ): Promise<number> {
   if (projects.length === 0) return 0
   const results = await Promise.all(

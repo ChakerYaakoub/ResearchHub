@@ -1,4 +1,5 @@
 """Project visibility and role lookup (AuthZ helpers)."""
+import uuid
 
 from django.db.models import Q, QuerySet
 from django.shortcuts import get_object_or_404
@@ -25,7 +26,6 @@ def is_super_admin(user) -> bool:
     return getattr(user, "role", None) == GlobalRole.SUPER_ADMIN
 
 
-
 def projects_visible_to(user) -> QuerySet[ResearchProject]:
     """Projects the user may see: all if admin, else owner ∪ membership (no soft-deleted)."""
     qs = ResearchProject.objects.select_related("owner")
@@ -38,7 +38,7 @@ def projects_visible_to(user) -> QuerySet[ResearchProject]:
     )
 
 
-def get_visible_project(user, pk: int) -> ResearchProject:
+def get_visible_project(user, pk: uuid.UUID) -> ResearchProject:
     """Resolve a project by pk within the user's visible set (404 if not)."""
     return get_object_or_404(projects_visible_to(user), pk=pk)
 
@@ -60,39 +60,3 @@ def user_project_role(user, project: ResearchProject) -> str | None:
         .first()
     )
     return membership.role if membership else None
-
-
-def get_visible_experiment(user, pk: int):
-    """Experiment under a project visible to the user (404 otherwise)."""
-    from experiments.models import Experiment
-
-    return get_object_or_404(
-        Experiment.objects.select_related("project").filter(
-            project__in=projects_visible_to(user)
-        ),
-        pk=pk,
-    )
-
-
-def get_visible_publication(user, pk: int):
-    """Publication under a project visible to the user (404 otherwise)."""
-    from publications.models import Publication
-
-    return get_object_or_404(
-        Publication.objects.select_related("project").filter(
-            project__in=projects_visible_to(user)
-        ),
-        pk=pk,
-    )
-
-
-def get_visible_proposal(user, pk: int):
-    """Proposal under a project visible to the user (404 otherwise)."""
-    from proposals.models import Proposal
-
-    return get_object_or_404(
-        Proposal.objects.select_related("project").filter(
-            project__in=projects_visible_to(user)
-        ),
-        pk=pk,
-    )

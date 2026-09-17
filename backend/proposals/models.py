@@ -1,5 +1,7 @@
 """Scientific proposal — one per project (MVP)."""
 
+import uuid
+
 from django.db import models
 
 from projects.models import ResearchProject
@@ -14,6 +16,7 @@ class ProposalStatus(models.TextChoices):
 class Proposal(models.Model):
     """Methodology / expected results; review fields filled when admins act."""
 
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     project = models.OneToOneField(
         ResearchProject,
         on_delete=models.CASCADE,

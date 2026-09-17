@@ -41,10 +41,10 @@ export function useInstruments() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [showForm, setShowForm] = useState(false)
-  const [editingId, setEditingId] = useState<number | null>(null)
+  const [editingId, setEditingId] = useState<string | null>(null)
   const [form, setForm] = useState<InstrumentFormValues>(blank)
   const [saving, setSaving] = useState(false)
-  const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null)
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null)
   const [deleting, setDeleting] = useState(false)
 
   const reload = useCallback(async () => {
@@ -111,7 +111,7 @@ export function useInstruments() {
     if (!access || !form.installation) return
     setSaving(true)
     const body = {
-      installation: Number(form.installation),
+      installation: form.installation,
       code: form.code.trim(),
       name: form.name.trim(),
       technique: form.technique.trim(),
@@ -134,7 +134,7 @@ export function useInstruments() {
     }
   }
 
-  function requestDelete(id: number) {
+  function requestDelete(id: string) {
     setPendingDeleteId(id)
   }
 

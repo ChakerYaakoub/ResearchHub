@@ -153,7 +153,7 @@ class AdminPanelApiTests(TestCase):
     def test_list_and_detail_projects(self):
         listed = self.admin_api.get("/api/admin/projects/")
         self.assertEqual(listed.status_code, status.HTTP_200_OK)
-        self.assertTrue(any(p["id"] == self.project.id for p in listed.data))
+        self.assertTrue(any(p["id"] == str(self.project.id) for p in listed.data))
 
         detail = self.admin_api.get(f"/api/admin/projects/{self.project.id}/")
         self.assertEqual(detail.status_code, status.HTTP_200_OK)
@@ -179,7 +179,7 @@ class AdminPanelApiTests(TestCase):
 
         listed = self.admin_api.get("/api/admin/projects/")
         self.assertEqual(listed.status_code, status.HTTP_200_OK)
-        row = next(p for p in listed.data if p["id"] == self.project.id)
+        row = next(p for p in listed.data if p["id"] == str(self.project.id))
         self.assertEqual(row["status"], "SOFT_DELETED")
 
         detail = self.admin_api.get(f"/api/admin/projects/{self.project.id}/")
@@ -277,12 +277,12 @@ class AdminPanelApiTests(TestCase):
 
         by_status = self.admin_api.get("/api/admin/projects/?status=DRAFT")
         self.assertEqual(by_status.status_code, status.HTTP_200_OK)
-        self.assertTrue(any(p["id"] == self.project.id for p in by_status.data))
+        self.assertTrue(any(p["id"] == str(self.project.id) for p in by_status.data))
 
         by_search = self.admin_api.get("/api/admin/projects/?search=Beam")
         self.assertEqual(by_search.status_code, status.HTTP_200_OK)
-        self.assertTrue(any(p["id"] == self.project.id for p in by_search.data))
-        self.assertFalse(any(p["id"] == other_project.id for p in by_search.data))
+        self.assertTrue(any(p["id"] == str(self.project.id) for p in by_search.data))
+        self.assertFalse(any(p["id"] == str(other_project.id) for p in by_search.data))
 
         users = self.admin_api.get(
             "/api/admin/users/?role=RESEARCHER&search=other&is_active=false"

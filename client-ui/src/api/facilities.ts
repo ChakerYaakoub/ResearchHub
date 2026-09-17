@@ -5,7 +5,7 @@ export function listInstallations(token: string) {
   return apiFetch<Installation[]>('/installations/', { token })
 }
 
-export function listInstruments(token: string, installationId?: number) {
+export function listInstruments(token: string, installationId?: string) {
   const q =
     installationId != null ? `?installation=${installationId}` : ''
   return apiFetch<Instrument[]>(`/instruments/${q}`, { token })

@@ -30,7 +30,7 @@ export function useAdmins() {
   const [users, setUsers] = useState<AdminUser[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [busyId, setBusyId] = useState<number | null>(null)
+  const [busyId, setBusyId] = useState<string | null>(null)
   const [createOpen, setCreateOpen] = useState(false)
   const [creating, setCreating] = useState(false)
 
@@ -83,7 +83,7 @@ export function useAdmins() {
     },
   })
 
-  async function setActive(id: number, is_active: boolean) {
+  async function setActive(id: string, is_active: boolean) {
     if (!access) return
     const target = users.find((u) => u.id === id)
     if (!target || target.role === 'SUPER_ADMIN') return

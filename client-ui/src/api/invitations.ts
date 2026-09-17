@@ -12,7 +12,7 @@ export function listMyInvitations(token: string) {
 
 export function listProjectInvitations(
   token: string,
-  projectId: number | string,
+  projectId: string,
 ) {
   return apiFetch<Invitation[]>(`/projects/${projectId}/invitations/`, {
     token,
@@ -21,8 +21,8 @@ export function listProjectInvitations(
 
 export function cancelProjectInvitation(
   token: string,
-  projectId: number | string,
-  invitationId: number,
+  projectId: string,
+  invitationId: string,
 ) {
   return apiFetch<void>(
     `/projects/${projectId}/invitations/${invitationId}/`,
@@ -46,7 +46,7 @@ export function declineInvitation(token: string, inviteToken: string) {
 
 export function createProjectInvitation(
   token: string,
-  projectId: number | string,
+  projectId: string,
   body: InvitationCreateInput,
 ) {
   return apiFetch<Invitation>(`/projects/${projectId}/invitations/`, {

@@ -1,5 +1,7 @@
 """Research projects and collaborator memberships."""
 
+import uuid
+
 from django.conf import settings
 from django.db import models
 
@@ -29,6 +31,7 @@ class MembershipRole(models.TextChoices):
 class ResearchProject(models.Model):
     """Scientific project owned by a user; collaborators via ProjectMembership."""
 
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     scientific_objective = models.TextField(blank=True)
@@ -62,6 +65,7 @@ class ProjectMembership(models.Model):
     Created on invitation accept (Phase 7); unique per (project, user).
     """
 
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     project = models.ForeignKey(
         ResearchProject,
         on_delete=models.CASCADE,

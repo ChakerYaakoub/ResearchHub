@@ -13,7 +13,7 @@ export function useUsers() {
   const [users, setUsers] = useState<AdminUser[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [busyId, setBusyId] = useState<number | null>(null)
+  const [busyId, setBusyId] = useState<string | null>(null)
 
   const reload = useCallback(async () => {
     if (!access) return
@@ -44,7 +44,7 @@ export function useUsers() {
     void reload()
   }, [reload])
 
-  async function setActive(id: number, is_active: boolean) {
+  async function setActive(id: string, is_active: boolean) {
     if (!access) return
     setBusyId(id)
     try {

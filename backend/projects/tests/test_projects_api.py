@@ -34,7 +34,7 @@ class ProjectCrudApiTests(TestCase):
         response = client.get("/api/projects/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         ids = {row["id"] for row in response.data}
-        self.assertIn(mine.id, ids)
+        self.assertIn(str(mine.id), ids)
         self.assertEqual(len(ids), 1)
 
     def test_retrieve_update_delete_happy_path(self):
@@ -61,7 +61,7 @@ class ProjectCrudApiTests(TestCase):
         self.assertEqual(project.status, "SOFT_DELETED")
         listed = client.get("/api/projects/")
         self.assertEqual(listed.status_code, status.HTTP_200_OK)
-        self.assertFalse(any(row["id"] == project.id for row in listed.data))
+        self.assertFalse(any(row["id"] == str(project.id) for row in listed.data))
         gone = client.get(f"/api/projects/{project.id}/")
         self.assertEqual(gone.status_code, status.HTTP_404_NOT_FOUND)
 
@@ -74,9 +74,9 @@ class ProjectCrudApiTests(TestCase):
 
         listed = client.get(f"/api/projects/{project.id}/collaborators/")
         self.assertEqual(listed.status_code, status.HTTP_200_OK)
-        user_ids = {row["user"] for row in listed.data}
-        self.assertIn(owner.id, user_ids)
-        self.assertIn(editor.id, user_ids)
+        user_ids = {str(row["user"]) for row in listed.data}
+        self.assertIn(str(owner.id), user_ids)
+        self.assertIn(str(editor.id), user_ids)
 
         removed = client.delete(
             f"/api/projects/{project.id}/collaborators/{editor.id}/"

@@ -1,5 +1,7 @@
 """Experiments scheduled against a project."""
 
+import uuid
+
 from django.db import models
 
 from facilities.models import Instrument
@@ -21,6 +23,7 @@ class ExperimentStatus(models.TextChoices):
 
 
 class Experiment(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     project = models.ForeignKey(
         ResearchProject,
         on_delete=models.CASCADE,

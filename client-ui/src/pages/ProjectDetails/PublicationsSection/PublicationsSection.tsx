@@ -83,8 +83,8 @@ function KindGroup({
   emptyMessage: string
   items: Publication[]
   canMutateItem: (pub: Publication) => boolean
-  onEdit: (id: number) => void
-  onDelete: (id: number) => void
+  onEdit: (id: string) => void
+  onDelete: (id: string) => void
   t: (key: string) => string
 }) {
   return (

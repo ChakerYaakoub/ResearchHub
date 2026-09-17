@@ -1,7 +1,7 @@
 import { apiFetch } from './client'
 import type { Experiment, ExperimentInput } from '../types/api'
 
-export function listExperiments(token: string, projectId: number | string) {
+export function listExperiments(token: string, projectId: string) {
   return apiFetch<Experiment[]>(`/projects/${projectId}/experiments/`, {
     token,
   })
@@ -9,7 +9,7 @@ export function listExperiments(token: string, projectId: number | string) {
 
 export function createExperiment(
   token: string,
-  projectId: number | string,
+  projectId: string,
   body: ExperimentInput,
 ) {
   return apiFetch<Experiment>(`/projects/${projectId}/experiments/`, {
@@ -21,7 +21,7 @@ export function createExperiment(
 
 export function updateExperiment(
   token: string,
-  experimentId: number | string,
+  experimentId: string,
   body: Partial<ExperimentInput>,
 ) {
   return apiFetch<Experiment>(`/experiments/${experimentId}/`, {
@@ -31,7 +31,7 @@ export function updateExperiment(
   })
 }
 
-export function deleteExperiment(token: string, experimentId: number | string) {
+export function deleteExperiment(token: string, experimentId: string) {
   return apiFetch<void>(`/experiments/${experimentId}/`, {
     method: 'DELETE',
     token,
