@@ -176,6 +176,41 @@ make shell-client-ui
 | [`client-ui/README.md`](client-ui/README.md) | Client UI entry point |
 | [`client-ui/docs/`](client-ui/docs/) | Architecture, routing, auth, API, forms, testing, development, deployment |
 
+## Admin UI
+
+The platform admin SPA: dedicated `/login`, stats dashboard, researchers, SUPER_ADMIN-managed admins, projects, proposal approve/reject, facilities CRUD, publications (read), and invitations. JWT is stored per origin (`rh_admin_*`). Route/role guards and Yup validation are **UX only** — the Django API is authoritative and requires Origin ∈ **`ADMIN_UI_ORIGINS`**.
+
+| Area | Summary |
+|------|---------|
+| Stack | React 19, TypeScript, Vite, React Router 7, Bootstrap 5, Formik, Yup (English `copy.ts`) |
+| Auth | Page login; access + refresh JWT; only SUPER_ADMIN / ADMIN |
+| Origin | Backend `ADMIN_UI_ORIGINS` must include this app’s Origin |
+| API | Native `fetch` via `apiFetch` + `api/admin.ts` / `api/auth.ts` |
+| State | React Context only (`AuthProvider`); URL list filters → server query |
+| AuthZ UI | RequireAuth; RequireSuperAdmin for `/admins`; hide deactivate self / SUPER_ADMIN |
+
+```text
+Browser → admin-ui (:5175)
+              │  REST + JWT (+ Origin)
+              ▼
+         Django + DRF  →  PostgreSQL
+```
+
+Useful commands (Docker-first):
+
+```bash
+make start
+make test-admin-ui
+make shell-admin-ui
+```
+
+**Documentation**
+
+| Doc | Purpose |
+|-----|---------|
+| [`admin-ui/README.md`](admin-ui/README.md) | Admin UI entry point |
+| [`admin-ui/docs/`](admin-ui/docs/) | Architecture, routing, auth, Origin, API, workflows, testing, development |
+
 ## API authentication
 
 Private endpoints use **JWT** (`djangorestframework-simplejwt`).

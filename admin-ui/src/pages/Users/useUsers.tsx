@@ -7,6 +7,10 @@ import { copy } from '../../copy'
 import { useAdminListParams } from '../../hooks/useAdminListParams'
 import { notifyError, notifySuccess } from '../../notify'
 
+/**
+ * `/users`: list researchers with URL filters; activate/deactivate (not self).
+ * Privileged PATCH — backend AuthZ + Origin remain authoritative.
+ */
 export function useUsers() {
   const { access, user: me } = useAuth()
   const listParams = useAdminListParams()

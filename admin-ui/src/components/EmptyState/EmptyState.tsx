@@ -1,6 +1,7 @@
 import { useEmptyState, type EmptyStateProps } from './useEmptyState'
 import './EmptyState.css'
 
+/** Centered empty placeholder for admin list pages. */
 export function EmptyState(props: EmptyStateProps) {
   const vm = useEmptyState(props)
   const className = [

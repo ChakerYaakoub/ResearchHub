@@ -1,4 +1,8 @@
-﻿import { apiFetch } from './client'
+﻿/**
+ * Admin REST helpers (`/admin/…` plus proposal approve/reject).
+ * Paths are relative to VITE_API_BASE_URL. Backend requires platform admin + Origin ∈ ADMIN_UI_ORIGINS.
+ */
+import { apiFetch } from './client'
 import {
   adminQuery,
   type InstallationListParams,

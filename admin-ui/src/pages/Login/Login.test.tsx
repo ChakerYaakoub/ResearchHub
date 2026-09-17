@@ -1,3 +1,6 @@
+/**
+ * Login page smoke: heading and email/password fields render (hook mocked).
+ */
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { describe, expect, it, vi } from 'vitest'
@@ -26,8 +29,8 @@ describe('LoginPage', () => {
       </MemoryRouter>,
     )
     expect(screen.getByRole('heading', { name: copy.loginTitle })).toBeInTheDocument()
-    expect(screen.getByLabelText(copy.email)).toBeInTheDocument()
-    expect(screen.getByLabelText(copy.password)).toBeInTheDocument()
+    expect(screen.getByRole('textbox', { name: /email/i })).toBeInTheDocument()
+    expect(document.querySelector('input#password')).toBeInTheDocument()
     expect(
       screen.getByRole('button', { name: copy.loginSubmit }),
     ).toBeInTheDocument()

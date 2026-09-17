@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
-/** Sync list filters to the URL; debounce search input for typing. */
+/**
+ * Sync list filters to the URL; debounce search input for typing.
+ * Values feed adminQuery / list API calls (server-side filter).
+ */
 export function useAdminListParams(defaults?: { status?: string }) {
   const [params, setParams] = useSearchParams()
   const search = params.get('search') ?? ''

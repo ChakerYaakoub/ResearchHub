@@ -1,5 +1,6 @@
 /**
- * App bootstrap: React root, BrowserRouter, Bootstrap CSS, AuthProvider.
+ * App bootstrap: BrowserRouter, AuthProvider, Bootstrap + toast CSS.
+ * Admin session keys differ from client-ui (`rh_admin_*` vs `rh_*`).
  */
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'

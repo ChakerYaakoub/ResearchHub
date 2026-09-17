@@ -73,7 +73,10 @@ function titleForPath(pathname: string): string {
   return copy.dashboard;
 }
 
-/** Sidebar shell state for the admin dashboard. */
+/**
+ * Authenticated shell: sidebar nav (Admins link SUPER_ADMIN-only), logout.
+ * Mounted under RequireAuth.
+ */
 export function useDashboardLayout() {
   const location = useLocation();
   const navigate = useNavigate();

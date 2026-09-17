@@ -1,7 +1,9 @@
+/**
+ * Shared fetch for ResearchHub REST: Bearer token, 401 → single-flight refresh → retry.
+ * Base URL: VITE_API_BASE_URL (must include `/api`).
+ */
 import { copy } from '../copy'
 import { ensureFreshAccess, isAuthPath } from '../auth/tokenSession'
-
-/** Thin fetch wrapper for ResearchHub REST API. */
 
 const baseUrl = (import.meta.env.VITE_API_BASE_URL ?? '').replace(/\/$/, '')
 

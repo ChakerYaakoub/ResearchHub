@@ -33,6 +33,7 @@ const blank: InstrumentFormValues = {
   status: 'AVAILABLE',
 }
 
+/** `/instruments`: list + CRUD; loads installations for the select. */
 export function useInstruments() {
   const { access } = useAuth()
   const listParams = useAdminListParams()

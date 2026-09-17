@@ -10,6 +10,9 @@ import { useAuth } from '../../auth'
 import { copy } from '../../copy'
 import { notifyError, notifySuccess } from '../../notify'
 
+/**
+ * `/projects/:id`: nested project detail + permanent delete (ConfirmDialog).
+ */
 export function useProjectDetail() {
   const { id } = useParams()
   const navigate = useNavigate()

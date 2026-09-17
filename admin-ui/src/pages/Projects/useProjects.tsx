@@ -18,6 +18,7 @@ const PROJECT_STATUSES = [
   'SOFT_DELETED',
 ]
 
+/** `/projects`: filterable admin project list (server-side query params). */
 export function useProjects() {
   const { access } = useAuth()
   const listParams = useAdminListParams()

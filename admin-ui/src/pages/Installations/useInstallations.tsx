@@ -27,6 +27,7 @@ const blank: InstallationFormValues = {
   status: 'ACTIVE',
 }
 
+/** `/installations`: list + create/edit popup + delete confirm. */
 export function useInstallations() {
   const { access } = useAuth()
   const listParams = useAdminListParams()

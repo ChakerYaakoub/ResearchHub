@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 
 type Option = { value: string; label: string }
 
+/** Search + select filters for admin list pages (wired to useAdminListParams). */
 type AdminListFiltersProps = {
   searchInput: string
   onSearchChange: (value: string) => void

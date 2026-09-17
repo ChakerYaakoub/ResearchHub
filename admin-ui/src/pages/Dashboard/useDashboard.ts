@@ -41,6 +41,7 @@ const STAT_CARDS: {
 
 const TEASER_LIMIT = 3
 
+/** `/` dashboard: admin stats cards + pending proposal teaser (Origin-gated APIs). */
 export function useDashboard() {
   const { access } = useAuth()
   const [stats, setStats] = useState<AdminStats | null>(null)

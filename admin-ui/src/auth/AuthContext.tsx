@@ -1,3 +1,7 @@
+/**
+ * JWT session for platform admins only (`SUPER_ADMIN` | `ADMIN`).
+ * Researchers who authenticate at the API are rejected here (UX); backend AuthZ remains authoritative.
+ */
 import {
   createContext,
   useCallback,

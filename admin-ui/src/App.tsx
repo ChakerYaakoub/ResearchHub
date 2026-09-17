@@ -1,6 +1,6 @@
 /**
- * Admin UI — platform admin panel (PROJECT_SPEC Admin area).
- * Admin API routes require this Origin (ADMIN_UI_ORIGINS).
+ * Admin UI — platform admin panel.
+ * JWT session is per this origin (`rh_admin_*`). Admin API also requires Origin ∈ ADMIN_UI_ORIGINS.
  */
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { DashboardLayout } from './components/DashboardLayout'
