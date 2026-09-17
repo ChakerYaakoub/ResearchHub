@@ -10,7 +10,7 @@ from experiments.models import Experiment, ExperimentStatus
 from invitations.models import Invitation, InvitationStatus
 from invitations.services import InvitationError, cancel_invitation
 from proposals.models import Proposal, ProposalStatus
-from publications.models import Publication, PublicationKind
+from publications.models import Publication
 from users.models import GlobalRole, User
 
 from core.admin_filters import invalid_choice_response, query_search
@@ -18,11 +18,9 @@ from core.api import ADMIN_PERMS, api_error
 from projects.models import ProjectMembership, ProjectStatus, ResearchProject
 
 from .serializers import (
-    AdminExperimentSerializer,
     AdminInvitationSerializer,
     AdminProjectDetailSerializer,
     AdminProjectListSerializer,
-    AdminPublicationSerializer,
 )
 
 
@@ -89,45 +87,6 @@ class AdminProjectDetailView(APIView):
         project = get_object_or_404(ResearchProject, pk=project_id)
         project.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-class AdminExperimentListView(APIView):
-    """GET `/api/admin/experiments/`."""
-
-    permission_classes = ADMIN_PERMS
-
-    def get(self, request):
-        qs = Experiment.objects.select_related(
-            "project", "instrument", "instrument__installation"
-        ).order_by(
-            "scheduled_date", "id"
-        )
-        return Response(AdminExperimentSerializer(qs, many=True).data)
-
-
-class AdminPublicationListView(APIView):
-    """GET `/api/admin/publications/` — optional ?search= & ?kind=."""
-
-    permission_classes = ADMIN_PERMS
-
-    def get(self, request):
-        qs = Publication.objects.select_related("project").order_by(
-            "-publication_date", "title"
-        )
-        kind = (request.query_params.get("kind") or "").strip().upper()
-        if kind:
-            if kind not in PublicationKind.values:
-                return invalid_choice_response("kind", PublicationKind.values)
-            qs = qs.filter(kind=kind)
-        search = query_search(request)
-        if search:
-            qs = qs.filter(
-                Q(title__icontains=search)
-                | Q(authors__icontains=search)
-                | Q(doi__icontains=search)
-                | Q(journal__icontains=search)
-            )
-        return Response(AdminPublicationSerializer(qs, many=True).data)
 
 
 class AdminInvitationListView(APIView):

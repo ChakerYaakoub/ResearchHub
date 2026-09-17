@@ -6,7 +6,8 @@ from experiments.admin_api.serializers import AdminExperimentSerializer
 from invitations.models import Invitation
 from projects.models import ProjectMembership, ResearchProject
 from proposals.admin_api.serializers import AdminProposalSerializer
-from publications.models import Publication
+from publications.admin_api.serializers import AdminPublicationSerializer
+
 class AdminProjectListSerializer(serializers.ModelSerializer):
     owner_email = serializers.EmailField(source="owner.email", read_only=True)
 
@@ -20,26 +21,6 @@ class AdminProjectListSerializer(serializers.ModelSerializer):
             "owner_email",
             "created_at",
             "updated_at",
-        )
-        read_only_fields = fields
-
-
-class AdminPublicationSerializer(serializers.ModelSerializer):
-    project_title = serializers.CharField(source="project.title", read_only=True)
-
-    class Meta:
-        model = Publication
-        fields = (
-            "id",
-            "project",
-            "project_title",
-            "kind",
-            "title",
-            "authors",
-            "journal",
-            "doi",
-            "publication_date",
-            "url",
         )
         read_only_fields = fields
 

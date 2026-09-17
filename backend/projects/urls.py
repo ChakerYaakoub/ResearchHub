@@ -8,7 +8,6 @@ from projects.admin_api.views import (
     AdminInvitationListView,
     AdminProjectDetailView,
     AdminProjectListView,
-    AdminPublicationListView,
     AdminStatsView,
 )
 from projects.api.views import (
@@ -43,11 +42,6 @@ urlpatterns = [
         "admin/projects/<int:project_id>/",
         AdminProjectDetailView.as_view(),
         name="admin-project-detail",
-    ),
-    path(
-        "admin/publications/",
-        AdminPublicationListView.as_view(),
-        name="admin-publications",
     ),
     path(
         "admin/invitations/",
