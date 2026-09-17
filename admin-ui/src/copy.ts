@@ -82,7 +82,7 @@ export const copy = {
   createAdminSuccess:
     'Admin created. Login credentials were emailed to them.',
   createAdminHint:
-    'A temporary password will be generated and sent to their email. They should change it later.',
+    'A temporary password will be generated and sent to their email. They should change it on their account page.',
   saved: 'Saved.',
   deleted: 'Deleted.',
   userActivated: 'Account activated.',
