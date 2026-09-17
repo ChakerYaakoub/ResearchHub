@@ -2,7 +2,7 @@
 
 from rest_framework import serializers
 
-from .models import Proposal
+from proposals.models import Proposal
 
 
 class ProposalSerializer(serializers.ModelSerializer):

@@ -1,8 +1,9 @@
-"""Proposal API routes (nested under projects + review actions)."""
+"""Proposal API routes (nested under projects + review actions + admin list)."""
 
 from django.urls import path
 
-from .views import (
+from proposals.admin_api.views import AdminProposalListView
+from proposals.api.views import (
     ProjectProposalSubmitView,
     ProjectProposalView,
     ProposalApproveView,
@@ -29,5 +30,10 @@ urlpatterns = [
         "proposals/<int:pk>/reject/",
         ProposalRejectView.as_view(),
         name="proposal-reject",
+    ),
+    path(
+        "admin/proposals/",
+        AdminProposalListView.as_view(),
+        name="admin-proposals",
     ),
 ]

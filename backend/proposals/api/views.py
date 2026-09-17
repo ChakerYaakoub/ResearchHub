@@ -15,10 +15,9 @@ from core.permissions import (
 )
 from projects.selectors import get_visible_project
 from projects.services import WorkflowError, is_preparing
-
-from .models import Proposal
-from .serializers import ProposalReviewSerializer, ProposalSerializer
-from .services import approve_proposal, reject_proposal, submit_proposal
+from proposals.api.serializers import ProposalReviewSerializer, ProposalSerializer
+from proposals.models import Proposal
+from proposals.services import approve_proposal, reject_proposal, submit_proposal
 
 
 class ProjectProposalView(APIView):
