@@ -10,7 +10,7 @@ Domain models use **UUID primary keys**. After pulling a UUID migration reset, r
 backend/
 ├── manage.py
 ├── config/           # settings, urls, wsgi/asgi
-├── core/             # shared permissions, admin filters, api helpers (no models)
+├── core/             # shared permissions, mail, admin filters, api helpers (no models)
 ├── users/            # api/ (auth) + admin_api/ (users/admins)
 ├── projects/         # api/ + admin_api/ (stats, projects) + services/selectors
 ├── proposals/        # api/ + admin_api/
@@ -22,7 +22,7 @@ backend/
 
 Domain apps keep models and workflow `services.py` at the app root. HTTP lives under `api/` (client) and `admin_api/` (platform admin). Cross-cutting AuthZ helpers live in `core/`.
 
-Invitation emails use Django `send_mail` + `CLIENT_UI_ORIGIN` deep links (`/?auth=login|register&token=…`). Configure `EMAIL_*` and `CLIENT_UI_ORIGIN` via env.
+Shared sending: `core.mail.send_app_email` (plain text, `EMAIL_*` / `DEFAULT_FROM_EMAIL`). Invitation copy + `CLIENT_UI_ORIGIN` deep links (`/?auth=login|register&token=…`) stay in `invitations.services`.
 
 ## Architecture
 

@@ -1,19 +1,16 @@
 """Invitation create / accept / decline / cancel (Phase 7)."""
 
-import logging
 from urllib.parse import urlencode
 
 from django.conf import settings
-from django.core.mail import send_mail
 from django.db import transaction
 from django.utils import timezone
 
+from core.mail import send_app_email
 from projects.models import MembershipRole, ProjectMembership, ResearchProject
 from users.models import User
 
 from .models import Invitation, InvitationRole, InvitationStatus
-
-logger = logging.getLogger(__name__)
 
 
 class InvitationError(Exception):
@@ -56,20 +53,12 @@ def send_invitation_email(invitation: Invitation) -> None:
         "Do not reply to this email.\n"
     )
 
-    try:
-        send_mail(
-            subject=subject,
-            message=body,
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[email],
-            fail_silently=False,
-        )
-    except Exception:
-        logger.exception(
-            "Failed to send invitation email: project=%s email=%s",
-            project.pk,
-            email,
-        )
+    send_app_email(
+        subject=subject,
+        message=body,
+        to=email,
+        purpose=f"invitation email project={project.pk}",
+    )
 
 
 def _ensure_pending_and_fresh(invitation: Invitation) -> Invitation:

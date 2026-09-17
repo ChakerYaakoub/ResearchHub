@@ -53,7 +53,7 @@ class InvitationMailerTests(TestCase):
 
     def test_send_failure_still_creates_invitation(self):
         with patch(
-            "invitations.services.send_mail",
+            "core.mail.send_mail",
             side_effect=OSError("smtp down"),
         ):
             data = self._create_invite("still-created@example.com")
