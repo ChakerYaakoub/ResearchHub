@@ -2,7 +2,7 @@
 
 from rest_framework import serializers
 
-from .models import Invitation, InvitationRole
+from invitations.models import Invitation, InvitationRole
 
 
 class InvitationCreateSerializer(serializers.Serializer):

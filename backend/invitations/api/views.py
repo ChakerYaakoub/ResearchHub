@@ -8,22 +8,21 @@ from rest_framework.views import APIView
 
 from core.api import api_error
 from core.permissions import IsProjectOwnerOrAdmin
-from projects.selectors import get_visible_project
-
-from .models import Invitation
-from .serializers import (
+from invitations.api.serializers import (
     InvitationCreateSerializer,
     InvitationCreatedSerializer,
     InvitationListSerializer,
     MyInvitationSerializer,
 )
-from .services import (
+from invitations.models import Invitation
+from invitations.services import (
     InvitationError,
     accept_invitation,
     cancel_invitation,
     create_project_invitation,
     decline_invitation,
 )
+from projects.selectors import get_visible_project
 
 
 class ProjectInvitationListCreateView(APIView):
