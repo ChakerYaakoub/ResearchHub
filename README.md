@@ -90,16 +90,17 @@ Kubernetes manifests under `k8s/` after a working Docker VM + Nginx MVP. Kuberne
 | Phase | Focus | Status |
 |------:|-------|--------|
 | 0–14 | Foundation → mailer (API, AuthZ, both UIs, tests, email) | done |
-| 15 | CI/CD | next |
-| 16 | Documentation polish | todo |
+| 15 | Documentation polish | done |
+| 16 | CI/CD | next |
 | 17 | Google Cloud + Nginx + DuckDNS + HTTPS | todo |
 | 18 | Kubernetes (optional) | todo |
 
 ```text
-done:  0 → 14
-next:  15 CI/CD
-todo:  16 docs polish → 17 GCP/Nginx/HTTPS → 18 k8s
+done:  0 → 15
+next:  16 CI/CD
+todo:  17 GCP/Nginx/HTTPS → 18 k8s
 ```
+
 
 ## Documentation
 
@@ -120,7 +121,7 @@ admin-ui/          # Platform admin SPA (Vite) + docs/
 nginx/             # Reverse proxy configs (Phase 17)
 deploy/            # Google Cloud / production helpers (Phase 17)
 k8s/               # Optional Kubernetes manifests (Phase 18)
-.github/workflows/ # CI/CD (Phase 15)
+.github/workflows/ # CI/CD (Phase 16)
 docker-compose.yml # Local Docker Compose
 ```
 
