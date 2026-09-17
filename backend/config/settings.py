@@ -135,7 +135,7 @@ ADMIN_UI_ORIGINS = [
     if origin.strip()
 ]
 
-# Console email locally; SMTP via env in production (Phase 12).
+# Console email locally; SMTP via env in production (Phase 14 mailer).
 EMAIL_BACKEND = os.environ.get(
     "EMAIL_BACKEND",
     "django.core.mail.backends.console.EmailBackend",
@@ -150,6 +150,10 @@ EMAIL_USE_TLS = os.environ.get(
     "EMAIL_USE_TLS", "True").lower() in ("1", "true", "yes")
 EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "")
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "")
+# Base URL for invitation deep links (no trailing slash).
+CLIENT_UI_ORIGIN = os.environ.get("CLIENT_UI_ORIGIN", "http://localhost:5173").rstrip(
+    "/"
+)
 
 # JWT for SPA clients; Session keeps browsable API usable.
 # AuthN = JWT; AuthZ = DRF permissions + filtered querysets (Phase 5).

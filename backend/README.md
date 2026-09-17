@@ -22,6 +22,8 @@ backend/
 
 Domain apps keep models and workflow `services.py` at the app root. HTTP lives under `api/` (client) and `admin_api/` (platform admin). Cross-cutting AuthZ helpers live in `core/`.
 
+Invitation emails use Django `send_mail` + `CLIENT_UI_ORIGIN` deep links (`/?auth=login|register&token=…`). Configure `EMAIL_*` and `CLIENT_UI_ORIGIN` via env.
+
 ## Architecture
 
 Django-first: thin views, domain logic, small `services.py` / `selectors.py` only for real workflows. No generic service/repository stack.
