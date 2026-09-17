@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import { EmptyState } from '../../components/EmptyState'
 import { LoadingState } from '../../components/LoadingState'
 import { PageHeader } from '../../components/PageHeader'
@@ -7,6 +8,13 @@ import { useInvitations } from './useInvitations'
 
 export function InvitationsPage() {
   const vm = useInvitations()
+  const highlightRef = useRef<HTMLDivElement | null>(null)
+
+  useEffect(() => {
+    if (!vm.loading && vm.highlightToken && highlightRef.current) {
+      highlightRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }
+  }, [vm.loading, vm.highlightToken, vm.pending.length])
 
   return (
     <div className="container py-4">
@@ -39,8 +47,18 @@ export function InvitationsPage() {
         <div className="d-flex flex-column gap-3">
           {vm.pending.map((inv) => {
             const busy = vm.busyToken === inv.token
+            const highlighted =
+              Boolean(vm.highlightToken) && inv.token === vm.highlightToken
             return (
-              <div key={inv.id} className="border rounded p-3">
+              <div
+                key={inv.id}
+                ref={highlighted ? highlightRef : undefined}
+                className={
+                  highlighted
+                    ? 'border border-primary border-2 rounded p-3'
+                    : 'border rounded p-3'
+                }
+              >
                 <div className="d-flex flex-wrap justify-content-between gap-2 mb-2">
                   <div>
                     <div className="fw-semibold">{inv.project_title}</div>

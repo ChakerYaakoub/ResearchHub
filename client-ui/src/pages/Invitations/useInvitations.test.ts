@@ -45,6 +45,7 @@ const invite: Invitation = {
 
 describe('useInvitations', () => {
   beforeEach(() => {
+    sessionStorage.clear()
     listMock.mockReset()
     acceptMock.mockReset()
     declineMock.mockReset()
@@ -62,6 +63,7 @@ describe('useInvitations', () => {
   })
 
   it('accepts an invitation and reloads', async () => {
+    sessionStorage.setItem('rh_invite_token', 'invite-token')
     const { result } = renderHook(() => useInvitations())
     await waitFor(() => expect(result.current.loading).toBe(false))
 
@@ -72,9 +74,11 @@ describe('useInvitations', () => {
     expect(acceptMock).toHaveBeenCalledWith('tok', 'invite-token')
     expect(notifySuccessMock).toHaveBeenCalledWith('toast.accepted')
     expect(listMock.mock.calls.length).toBeGreaterThanOrEqual(2)
+    expect(sessionStorage.getItem('rh_invite_token')).toBeNull()
   })
 
   it('declines an invitation and reloads', async () => {
+    sessionStorage.setItem('rh_invite_token', 'invite-token')
     const { result } = renderHook(() => useInvitations())
     await waitFor(() => expect(result.current.loading).toBe(false))
 
@@ -84,5 +88,13 @@ describe('useInvitations', () => {
 
     expect(declineMock).toHaveBeenCalledWith('tok', 'invite-token')
     expect(notifySuccessMock).toHaveBeenCalledWith('toast.declined')
+    expect(sessionStorage.getItem('rh_invite_token')).toBeNull()
+  })
+
+  it('exposes highlightToken from sessionStorage', async () => {
+    sessionStorage.setItem('rh_invite_token', 'invite-token')
+    const { result } = renderHook(() => useInvitations())
+    await waitFor(() => expect(result.current.loading).toBe(false))
+    expect(result.current.highlightToken).toBe('invite-token')
   })
 })
