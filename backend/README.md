@@ -2,6 +2,8 @@
 
 ResearchHub API — **Django + DRF + PostgreSQL**. Run only via Docker (`make start`).
 
+Domain models use **UUID primary keys**. After pulling a UUID migration reset, recreate local DB data (`make clean` then `make start`) so Postgres is empty before migrate.
+
 ## Layout
 
 ```text
