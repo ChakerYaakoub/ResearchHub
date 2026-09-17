@@ -7,7 +7,8 @@ from rest_framework.views import APIView
 
 from core.api import api_error
 from core.permissions import IsProjectMemberReadEditorWrite
-from projects.selectors import get_visible_project, get_visible_publication
+from projects.selectors import get_visible_project
+from publications.selectors import get_visible_publication
 from projects.services import WorkflowError, assert_can_mutate_publications
 from publications.api.serializers import PublicationSerializer
 from publications.models import PublicationKind

@@ -10,7 +10,8 @@ from core.permissions import IsProjectMemberReadEditorWrite
 from experiments.api.serializers import ExperimentSerializer
 from experiments.models import ExperimentKind
 from projects.models import ProjectStatus
-from projects.selectors import get_visible_experiment, get_visible_project
+from experiments.selectors import get_visible_experiment
+from projects.selectors import get_visible_project
 from projects.services import (
     WorkflowError,
     assert_can_mutate_experiments,
