@@ -46,6 +46,10 @@ class Experiment(models.Model):
 
     class Meta:
         ordering = ["scheduled_date"]
+        indexes = [
+            models.Index(fields=["status"], name="experiments_status_idx"),
+            models.Index(fields=["scheduled_date"], name="experiments_sched_date_idx"),
+        ]
 
     def __str__(self) -> str:
         return f"{self.instrument} ({self.project})"

@@ -15,18 +15,26 @@ const STAT_CARDS: {
   to: string
 }[] = [
   { key: 'total_projects', label: copy.totalProjects, to: '/projects' },
-  { key: 'pending_proposals', label: copy.pendingProposals, to: '/proposals' },
+  {
+    key: 'pending_proposals',
+    label: copy.pendingProposals,
+    to: '/proposals?status=PENDING',
+  },
   {
     key: 'scheduled_experiments',
     label: copy.scheduledExperiments,
-    to: '/experiments',
+    to: '/projects?status=IN_PROGRESS',
   },
-  { key: 'completed_projects', label: copy.completedProjects, to: '/projects' },
+  {
+    key: 'completed_projects',
+    label: copy.completedProjects,
+    to: '/projects?status=COMPLETED',
+  },
   { key: 'researchers', label: copy.researchers, to: '/users' },
   {
     key: 'pending_invitations',
     label: copy.pendingInvitations,
-    to: '/invitations',
+    to: '/invitations?status=PENDING',
   },
   { key: 'publications', label: copy.publications, to: '/publications' },
 ]

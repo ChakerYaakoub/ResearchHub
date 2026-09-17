@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+﻿import { useCallback, useEffect, useState } from 'react'
 import {
   createInstrument,
   deleteInstrument,
@@ -9,8 +9,10 @@ import {
   type AdminInstrument,
 } from '../../api/admin'
 import { ApiError } from '../../api/client'
+import { AdminListFilters } from '../../components/AdminListFilters'
 import { useAuth } from '../../auth'
 import { copy } from '../../copy'
+import { useAdminListParams } from '../../hooks/useAdminListParams'
 
 export type InstrumentFormValues = {
   installation: string
@@ -32,9 +34,9 @@ const blank: InstrumentFormValues = {
 
 export function useInstruments() {
   const { access } = useAuth()
+  const listParams = useAdminListParams()
   const [items, setItems] = useState<AdminInstrument[]>([])
   const [installations, setInstallations] = useState<AdminInstallation[]>([])
-  const [filterInstallation, setFilterInstallation] = useState('')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [actionError, setActionError] = useState<string | null>(null)
@@ -52,10 +54,11 @@ export function useInstruments() {
     try {
       const [insts, instruments] = await Promise.all([
         listInstallations(access),
-        listAdminInstruments(
-          access,
-          filterInstallation ? Number(filterInstallation) : undefined,
-        ),
+        listAdminInstruments(access, {
+          installation: listParams.filters.installation,
+          status: listParams.filters.status,
+          search: listParams.filters.search,
+        }),
       ])
       setInstallations(insts)
       setItems(instruments)
@@ -65,7 +68,12 @@ export function useInstruments() {
     } finally {
       setLoading(false)
     }
-  }, [access, filterInstallation])
+  }, [
+    access,
+    listParams.filters.installation,
+    listParams.filters.search,
+    listParams.filters.status,
+  ])
 
   useEffect(() => {
     void reload()
@@ -75,7 +83,7 @@ export function useInstruments() {
     setEditingId(null)
     setForm({
       ...blank,
-      installation: filterInstallation || '',
+      installation: listParams.installation || '',
     })
     setActionError(null)
     setShowForm(true)
@@ -148,12 +156,44 @@ export function useInstruments() {
     }
   }
 
+  const filtersUi = (
+    <AdminListFilters
+      searchInput={listParams.searchInput}
+      onSearchChange={listParams.setSearchInput}
+      searchPlaceholder={copy.searchInstruments}
+      selects={[
+        {
+          id: 'filter-installation',
+          label: copy.installation,
+          value: listParams.installation,
+          onChange: listParams.setInstallation,
+          options: [
+            { value: '', label: copy.filterAll },
+            ...installations.map((i) => ({
+              value: String(i.id),
+              label: i.name,
+            })),
+          ],
+        },
+        {
+          id: 'instrument-status',
+          label: copy.status,
+          value: listParams.status,
+          onChange: listParams.setStatus,
+          options: [
+            { value: '', label: copy.filterAll },
+            { value: 'AVAILABLE', label: copy.available },
+            { value: 'UNAVAILABLE', label: copy.unavailable },
+          ],
+        },
+      ]}
+    />
+  )
+
   return {
     copy,
     items,
     installations,
-    filterInstallation,
-    setFilterInstallation,
     loading,
     error,
     actionError,
@@ -173,5 +213,6 @@ export function useInstruments() {
     closeDelete: () => {
       if (!deleting) setPendingDeleteId(null)
     },
+    filtersUi,
   }
 }

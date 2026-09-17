@@ -67,6 +67,15 @@ class Invitation(models.Model):
 
     class Meta:
         ordering = ["-created_at"]
+        indexes = [
+            models.Index(fields=["status"], name="invitations_status_idx"),
+            models.Index(fields=["email"], name="invitations_email_idx"),
+            models.Index(
+                fields=["project", "status"],
+                name="invitations_project_status_idx",
+            ),
+            models.Index(fields=["-created_at"], name="invitations_created_at_idx"),
+        ]
 
     def __str__(self) -> str:
         return f"Invite {self.email} to {self.project} ({self.status})"

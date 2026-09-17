@@ -239,6 +239,53 @@ class AdminPanelApiTests(TestCase):
         self.assertEqual(cancelled.status_code, status.HTTP_204_NO_CONTENT)
         self.assertFalse(Invitation.objects.filter(pk=invite_id).exists())
 
+    def test_list_filters_search_status_and_active(self):
+        other_project = make_project(self.other, title="Neutron run")
+        self.other.is_active = False
+        self.other.save(update_fields=["is_active"])
+
+        by_status = self.admin_api.get("/api/admin/projects/?status=DRAFT")
+        self.assertEqual(by_status.status_code, status.HTTP_200_OK)
+        self.assertTrue(any(p["id"] == self.project.id for p in by_status.data))
+
+        by_search = self.admin_api.get("/api/admin/projects/?search=Beam")
+        self.assertEqual(by_search.status_code, status.HTTP_200_OK)
+        self.assertTrue(any(p["id"] == self.project.id for p in by_search.data))
+        self.assertFalse(any(p["id"] == other_project.id for p in by_search.data))
+
+        users = self.admin_api.get(
+            "/api/admin/users/?role=RESEARCHER&search=other&is_active=false"
+        )
+        self.assertEqual(users.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(users.data), 1)
+        self.assertEqual(users.data[0]["email"], self.other.email)
+
+        Publication.objects.create(
+            project=self.project,
+            title="Spectra paper",
+            authors="A. Author",
+            doi="10.1/abc",
+        )
+        pubs = self.admin_api.get("/api/admin/publications/?search=Spectra")
+        self.assertEqual(pubs.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(pubs.data), 1)
+
+        Invitation.objects.create(
+            project=self.project,
+            email="filter-me@example.com",
+            invited_by=self.owner,
+            role=InvitationRole.VIEWER,
+            status=InvitationStatus.PENDING,
+        )
+        invs = self.admin_api.get(
+            "/api/admin/invitations/?status=PENDING&search=filter-me"
+        )
+        self.assertEqual(invs.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(invs.data), 1)
+
+        bad = self.admin_api.get("/api/admin/projects/?status=NOPE")
+        self.assertEqual(bad.status_code, status.HTTP_400_BAD_REQUEST)
+
     def test_createsuperuser_sets_super_admin_role(self):
         user = User.objects.create_superuser(
             username="su",

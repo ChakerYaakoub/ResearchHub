@@ -5,11 +5,14 @@ import {
   type AdminInvitation,
 } from '../../api/admin'
 import { ApiError } from '../../api/client'
+import { AdminListFilters } from '../../components/AdminListFilters'
 import { useAuth } from '../../auth'
 import { copy } from '../../copy'
+import { useAdminListParams } from '../../hooks/useAdminListParams'
 
 export function useInvitations() {
   const { access } = useAuth()
+  const listParams = useAdminListParams({ status: 'PENDING' })
   const [items, setItems] = useState<AdminInvitation[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -22,14 +25,19 @@ export function useInvitations() {
     setLoading(true)
     setError(null)
     try {
-      setItems(await listInvitations(access))
+      setItems(
+        await listInvitations(access, {
+          status: listParams.filters.status,
+          search: listParams.filters.search,
+        }),
+      )
     } catch (err) {
       setError(err instanceof ApiError ? err.message : copy.loadFailed)
       setItems([])
     } finally {
       setLoading(false)
     }
-  }, [access])
+  }, [access, listParams.filters.search, listParams.filters.status])
 
   useEffect(() => {
     void reload()
@@ -50,6 +58,29 @@ export function useInvitations() {
     }
   }
 
+  const filtersUi = (
+    <AdminListFilters
+      searchInput={listParams.searchInput}
+      onSearchChange={listParams.setSearchInput}
+      searchPlaceholder={copy.searchInvitations}
+      selects={[
+        {
+          id: 'invite-status',
+          label: copy.status,
+          value: listParams.status,
+          onChange: listParams.setStatus,
+          options: [
+            { value: '', label: copy.filterAll },
+            { value: 'PENDING', label: copy.filterPending },
+            { value: 'ACCEPTED', label: 'Accepted' },
+            { value: 'DECLINED', label: 'Declined' },
+            { value: 'EXPIRED', label: 'Expired' },
+          ],
+        },
+      ]}
+    />
+  )
+
   return {
     copy,
     items,
@@ -60,5 +91,6 @@ export function useInvitations() {
     setPending,
     busy,
     confirmCancel,
+    filtersUi,
   }
 }

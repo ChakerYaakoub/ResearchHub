@@ -1,4 +1,14 @@
-import { apiFetch } from './client'
+﻿import { apiFetch } from './client'
+import {
+  adminQuery,
+  type InstallationListParams,
+  type InstrumentListParams,
+  type InvitationListParams,
+  type ProjectListParams,
+  type ProposalListParams,
+  type PublicationListParams,
+  type UserListParams,
+} from './adminQuery'
 
 export type AdminStats = {
   total_projects: number
@@ -99,6 +109,7 @@ export type AdminPublication = {
   doi: string
   publication_date: string | null
   url: string
+  kind?: string
 }
 
 export type AdminInvitation = {
@@ -119,16 +130,31 @@ export function getAdminStats(token: string) {
   return apiFetch<AdminStats>('/admin/stats/', { token })
 }
 
-export function listUsers(token: string) {
-  return listResearchers(token)
+export function listUsers(token: string, params?: UserListParams) {
+  return listResearchers(token, params)
 }
 
-export function listResearchers(token: string) {
-  return apiFetch<AdminUser[]>('/admin/users/?role=RESEARCHER', { token })
+export function listResearchers(token: string, params?: UserListParams) {
+  const q = adminQuery({
+    role: 'RESEARCHER',
+    search: params?.search,
+    is_active:
+      params?.is_active === '' || params?.is_active === undefined
+        ? undefined
+        : params.is_active,
+  })
+  return apiFetch<AdminUser[]>(`/admin/users/${q}`, { token })
 }
 
-export function listAdmins(token: string) {
-  return apiFetch<AdminUser[]>('/admin/admins/', { token })
+export function listAdmins(token: string, params?: UserListParams) {
+  const q = adminQuery({
+    search: params?.search,
+    is_active:
+      params?.is_active === '' || params?.is_active === undefined
+        ? undefined
+        : params.is_active,
+  })
+  return apiFetch<AdminUser[]>(`/admin/admins/${q}`, { token })
 }
 
 export function createAdmin(
@@ -154,8 +180,9 @@ export function patchUser(
   })
 }
 
-export function listProjects(token: string) {
-  return apiFetch<AdminProject[]>('/admin/projects/', { token })
+export function listProjects(token: string, params?: ProjectListParams) {
+  const q = adminQuery({ status: params?.status, search: params?.search })
+  return apiFetch<AdminProject[]>(`/admin/projects/${q}`, { token })
 }
 
 export function getProject(token: string, id: number) {
@@ -169,8 +196,16 @@ export function deleteProject(token: string, id: number) {
   })
 }
 
-export function listProposals(token: string, status?: string) {
-  const q = status ? `?status=${encodeURIComponent(status)}` : ''
+export function listProposals(
+  token: string,
+  params?: ProposalListParams | string,
+) {
+  const normalized =
+    typeof params === 'string' ? { status: params || undefined } : (params ?? {})
+  const q = adminQuery({
+    status: normalized.status,
+    search: normalized.search,
+  })
   return apiFetch<AdminProposal[]>(`/admin/proposals/${q}`, { token })
 }
 
@@ -202,12 +237,12 @@ export function rejectProposal(
   })
 }
 
-export function listExperiments(token: string) {
-  return apiFetch<AdminExperiment[]>('/admin/experiments/', { token })
-}
-
-export function listInstallations(token: string) {
-  return apiFetch<AdminInstallation[]>('/admin/installations/', { token })
+export function listInstallations(
+  token: string,
+  params?: InstallationListParams,
+) {
+  const q = adminQuery({ status: params?.status, search: params?.search })
+  return apiFetch<AdminInstallation[]>(`/admin/installations/${q}`, { token })
 }
 
 export function createInstallation(
@@ -240,9 +275,17 @@ export function deleteInstallation(token: string, id: number) {
   })
 }
 
-export function listAdminInstruments(token: string, installationId?: number) {
-  const q =
-    installationId != null ? `?installation=${installationId}` : ''
+export function listAdminInstruments(
+  token: string,
+  params?: InstrumentListParams | number,
+) {
+  const normalized =
+    typeof params === 'number' ? { installation: params } : (params ?? {})
+  const q = adminQuery({
+    installation: normalized.installation,
+    status: normalized.status,
+    search: normalized.search,
+  })
   return apiFetch<AdminInstrument[]>(`/admin/instruments/${q}`, { token })
 }
 
@@ -290,12 +333,18 @@ export function deleteInstrument(token: string, id: number) {
   })
 }
 
-export function listPublications(token: string) {
-  return apiFetch<AdminPublication[]>('/admin/publications/', { token })
+export function listPublications(token: string, params?: PublicationListParams) {
+  const q = adminQuery({ search: params?.search, kind: params?.kind })
+  return apiFetch<AdminPublication[]>(`/admin/publications/${q}`, { token })
 }
 
-export function listInvitations(token: string) {
-  return apiFetch<AdminInvitation[]>('/admin/invitations/', { token })
+export function listInvitations(token: string, params?: InvitationListParams) {
+  const q = adminQuery({
+    status: params?.status,
+    search: params?.search,
+    project: params?.project,
+  })
+  return apiFetch<AdminInvitation[]>(`/admin/invitations/${q}`, { token })
 }
 
 export function cancelInvitation(token: string, id: number) {

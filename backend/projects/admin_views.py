@@ -11,9 +11,16 @@ from experiments.models import Experiment
 from invitations.models import Invitation, InvitationStatus
 from invitations.services import InvitationError, cancel_invitation
 from proposals.models import Proposal, ProposalStatus
-from publications.models import Publication
+from publications.models import Publication, PublicationKind
 from users.models import GlobalRole, User
 
+from .admin_filters import (
+    apply_is_active,
+    apply_user_search,
+    invalid_choice_response,
+    query_bool,
+    query_search,
+)
 from .admin_serializers import (
     AdminCreateAdminSerializer,
     AdminExperimentSerializer,
@@ -25,7 +32,7 @@ from .admin_serializers import (
     AdminUserPatchSerializer,
     AdminUserSerializer,
 )
-from .models import ResearchProject
+from .models import ProjectStatus, ResearchProject
 from .permissions import IsAdminUiOrigin, IsPlatformAdmin, IsSuperAdmin
 from .selectors import is_super_admin
 
@@ -49,7 +56,15 @@ class AdminUserListView(APIView):
                 {"detail": "Use GET /api/admin/admins/ for admin accounts."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+        is_active = query_bool(request, "is_active")
+        if is_active == "invalid":
+            return Response(
+                {"detail": "Invalid is_active. Use true or false."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         qs = User.objects.filter(role=GlobalRole.RESEARCHER).order_by("email")
+        qs = apply_user_search(qs, query_search(request))
+        qs = apply_is_active(qs, is_active)
         return Response(AdminUserSerializer(qs, many=True).data)
 
     def post(self, request):
@@ -68,9 +83,17 @@ class AdminAdminListView(APIView):
     permission_classes = _SUPER_ADMIN_PERMS
 
     def get(self, request):
+        is_active = query_bool(request, "is_active")
+        if is_active == "invalid":
+            return Response(
+                {"detail": "Invalid is_active. Use true or false."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         qs = User.objects.filter(
             role__in=(GlobalRole.ADMIN, GlobalRole.SUPER_ADMIN)
         ).order_by("email")
+        qs = apply_user_search(qs, query_search(request))
+        qs = apply_is_active(qs, is_active)
         return Response(AdminUserSerializer(qs, many=True).data)
 
 
@@ -107,12 +130,22 @@ class AdminUserDetailView(APIView):
 
 
 class AdminProjectListView(APIView):
-    """GET `/api/admin/projects/`."""
+    """GET `/api/admin/projects/` — optional ?status= & ?search=."""
 
     permission_classes = _ADMIN_PERMS
 
     def get(self, request):
         qs = ResearchProject.objects.select_related("owner").order_by("-created_at")
+        status_filter = (request.query_params.get("status") or "").strip().upper()
+        if status_filter:
+            if status_filter not in ProjectStatus.values:
+                return invalid_choice_response("status", ProjectStatus.values)
+            qs = qs.filter(status=status_filter)
+        search = query_search(request)
+        if search:
+            qs = qs.filter(
+                Q(title__icontains=search) | Q(owner__email__icontains=search)
+            )
         return Response(AdminProjectListSerializer(qs, many=True).data)
 
 
@@ -140,13 +173,11 @@ class AdminProjectDetailView(APIView):
 
 
 class AdminProposalListView(APIView):
-    """GET `/api/admin/proposals/` — optional ?status= or ?queue=review|draft."""
+    """GET `/api/admin/proposals/` — optional ?status=, ?queue=, ?search=."""
 
     permission_classes = _ADMIN_PERMS
 
     def get(self, request):
-        from projects.models import ProjectStatus
-
         status_filter = (request.query_params.get("status") or "").strip().upper()
         queue = (request.query_params.get("queue") or "").strip().lower()
         qs = Proposal.objects.select_related("project").order_by(
@@ -172,6 +203,9 @@ class AdminProposalListView(APIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
             qs = qs.filter(status=status_filter)
+        search = query_search(request)
+        if search:
+            qs = qs.filter(project__title__icontains=search)
         return Response(AdminProposalSerializer(qs, many=True).data)
 
 
@@ -190,7 +224,7 @@ class AdminExperimentListView(APIView):
 
 
 class AdminPublicationListView(APIView):
-    """GET `/api/admin/publications/`."""
+    """GET `/api/admin/publications/` — optional ?search= & ?kind=."""
 
     permission_classes = _ADMIN_PERMS
 
@@ -198,11 +232,24 @@ class AdminPublicationListView(APIView):
         qs = Publication.objects.select_related("project").order_by(
             "-publication_date", "title"
         )
+        kind = (request.query_params.get("kind") or "").strip().upper()
+        if kind:
+            if kind not in PublicationKind.values:
+                return invalid_choice_response("kind", PublicationKind.values)
+            qs = qs.filter(kind=kind)
+        search = query_search(request)
+        if search:
+            qs = qs.filter(
+                Q(title__icontains=search)
+                | Q(authors__icontains=search)
+                | Q(doi__icontains=search)
+                | Q(journal__icontains=search)
+            )
         return Response(AdminPublicationSerializer(qs, many=True).data)
 
 
 class AdminInvitationListView(APIView):
-    """GET `/api/admin/invitations/`."""
+    """GET `/api/admin/invitations/` — optional ?status=, ?search=, ?project=."""
 
     permission_classes = _ADMIN_PERMS
 
@@ -210,6 +257,22 @@ class AdminInvitationListView(APIView):
         qs = Invitation.objects.select_related("project", "invited_by").order_by(
             "-created_at"
         )
+        status_filter = (request.query_params.get("status") or "").strip().upper()
+        if status_filter:
+            if status_filter not in InvitationStatus.values:
+                return invalid_choice_response("status", InvitationStatus.values)
+            qs = qs.filter(status=status_filter)
+        search = query_search(request)
+        if search:
+            qs = qs.filter(email__icontains=search)
+        project_id = (request.query_params.get("project") or "").strip()
+        if project_id:
+            if not project_id.isdigit():
+                return Response(
+                    {"detail": "Invalid project. Use a numeric project id."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            qs = qs.filter(project_id=int(project_id))
         return Response(AdminInvitationSerializer(qs, many=True).data)
 
 

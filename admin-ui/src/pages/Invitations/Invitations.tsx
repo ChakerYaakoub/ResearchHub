@@ -22,6 +22,8 @@ export function InvitationsPage() {
         </div>
       ) : null}
 
+      {vm.filtersUi}
+
       {vm.loading ? (
         <LoadingState label={vm.copy.loading} />
       ) : vm.items.length === 0 ? (
