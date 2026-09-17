@@ -1,5 +1,6 @@
 import { Form, Formik } from 'formik'
 import { Navigate } from 'react-router-dom'
+import { DocumentTitle } from '../../components/DocumentTitle'
 import { PasswordField } from '../../components/PasswordField'
 import { useLogin, type LoginFormValues } from './useLogin'
 
@@ -12,6 +13,7 @@ export function LoginPage() {
 
   return (
     <div className="container py-5">
+      <DocumentTitle title={`${vm.copy.loginTitle} — ResearchHub Admin`} />
       <div className="row justify-content-center">
         <div className="col-12 col-sm-10 col-md-6 col-lg-4">
           <div className="border rounded p-4 bg-white shadow-sm">

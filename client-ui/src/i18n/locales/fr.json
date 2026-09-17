@@ -63,6 +63,29 @@
     "footerTagline": "ResearchHub — gestion de projets et d'expériences scientifiques",
     "copyrightPrefix": "©"
   },
+  "seo": {
+    "home": {
+      "title": "ResearchHub — Gestion de projets et d'expériences scientifiques",
+      "description": "Planifiez vos propositions, collaborez avec votre équipe, menez des expériences et centralisez vos publications."
+    },
+    "howItWorks": {
+      "title": "Comment ça marche — ResearchHub",
+      "description": "Découvrez le parcours ResearchHub de la proposition à la publication : brouillon, revue, expériences et résultats."
+    },
+    "documentation": {
+      "title": "En savoir plus — ResearchHub",
+      "description": "Découvrez comment les chercheurs utilisent ResearchHub pour projets, collaboration, expériences et publications."
+    },
+    "dashboard": {
+      "title": "Tableau de bord — ResearchHub"
+    },
+    "projects": {
+      "title": "Projets — ResearchHub"
+    },
+    "invitations": {
+      "title": "Invitations — ResearchHub"
+    }
+  },
   "home": {
     "hero": {
       "brand": "ResearchHub",

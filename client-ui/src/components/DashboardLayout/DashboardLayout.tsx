@@ -1,4 +1,5 @@
 import { Link, NavLink, Outlet } from 'react-router-dom'
+import { PageMeta } from '../PageMeta'
 import { useDashboardLayout } from './useDashboardLayout'
 import './DashboardLayout.css'
 
@@ -42,6 +43,10 @@ export function DashboardLayout() {
 
   return (
     <div className={`rh-dash${vm.sidebarOpen ? ' is-open' : ''}`}>
+      <PageMeta
+        title={vm.documentTitle}
+        robots="noindex,nofollow"
+      />
       <button
         type="button"
         className="rh-dash-backdrop"

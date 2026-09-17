@@ -63,6 +63,29 @@
     "footerTagline": "ResearchHub — scientific project & experiment management",
     "copyrightPrefix": "©"
   },
+  "seo": {
+    "home": {
+      "title": "ResearchHub — Scientific project & experiment management",
+      "description": "Plan proposals, collaborate with your team, run experiments, and keep publications in one clear workspace."
+    },
+    "howItWorks": {
+      "title": "How it works — ResearchHub",
+      "description": "Follow the ResearchHub journey from proposal to publication: draft, review, experiments, and results."
+    },
+    "documentation": {
+      "title": "Learn more — ResearchHub",
+      "description": "Learn how researchers use ResearchHub for projects, collaboration, experiments, and publications."
+    },
+    "dashboard": {
+      "title": "Dashboard — ResearchHub"
+    },
+    "projects": {
+      "title": "Projects — ResearchHub"
+    },
+    "invitations": {
+      "title": "Invitations — ResearchHub"
+    }
+  },
   "home": {
     "hero": {
       "brand": "ResearchHub",
