@@ -2,11 +2,12 @@
 
 from rest_framework import serializers
 
+from users.mail import send_admin_welcome_email
 from users.models import GlobalRole, User
 from users.user_create import (
+    generate_temporary_password,
     normalize_unique_email,
     unique_username_from_email,
-    validate_user_password,
 )
 
 
@@ -31,27 +32,30 @@ class AdminUserPatchSerializer(serializers.Serializer):
 
 
 class AdminCreateAdminSerializer(serializers.Serializer):
-    """SUPER_ADMIN creates an ADMIN account (not promote researchers)."""
+    """SUPER_ADMIN creates an ADMIN; password is generated and emailed."""
 
     email = serializers.EmailField()
-    password = serializers.CharField(write_only=True, style={"input_type": "password"})
     username = serializers.CharField(required=False, allow_blank=True, max_length=150)
 
     def validate_email(self, value: str) -> str:
         return normalize_unique_email(value)
 
-    def validate_password(self, value: str) -> str:
-        return validate_user_password(value)
-
     def create(self, validated_data: dict) -> User:
         email = validated_data["email"]
         username = unique_username_from_email(email, validated_data.get("username"))
+        plain_password = generate_temporary_password(8)
         user = User(
             email=email,
             username=username,
             role=GlobalRole.ADMIN,
             is_staff=True,
         )
-        user.set_password(validated_data["password"])
+        user.set_password(plain_password)
         user.save()
+
+        if not send_admin_welcome_email(user, plain_password):
+            user.delete()
+            raise serializers.ValidationError(
+                "Could not send credentials email. Admin was not created."
+            )
         return user

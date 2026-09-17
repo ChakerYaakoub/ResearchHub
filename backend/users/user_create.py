@@ -1,9 +1,19 @@
 """Shared user-create helpers (register + admin create-admin)."""
 
+import secrets
+import string
+
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 
 from users.models import User
+
+_TEMP_PASSWORD_ALPHABET = string.ascii_letters + string.digits
+
+
+def generate_temporary_password(length: int = 8) -> str:
+    """Cryptographically random alphanumeric password (default 8 chars)."""
+    return "".join(secrets.choice(_TEMP_PASSWORD_ALPHABET) for _ in range(length))
 
 
 def normalize_unique_email(value: str) -> str:
