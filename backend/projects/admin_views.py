@@ -1,6 +1,6 @@
 """Admin-panel list/manage views (admin-ui Origin + platform ADMIN)."""
 
-from django.db.models import Count, Q
+from django.db.models import Count, Prefetch, Q
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
@@ -32,7 +32,7 @@ from .admin_serializers import (
     AdminUserPatchSerializer,
     AdminUserSerializer,
 )
-from .models import ProjectStatus, ResearchProject
+from .models import ProjectMembership, ProjectStatus, ResearchProject
 from .permissions import IsAdminUiOrigin, IsPlatformAdmin, IsSuperAdmin
 from .selectors import is_super_admin
 
@@ -150,13 +150,30 @@ class AdminProjectListView(APIView):
 
 
 class AdminProjectDetailView(APIView):
-    """GET `/api/admin/projects/{id}/`."""
+    """GET `/api/admin/projects/{id}/` — overview counts + nested sections."""
 
     permission_classes = _ADMIN_PERMS
 
     def get(self, request, project_id: int):
         qs = (
             ResearchProject.objects.select_related("owner", "proposal")
+            .prefetch_related(
+                Prefetch(
+                    "memberships",
+                    queryset=ProjectMembership.objects.select_related("user"),
+                ),
+                Prefetch(
+                    "experiments",
+                    queryset=Experiment.objects.select_related(
+                        "instrument__installation"
+                    ),
+                ),
+                "publications",
+                Prefetch(
+                    "invitations",
+                    queryset=Invitation.objects.select_related("invited_by"),
+                ),
+            )
             .annotate(
                 member_count=Count("memberships", distinct=True),
                 experiment_count=Count("experiments", distinct=True),

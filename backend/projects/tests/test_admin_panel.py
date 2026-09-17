@@ -160,6 +160,18 @@ class AdminPanelApiTests(TestCase):
         self.assertEqual(detail.data["title"], "Beam study")
         self.assertEqual(detail.data["owner_email"], self.owner.email)
         self.assertGreaterEqual(detail.data["member_count"], 1)
+        for key in (
+            "proposal",
+            "members",
+            "experiments",
+            "publications",
+            "invitations",
+        ):
+            self.assertIn(key, detail.data)
+        self.assertIsInstance(detail.data["members"], list)
+        self.assertIsInstance(detail.data["experiments"], list)
+        self.assertIsInstance(detail.data["publications"], list)
+        self.assertIsInstance(detail.data["invitations"], list)
 
     def test_proposals_default_and_status_filter(self):
         created = self.owner_client.post(

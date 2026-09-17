@@ -47,6 +47,16 @@ export type AdminProjectDetail = AdminProject & {
   experiment_count: number
   publication_count: number
   pending_invitation_count: number
+  proposal: AdminProposal | null
+  members: AdminProjectMember[]
+  experiments: AdminExperiment[]
+  publications: AdminPublication[]
+  invitations: AdminInvitation[]
+}
+
+export type AdminProjectMember = {
+  email: string
+  role: string
 }
 
 export type AdminProposal = {
