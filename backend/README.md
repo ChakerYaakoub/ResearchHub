@@ -8,13 +8,17 @@ ResearchHub API — **Django + DRF + PostgreSQL**. Run only via Docker (`make st
 backend/
 ├── manage.py
 ├── config/           # settings, urls, wsgi/asgi
-├── users/
-├── projects/
-├── proposals/
-├── experiments/
-├── publications/
-└── invitations/
+├── core/             # shared permissions, admin filters, api helpers (no models)
+├── users/            # api/ (auth) + admin_api/ (users/admins)
+├── projects/         # api/ + admin_api/ (stats, projects) + services/selectors
+├── proposals/        # api/ + admin_api/
+├── experiments/      # api/ + admin_api/
+├── publications/     # api/ + admin_api/
+├── invitations/      # api/ + admin_api/
+└── facilities/       # client + admin installations/instruments
 ```
+
+Domain apps keep models and workflow `services.py` at the app root. HTTP lives under `api/` (client) and `admin_api/` (platform admin). Cross-cutting AuthZ helpers live in `core/`.
 
 ## Architecture
 
