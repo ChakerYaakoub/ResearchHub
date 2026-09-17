@@ -5,7 +5,7 @@ COMPOSE ?= docker compose
 
 .PHONY: help start up stop down build rebuild restart logs ps status \
 	shell-backend shell-client-ui shell-admin-ui \
-	migrate createsuperuser test-backend clean
+	migrate createsuperuser test-backend test-client-ui test-admin-ui test-frontend clean
 
 help:
 	@echo ResearchHub make targets:
@@ -23,6 +23,9 @@ help:
 	@echo   make migrate          Run Django migrations
 	@echo   make createsuperuser  Create Django superuser
 	@echo   make test-backend     Run Django tests
+	@echo   make test-client-ui   Run client-ui Vitest suite
+	@echo   make test-admin-ui    Run admin-ui Vitest suite
+	@echo   make test-frontend    Run both UI Vitest suites
 	@echo   make clean            Down + remove volumes (DESTROYS DB DATA)
 
 start up:
@@ -67,6 +70,14 @@ createsuperuser:
 
 test-backend:
 	$(COMPOSE) exec backend python manage.py test
+
+test-client-ui:
+	$(COMPOSE) exec client-ui npm test
+
+test-admin-ui:
+	$(COMPOSE) exec admin-ui npm test
+
+test-frontend: test-client-ui test-admin-ui
 
 clean:
 	$(COMPOSE) down -v
