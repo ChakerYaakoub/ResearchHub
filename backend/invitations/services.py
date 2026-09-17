@@ -49,8 +49,7 @@ def send_invitation_email(invitation: Invitation) -> None:
         f"Open this link to continue:\n{link}\n\n"
         "After you sign in, open My invitations to accept or decline.\n"
         "If you do not want to join, you can ignore this email "
-        "(or decline after signing in).\n\n"
-        "Do not reply to this email.\n"
+        "(or decline after signing in).\n"
     )
 
     send_app_email(

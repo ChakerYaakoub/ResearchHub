@@ -1,9 +1,15 @@
-"""Welcome email when SUPER_ADMIN creates a platform ADMIN."""
+"""User-facing emails (admin welcome, registration welcome)."""
 
 from django.conf import settings
+from django.utils import timezone
 
 from core.mail import send_app_email
 from users.models import User
+
+
+def _greeting_name(user: User) -> str:
+    full = f"{user.first_name} {user.last_name}".strip()
+    return full or user.username
 
 
 def send_admin_welcome_email(user: User, plain_password: str) -> bool:
@@ -17,12 +23,30 @@ def send_admin_welcome_email(user: User, plain_password: str) -> bool:
         f"Email: {user.email}\n"
         f"Temporary password: {plain_password}\n\n"
         f"Sign in at: {login_url}\n\n"
-        "Please change this password on your account page.\n\n"
-        "Do not reply to this email.\n"
+        "Please change this password on your account page."
     )
     return send_app_email(
         subject=subject,
         message=body,
         to=user.email,
         purpose="admin welcome",
+    )
+
+
+def send_registration_welcome_email(user: User) -> bool:
+    """Thank-you email after researcher registration (never blocks create)."""
+    when = timezone.localtime(user.date_joined).strftime("%d/%m/%Y %H:%M")
+    subject = "Welcome to ResearchHub"
+    body = (
+        f"Dear {_greeting_name(user)},\n\n"
+        f"We thank you for your registration on {when}.\n\n"
+        "This is your login information:\n"
+        f"email: {user.email}\n"
+        f"username: {user.username}\n"
+    )
+    return send_app_email(
+        subject=subject,
+        message=body,
+        to=user.email,
+        purpose="registration welcome",
     )
