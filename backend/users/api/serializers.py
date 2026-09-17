@@ -3,6 +3,7 @@
 from django.contrib.auth import authenticate
 from rest_framework import serializers
 
+from core.validation import validate_person_name, validate_username
 from users.mail import send_registration_welcome_email
 from users.models import GlobalRole, User
 from users.user_create import (
@@ -40,6 +41,17 @@ class RegisterSerializer(serializers.Serializer):
 
     def validate_password(self, value: str) -> str:
         return validate_user_password(value)
+
+    def validate_username(self, value: str) -> str:
+        if not (value or "").strip():
+            return ""
+        return validate_username(value)
+
+    def validate_first_name(self, value: str) -> str:
+        return validate_person_name(value, allow_blank=True)
+
+    def validate_last_name(self, value: str) -> str:
+        return validate_person_name(value, allow_blank=True)
 
     def create(self, validated_data: dict) -> User:
         email = validated_data["email"]
@@ -94,6 +106,15 @@ class MeUpdateSerializer(serializers.Serializer):
         required=False, allow_blank=True, write_only=True, style={"input_type": "password"}
     )
 
+    def validate_username(self, value: str) -> str:
+        return validate_username(value)
+
+    def validate_first_name(self, value: str) -> str:
+        return validate_person_name(value, allow_blank=True)
+
+    def validate_last_name(self, value: str) -> str:
+        return validate_person_name(value, allow_blank=True)
+
     def validate(self, attrs: dict) -> dict:
         if "email" in self.initial_data:
             raise serializers.ValidationError(
@@ -120,11 +141,6 @@ class MeUpdateSerializer(serializers.Serializer):
 
         username = attrs.get("username")
         if username is not None:
-            username = username.strip()
-            if not username:
-                raise serializers.ValidationError(
-                    {"username": "Username cannot be blank."}
-                )
             if (
                 User.objects.filter(username__iexact=username)
                 .exclude(pk=user.pk)
@@ -133,7 +149,6 @@ class MeUpdateSerializer(serializers.Serializer):
                 raise serializers.ValidationError(
                     {"username": "This username is already taken."}
                 )
-            attrs["username"] = username
 
         return attrs
 

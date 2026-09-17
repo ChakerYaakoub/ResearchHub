@@ -6,6 +6,7 @@ import string
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 
+from core.validation import username_from_email_local, validate_username
 from users.models import User
 
 _TEMP_PASSWORD_ALPHABET = string.ascii_letters + string.digits
@@ -29,11 +30,17 @@ def validate_user_password(value: str) -> str:
 
 
 def unique_username_from_email(email: str, preferred: str | None = None) -> str:
-    """Build a unique username from preferred or email local-part."""
-    username = (preferred or "").strip() or email.split("@")[0]
+    """Build a unique username from preferred (validated) or email local-part."""
+    preferred_clean = (preferred or "").strip()
+    if preferred_clean:
+        username = validate_username(preferred_clean)
+    else:
+        username = username_from_email_local(email)
     base = username
     suffix = 1
-    while User.objects.filter(username=username).exists():
-        username = f"{base}{suffix}"
+    while User.objects.filter(username__iexact=username).exists():
+        # Keep within max length when appending a numeric suffix.
+        suffix_str = str(suffix)
+        username = f"{base[: 150 - len(suffix_str)]}{suffix_str}"
         suffix += 1
     return username
