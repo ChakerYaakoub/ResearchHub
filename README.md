@@ -46,8 +46,8 @@ Publication
 | Database | PostgreSQL |
 | Email | Django + SMTP |
 | Local | Docker Compose |
-| Production (planned) | Google Cloud, Nginx, DuckDNS, Let's Encrypt HTTPS |
-| Optional (later) | Kubernetes |
+| Local Kubernetes | Docker Desktop Kubernetes (`k8s/`) |
+| Cloud deploy | Documented later (CI/CD, VM, registry, HTTPS) — not required to run the app |
 
 ## Architecture
 
@@ -67,23 +67,22 @@ admin-ui  (:5175) ──┼── REST + JWT ──► Django + DRF ──► Po
 - **admin-ui** — platform admin SPA; JWT in `rh_admin_*`; page login; Origin must be in `ADMIN_UI_ORIGINS` for admin routes.
 - **backend** — system of record for AuthN, AuthZ, workflows, and validation. Frontends are never trusted for security.
 
-### Target production (Phase 17)
+### Local Kubernetes (Phase 16)
 
-Design goal after CI/CD:
+Optional alternative to Compose for a Kubernetes demo on your machine:
 
 ```text
-User → DuckDNS → Nginx (TLS / Let's Encrypt)
-                    ├── client-ui (static)
-                    ├── admin-ui  (static)
-                    └── Django API → PostgreSQL
-                         (+ SMTP)
+Docker Desktop (Kubernetes on)
+  → kubectl apply -f k8s/
+       postgres + backend + client-ui + admin-ui
+       LoadBalancer → localhost
 ```
 
-Folders reserved for this work: `nginx/`, `deploy/`. Env for domain, TLS, and SMTP stays out of git.
+Daily coding stays on Compose. See [`k8s/README.md`](k8s/README.md).
 
-### Optional later (Phase 18)
+### Cloud deploy (later — docs)
 
-Kubernetes manifests under `k8s/` after a working Docker VM + Nginx MVP. Kubernetes is last and optional.
+A future guide under `deploy/` (or similar) will cover CI/CD, env, VM, registry, and HTTPS. No cloud provisioning is required to develop or demo ResearchHub locally. Folders `nginx/`, `deploy/` remain reserved.
 
 ## Progress / roadmap
 
@@ -91,14 +90,14 @@ Kubernetes manifests under `k8s/` after a working Docker VM + Nginx MVP. Kuberne
 |------:|-------|--------|
 | 0–14 | Foundation → mailer (API, AuthZ, both UIs, tests, email) | done |
 | 15 | Documentation polish | done |
-| 16 | CI/CD | next |
-| 17 | Google Cloud + Nginx + DuckDNS + HTTPS | todo |
-| 18 | Kubernetes (optional) | todo |
+| 16 | Local Kubernetes (Docker Desktop) | next |
+| 17 | Cloud deploy documentation (CI/CD, VM, HTTPS) | todo |
+| 18 | Optional real cloud deploy | todo |
 
 ```text
 done:  0 → 15
-next:  16 CI/CD
-todo:  17 GCP/Nginx/HTTPS → 18 k8s
+next:  16 local Docker Desktop Kubernetes
+todo:  17 cloud deploy docs → 18 optional cloud deploy
 ```
 
 
@@ -118,11 +117,11 @@ Security & validation (backend): [`backend/docs/SECURITY.md`](backend/docs/SECUR
 backend/           # Django domain apps + /api/ + docs/
 client-ui/         # Researcher SPA (Vite) + docs/
 admin-ui/          # Platform admin SPA (Vite) + docs/
-nginx/             # Reverse proxy configs (Phase 17)
-deploy/            # Google Cloud / production helpers (Phase 17)
-k8s/               # Optional Kubernetes manifests (Phase 18)
-.github/workflows/ # CI/CD (Phase 16)
-docker-compose.yml # Local Docker Compose
+nginx/             # Reserved for reverse proxy (cloud deploy later)
+deploy/            # Reserved for cloud deploy docs / helpers (later)
+k8s/               # Docker Desktop Kubernetes manifests (Phase 16)
+.github/workflows/ # Reserved for CI (later)
+docker-compose.yml # Local Docker Compose (daily)
 ```
 
 ## Backend
@@ -236,12 +235,16 @@ make test-backend       # Django tests
 make test-client-ui     # client-ui Vitest
 make test-admin-ui      # admin-ui Vitest
 make clean              # down -v (destroys DB volume)
+make k8s-start          # build + sync .env + apply (Docker Desktop Kubernetes)
+make k8s-status         # pods and services
+make k8s-delete         # remove researchhub namespace
 ```
 
 Environment variables:
 
 - **Docker / full stack:** copy root [`.env.example`](.env.example) → `.env` (Compose uses this)
 - **Per project:** [`backend/.env.example`](backend/.env.example), [`client-ui/.env.example`](client-ui/.env.example), [`admin-ui/.env.example`](admin-ui/.env.example)
+- **Local k8s:** copy [`k8s/secret.example.yaml`](k8s/secret.example.yaml) → `k8s/secret.yaml` (gitignored); see [`k8s/README.md`](k8s/README.md)
 
 Never commit real credentials or production secrets.
 
@@ -251,7 +254,7 @@ Never commit real credentials or production secrets.
 - Project access is limited to owners, collaborators, and admins
 - Admin API routes require admin-ui Origin (`ADMIN_UI_ORIGINS`) plus platform ADMIN role
 - Invitation tokens are secure, time-limited (7 days), and only grant access after acceptance
-- Production HTTPS via Let's Encrypt behind Nginx (target architecture)
+- Local k8s secrets stay out of git (`k8s/secret.yaml`); cloud HTTPS is a later deploy-docs topic
 
 ## License
 

@@ -62,3 +62,5 @@ PLAN.md
 # Secrets / keys
 *.pem
 secrets/
+k8s/secret.yaml
+k8s/configmap.yaml

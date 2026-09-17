@@ -1,0 +1,5 @@
+# ResearchHub local namespace (Docker Desktop Kubernetes).
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: researchhub
