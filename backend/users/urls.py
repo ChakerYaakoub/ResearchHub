@@ -7,7 +7,15 @@ from users.admin_api.views import (
     AdminUserDetailView,
     AdminUserListView,
 )
-from users.api.views import LoginView, LogoutView, MeView, RefreshView, RegisterView
+from users.api.views import (
+    LoginView,
+    LogoutView,
+    MeView,
+    PasswordResetConfirmView,
+    PasswordResetRequestView,
+    RefreshView,
+    RegisterView,
+)
 
 auth_urlpatterns = [
     path("register/", RegisterView.as_view(), name="auth-register"),
@@ -15,6 +23,16 @@ auth_urlpatterns = [
     path("logout/", LogoutView.as_view(), name="auth-logout"),
     path("refresh/", RefreshView.as_view(), name="auth-refresh"),
     path("me/", MeView.as_view(), name="auth-me"),
+    path(
+        "password-reset/",
+        PasswordResetRequestView.as_view(),
+        name="auth-password-reset",
+    ),
+    path(
+        "password-reset/confirm/",
+        PasswordResetConfirmView.as_view(),
+        name="auth-password-reset-confirm",
+    ),
 ]
 
 admin_urlpatterns = [

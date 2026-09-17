@@ -1,5 +1,6 @@
 import { Link, NavLink, Outlet } from 'react-router-dom'
 import { PageMeta } from '../PageMeta'
+import { UserMenu } from '../UserMenu'
 import { useDashboardLayout } from './useDashboardLayout'
 import './DashboardLayout.css'
 
@@ -87,11 +88,6 @@ export function DashboardLayout() {
           </div>
 
           <div className="rh-dash-header-end">
-            {vm.user ? (
-              <span className="rh-dash-header-user" title={vm.user.email}>
-                {vm.user.email}
-              </span>
-            ) : null}
             <div className="rh-lang" role="group" aria-label="Language">
               <button
                 type="button"
@@ -108,13 +104,13 @@ export function DashboardLayout() {
                 {vm.t('common.langFr')}
               </button>
             </div>
-            <button
-              type="button"
-              className="btn btn-outline-secondary btn-sm"
-              onClick={() => void vm.onLogout()}
-            >
-              {vm.t('common.logOut')}
-            </button>
+            <UserMenu
+              email={vm.user?.email}
+              accountLabel={vm.t('nav.account')}
+              logoutLabel={vm.t('common.logOut')}
+              menuLabel={vm.t('common.accountMenu')}
+              onLogout={vm.onLogout}
+            />
           </div>
         </header>
 

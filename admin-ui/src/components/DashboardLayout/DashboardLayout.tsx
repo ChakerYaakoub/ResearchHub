@@ -1,5 +1,6 @@
 import { Link, NavLink, Outlet } from 'react-router-dom'
 import { DocumentTitle } from '../DocumentTitle'
+import { UserMenu } from '../UserMenu'
 import { useDashboardLayout } from './useDashboardLayout'
 import './DashboardLayout.css'
 
@@ -72,18 +73,13 @@ export function DashboardLayout() {
           </div>
 
           <div className="rh-dash-header-end">
-            {vm.user ? (
-              <span className="rh-dash-header-user" title={vm.user.email}>
-                {vm.user.email}
-              </span>
-            ) : null}
-            <button
-              type="button"
-              className="btn btn-outline-secondary btn-sm"
-              onClick={() => void vm.onLogout()}
-            >
-              {vm.copy.logOut}
-            </button>
+            <UserMenu
+              email={vm.user?.email}
+              accountLabel={vm.copy.account}
+              logoutLabel={vm.copy.logOut}
+              menuLabel={vm.copy.accountMenu}
+              onLogout={vm.onLogout}
+            />
           </div>
         </header>
 

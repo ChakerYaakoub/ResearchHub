@@ -18,7 +18,14 @@ export function useAuthModal({
   onSwitchMode,
 }: AuthModalProps) {
   const { t } = useTranslation()
-  const title = mode === 'login' ? t('login.title') : t('register.title')
+  const title =
+    mode === 'login'
+      ? t('login.title')
+      : mode === 'register'
+        ? t('register.title')
+        : mode === 'forgot'
+          ? t('forgot.title')
+          : t('reset.title')
 
   return {
     open,

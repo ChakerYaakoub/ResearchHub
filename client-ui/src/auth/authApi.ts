@@ -35,3 +35,40 @@ export async function logoutRequest(
 export async function meRequest(access: string): Promise<AuthUser> {
   return apiFetch<AuthUser>('/auth/me/', { token: access })
 }
+
+export type MeUpdateBody = {
+  username?: string
+  first_name?: string
+  last_name?: string
+  current_password?: string
+  new_password?: string
+}
+
+export async function updateMeRequest(
+  access: string,
+  body: MeUpdateBody,
+): Promise<AuthUser> {
+  return apiFetch<AuthUser>('/auth/me/', {
+    method: 'PATCH',
+    token: access,
+    body: JSON.stringify(body),
+  })
+}
+
+export async function requestPasswordReset(email: string): Promise<void> {
+  await apiFetch('/auth/password-reset/', {
+    method: 'POST',
+    body: JSON.stringify({ email }),
+  })
+}
+
+export async function confirmPasswordReset(body: {
+  uid: string
+  token: string
+  new_password: string
+}): Promise<void> {
+  await apiFetch('/auth/password-reset/confirm/', {
+    method: 'POST',
+    body: JSON.stringify(body),
+  })
+}

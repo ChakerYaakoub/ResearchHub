@@ -15,6 +15,7 @@ import {
   isPlatformAdminRole,
   loadStoredAuth,
   saveAuth,
+  updateStoredUser,
   type AuthUser,
 } from './authStorage'
 import { onAuthTokensChange } from './tokenSession'
@@ -26,6 +27,7 @@ type AuthContextValue = {
   isSuperAdmin: boolean
   login: (email: string, password: string) => Promise<void>
   logout: () => Promise<void>
+  setUser: (user: AuthUser) => void
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null)
@@ -89,6 +91,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setRefresh(null)
   }, [access, refresh])
 
+  const setUserProfile = useCallback((next: AuthUser) => {
+    updateStoredUser(next)
+    setUser(next)
+  }, [])
+
   const value = useMemo(
     () => ({
       user,
@@ -99,8 +106,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       isSuperAdmin: user?.role === 'SUPER_ADMIN',
       login,
       logout,
+      setUser: setUserProfile,
     }),
-    [user, access, login, logout],
+    [user, access, login, logout, setUserProfile],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

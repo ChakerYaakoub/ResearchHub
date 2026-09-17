@@ -8,10 +8,15 @@ import { loginSchema, type AuthFormValues } from '../authSchemas'
 export type LoginFormProps = {
   onSuccess: () => void
   onSwitchToRegister: () => void
+  onSwitchToForgot: () => void
 }
 
 /** Login form state and Formik submit. */
-export function useLoginForm({ onSuccess, onSwitchToRegister }: LoginFormProps) {
+export function useLoginForm({
+  onSuccess,
+  onSwitchToRegister,
+  onSwitchToForgot,
+}: LoginFormProps) {
   const { t } = useTranslation()
   const { login } = useAuth()
 
@@ -34,5 +39,12 @@ export function useLoginForm({ onSuccess, onSwitchToRegister }: LoginFormProps) 
     }
   }
 
-  return { t, initialValues, validationSchema, onSubmit, onSwitchToRegister }
+  return {
+    t,
+    initialValues,
+    validationSchema,
+    onSubmit,
+    onSwitchToRegister,
+    onSwitchToForgot,
+  }
 }

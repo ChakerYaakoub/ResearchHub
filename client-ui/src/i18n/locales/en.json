@@ -7,6 +7,7 @@
     "email": "Email",
     "password": "Password",
     "close": "Close",
+    "accountMenu": "Account menu",
     "scrollToTop": "Go up",
     "toggleNav": "Toggle navigation",
     "langEn": "EN",
@@ -37,7 +38,10 @@
     "createFailed": "Could not create.",
     "inviteFailed": "Could not send invitation.",
     "acceptFailed": "Could not accept invitation.",
-    "declineFailed": "Could not decline invitation."
+    "declineFailed": "Could not decline invitation.",
+    "saveFailed": "Could not save changes.",
+    "resetFailed": "Could not reset password.",
+    "resetLinkInvalid": "This reset link is missing or invalid. Request a new one."
   },
   "toast": {
     "saved": "Saved.",
@@ -49,7 +53,11 @@
     "accepted": "Invitation accepted.",
     "declined": "Invitation declined.",
     "completed": "Project marked complete.",
-    "projectDeleted": "Project removed from your workspace."
+    "projectDeleted": "Project removed from your workspace.",
+    "profileSaved": "Profile updated.",
+    "passwordChanged": "Password changed.",
+    "resetEmailSent": "If an account exists for that email, a reset link was sent.",
+    "passwordReset": "Password updated. You can log in."
   },
   "nav": {
     "brand": "ResearchHub",
@@ -58,6 +66,7 @@
     "dashboard": "Dashboard",
     "projects": "Projects",
     "invitations": "Invitations",
+    "account": "Account",
     "publicSite": "Public site",
     "goToDashboard": "Go to dashboard",
     "footerTagline": "ResearchHub — scientific project & experiment management",
@@ -84,6 +93,9 @@
     },
     "invitations": {
       "title": "Invitations — ResearchHub"
+    },
+    "account": {
+      "title": "Account — ResearchHub"
     }
   },
   "home": {
@@ -317,7 +329,8 @@
     "submit": "Log in",
     "submitting": "Signing in…",
     "noAccount": "No account?",
-    "registerLink": "Register"
+    "registerLink": "Register",
+    "forgotPassword": "Forgot password?"
   },
   "register": {
     "title": "Register",
@@ -327,6 +340,22 @@
     "submitting": "Creating account…",
     "haveAccount": "Already registered?",
     "loginLink": "Log in"
+  },
+  "forgot": {
+    "title": "Forgot password",
+    "subtitle": "Enter your email and we will send a reset link if an account exists.",
+    "submit": "Send reset link",
+    "submitting": "Sending…",
+    "backToLogin": "Back to log in"
+  },
+  "reset": {
+    "title": "Set new password",
+    "subtitle": "Choose a new password for your ResearchHub account.",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm new password",
+    "submit": "Update password",
+    "submitting": "Updating…",
+    "backToLogin": "Back to log in"
   },
   "status": {
     "DRAFT": "Draft",
@@ -523,5 +552,24 @@
     "decline": "Decline",
     "accepting": "Accepting…",
     "declining": "Declining…"
+  },
+  "account": {
+    "title": "Account",
+    "subtitle": "Update your profile and password. Email cannot be changed.",
+    "profileSection": "Profile",
+    "passwordSection": "Password",
+    "emailHint": "Email is used to sign in and cannot be changed.",
+    "username": "Username",
+    "usernameRequired": "Username is required.",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "saveProfile": "Save profile",
+    "saving": "Saving…",
+    "currentPassword": "Current password",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm new password",
+    "passwordMismatch": "Passwords do not match.",
+    "changePassword": "Change password",
+    "changingPassword": "Changing…"
   }
 }

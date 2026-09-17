@@ -117,6 +117,80 @@ class AuthApiTests(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["email"], "me@example.com")
 
+    def test_me_patch_profile_fields(self):
+        user = make_user("profile@example.com")
+        client = auth_client(user)
+        response = client.patch(
+            "/api/auth/me/",
+            {
+                "username": "newname",
+                "first_name": "Chaker",
+                "last_name": "Yaakoub",
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["username"], "newname")
+        self.assertEqual(response.data["first_name"], "Chaker")
+        self.assertEqual(response.data["last_name"], "Yaakoub")
+        self.assertEqual(response.data["email"], "profile@example.com")
+        user.refresh_from_db()
+        self.assertEqual(user.username, "newname")
+        self.assertEqual(user.email, "profile@example.com")
+
+    def test_me_patch_rejects_email_change(self):
+        user = make_user("keep@example.com")
+        client = auth_client(user)
+        response = client.patch(
+            "/api/auth/me/",
+            {"email": "other@example.com", "first_name": "A"},
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        user.refresh_from_db()
+        self.assertEqual(user.email, "keep@example.com")
+
+    def test_me_patch_username_taken(self):
+        make_user("taken@example.com", username="taken")
+        user = make_user("free@example.com", username="free")
+        client = auth_client(user)
+        response = client.patch(
+            "/api/auth/me/",
+            {"username": "taken"},
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_me_patch_password_change(self):
+        user = make_user("pwd@example.com")
+        client = auth_client(user)
+        response = client.patch(
+            "/api/auth/me/",
+            {
+                "current_password": DEFAULT_PASSWORD,
+                "new_password": "NewPass999!",
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        user.refresh_from_db()
+        self.assertTrue(user.check_password("NewPass999!"))
+
+    def test_me_patch_password_wrong_current(self):
+        user = make_user("badpwd@example.com")
+        client = auth_client(user)
+        response = client.patch(
+            "/api/auth/me/",
+            {
+                "current_password": "WrongPass999!",
+                "new_password": "NewPass999!",
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        user.refresh_from_db()
+        self.assertTrue(user.check_password(DEFAULT_PASSWORD))
+
     def test_refresh_issues_new_access(self):
         response = self.client.post(
             "/api/auth/register/",
@@ -164,3 +238,98 @@ class AuthApiTests(TestCase):
             format="json",
         )
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    @override_settings(
+        EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend",
+        CLIENT_UI_ORIGIN="http://client.test",
+    )
+    def test_password_reset_sends_email_for_known_user(self):
+        make_user("resetme@example.com")
+        response = self.client.post(
+            "/api/auth/password-reset/",
+            {"email": "resetme@example.com"},
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(mail.outbox), 1)
+        body = mail.outbox[0].body
+        self.assertIn("auth=reset", body)
+        self.assertIn("uid=", body)
+        self.assertIn("token=", body)
+        self.assertIn("http://client.test/?", body)
+        self.assertIn("ResearchHub User Office", body)
+
+    @override_settings(
+        EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend",
+    )
+    def test_password_reset_unknown_email_still_200(self):
+        response = self.client.post(
+            "/api/auth/password-reset/",
+            {"email": "nobody@example.com"},
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(mail.outbox), 0)
+
+    @override_settings(
+        EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend",
+        CLIENT_UI_ORIGIN="http://client.test",
+    )
+    def test_password_reset_confirm_success(self):
+        from urllib.parse import parse_qs, urlparse
+
+        user = make_user("confirm@example.com")
+        self.client.post(
+            "/api/auth/password-reset/",
+            {"email": "confirm@example.com"},
+            format="json",
+        )
+        link_line = next(
+            line for line in mail.outbox[0].body.splitlines() if "auth=reset" in line
+        )
+        query = parse_qs(urlparse(link_line).query)
+        uid = query["uid"][0]
+        token = query["token"][0]
+
+        response = self.client.post(
+            "/api/auth/password-reset/confirm/",
+            {
+                "uid": uid,
+                "token": token,
+                "new_password": "BrandNew999!",
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        user.refresh_from_db()
+        self.assertTrue(user.check_password("BrandNew999!"))
+
+        again = self.client.post(
+            "/api/auth/password-reset/confirm/",
+            {
+                "uid": uid,
+                "token": token,
+                "new_password": "AnotherNew999!",
+            },
+            format="json",
+        )
+        self.assertEqual(again.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_password_reset_confirm_bad_token(self):
+        from django.utils.encoding import force_bytes
+        from django.utils.http import urlsafe_base64_encode
+
+        user = make_user("badtoken@example.com")
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        response = self.client.post(
+            "/api/auth/password-reset/confirm/",
+            {
+                "uid": uid,
+                "token": "not-a-real-token",
+                "new_password": "BrandNew999!",
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        user.refresh_from_db()
+        self.assertTrue(user.check_password(DEFAULT_PASSWORD))
