@@ -7,6 +7,8 @@ from rest_framework.views import APIView
 
 from core.api import api_error
 from core.permissions import IsProjectMemberReadEditorWrite
+from experiments.api.serializers import ExperimentSerializer
+from experiments.models import ExperimentKind
 from projects.models import ProjectStatus
 from projects.selectors import get_visible_experiment, get_visible_project
 from projects.services import (
@@ -14,9 +16,6 @@ from projects.services import (
     assert_can_mutate_experiments,
     start_project,
 )
-
-from .models import ExperimentKind
-from .serializers import ExperimentSerializer
 
 
 class ProjectExperimentListCreateView(APIView):

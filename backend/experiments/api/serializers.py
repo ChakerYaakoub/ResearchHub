@@ -4,7 +4,7 @@ from rest_framework import serializers
 
 from facilities.services import FacilityError, assert_instrument_selectable
 
-from .models import Experiment
+from experiments.models import Experiment
 
 
 class ExperimentSerializer(serializers.ModelSerializer):

@@ -2,7 +2,8 @@
 
 from django.urls import path
 
-from .views import ExperimentDetailView, ProjectExperimentListCreateView
+from experiments.admin_api.views import AdminExperimentListView
+from experiments.api.views import ExperimentDetailView, ProjectExperimentListCreateView
 
 urlpatterns = [
     path(
@@ -14,5 +15,10 @@ urlpatterns = [
         "experiments/<int:pk>/",
         ExperimentDetailView.as_view(),
         name="experiment-detail",
+    ),
+    path(
+        "admin/experiments/",
+        AdminExperimentListView.as_view(),
+        name="admin-experiments",
     ),
 ]

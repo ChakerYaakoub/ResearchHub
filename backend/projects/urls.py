@@ -4,7 +4,6 @@ from django.urls import path
 from rest_framework.routers import DefaultRouter
 
 from projects.admin_api.views import (
-    AdminExperimentListView,
     AdminInvitationCancelView,
     AdminInvitationListView,
     AdminProjectDetailView,
@@ -44,11 +43,6 @@ urlpatterns = [
         "admin/projects/<int:project_id>/",
         AdminProjectDetailView.as_view(),
         name="admin-project-detail",
-    ),
-    path(
-        "admin/experiments/",
-        AdminExperimentListView.as_view(),
-        name="admin-experiments",
     ),
     path(
         "admin/publications/",
