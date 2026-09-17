@@ -1,4 +1,5 @@
-﻿import react from '@vitejs/plugin-react'
+﻿/// <reference types="vitest/config" />
+import react from '@vitejs/plugin-react'
 import { defineConfig, loadEnv } from 'vite'
 
 // Dev server reachable from Docker host; port from ADMIN_UI_PORT (.env / Compose).
@@ -14,6 +15,12 @@ export default defineConfig(({ mode }) => {
       watch: {
         usePolling: true,
       },
+    },
+    test: {
+      environment: 'jsdom',
+      setupFiles: './src/test/setup.ts',
+      globals: true,
+      passWithNoTests: true,
     },
   }
 })
