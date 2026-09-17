@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",  # JWT access/refresh for SPA (Phase 4)
     "rest_framework_simplejwt.token_blacklist",  # logout invalidates refresh tokens
     # ResearchHub
+    "core",
     "users",
     "projects",
     "proposals",

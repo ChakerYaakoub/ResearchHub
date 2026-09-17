@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from projects.permissions import IsProjectOwnerOrAdmin
+from core.permissions import IsProjectOwnerOrAdmin
 from projects.selectors import get_visible_project
 
 from .models import Invitation

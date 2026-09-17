@@ -1,12 +1,12 @@
-"""DRF permission classes for project-scoped AuthZ."""
+"""DRF permission classes for project-scoped AuthZ and admin UI origin."""
 
 from urllib.parse import urlparse
 
 from django.conf import settings
 from rest_framework.permissions import BasePermission, SAFE_METHODS
 
-from .models import MembershipRole, ResearchProject
-from .selectors import is_platform_admin, user_project_role
+from projects.models import MembershipRole, ResearchProject
+from projects.selectors import is_platform_admin, user_project_role
 
 
 def _project_from_obj(obj) -> ResearchProject | None:
@@ -63,7 +63,7 @@ class IsSuperAdmin(BasePermission):
     message = "Only a super admin can perform this action."
 
     def has_permission(self, request, view) -> bool:
-        from .selectors import is_super_admin
+        from projects.selectors import is_super_admin
 
         return is_super_admin(request.user)
 

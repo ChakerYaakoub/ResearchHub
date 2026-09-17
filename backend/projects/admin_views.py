@@ -14,13 +14,14 @@ from proposals.models import Proposal, ProposalStatus
 from publications.models import Publication, PublicationKind
 from users.models import GlobalRole, User
 
-from .admin_filters import (
+from core.admin_filters import (
     apply_is_active,
     apply_user_search,
     invalid_choice_response,
     query_bool,
     query_search,
 )
+from core.permissions import IsAdminUiOrigin, IsPlatformAdmin, IsSuperAdmin
 from .admin_serializers import (
     AdminCreateAdminSerializer,
     AdminExperimentSerializer,
@@ -33,7 +34,6 @@ from .admin_serializers import (
     AdminUserSerializer,
 )
 from .models import ProjectMembership, ProjectStatus, ResearchProject
-from .permissions import IsAdminUiOrigin, IsPlatformAdmin, IsSuperAdmin
 from .selectors import is_super_admin
 
 _ADMIN_PERMS = [IsAuthenticated, IsAdminUiOrigin, IsPlatformAdmin]

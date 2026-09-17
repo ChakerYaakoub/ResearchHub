@@ -5,7 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from projects.permissions import IsProjectMemberReadEditorWrite
+from core.permissions import IsProjectMemberReadEditorWrite
 from projects.selectors import get_visible_project, get_visible_publication
 from projects.services import WorkflowError, assert_can_mutate_publications
 

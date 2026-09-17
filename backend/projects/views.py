@@ -12,7 +12,7 @@ from publications.models import Publication
 from users.models import GlobalRole, User
 
 from .models import MembershipRole, ProjectMembership, ProjectStatus, ResearchProject
-from .permissions import (
+from core.permissions import (
     IsAdminUiOrigin,
     IsPlatformAdmin,
     IsProjectEditor,

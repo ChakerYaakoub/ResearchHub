@@ -7,8 +7,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from projects.admin_filters import invalid_choice_response, query_search
-from projects.permissions import IsAdminUiOrigin, IsPlatformAdmin
+from core.admin_filters import invalid_choice_response, query_search
+from core.permissions import IsAdminUiOrigin, IsPlatformAdmin
 
 from .models import Installation, InstallationStatus, Instrument, InstrumentStatus
 from .serializers import InstallationSerializer, InstrumentSerializer

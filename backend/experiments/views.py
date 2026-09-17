@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from projects.models import ProjectStatus
-from projects.permissions import IsProjectMemberReadEditorWrite
+from core.permissions import IsProjectMemberReadEditorWrite
 from projects.selectors import get_visible_experiment, get_visible_project
 from projects.services import (
     WorkflowError,
