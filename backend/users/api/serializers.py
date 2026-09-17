@@ -3,6 +3,7 @@
 from django.contrib.auth import authenticate
 from rest_framework import serializers
 
+from users.mail import send_registration_welcome_email
 from users.models import GlobalRole, User
 from users.user_create import (
     normalize_unique_email,
@@ -52,6 +53,7 @@ class RegisterSerializer(serializers.Serializer):
         )
         user.set_password(validated_data["password"])
         user.save()
+        send_registration_welcome_email(user)
         return user
 
 

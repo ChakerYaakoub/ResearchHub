@@ -1,6 +1,7 @@
 """Authentication API tests (`/api/auth/`)."""
 
-from django.test import TestCase
+from django.core import mail
+from django.test import TestCase, override_settings
 from rest_framework import status
 from rest_framework.test import APIClient
 
@@ -12,6 +13,9 @@ class AuthApiTests(TestCase):
     def setUp(self):
         self.client = APIClient()
 
+    @override_settings(
+        EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend",
+    )
     def test_register_returns_tokens_and_researcher(self):
         response = self.client.post(
             "/api/auth/register/",
@@ -23,7 +27,36 @@ class AuthApiTests(TestCase):
         self.assertIn("refresh", response.data)
         self.assertEqual(response.data["user"]["email"], "new@example.com")
         self.assertEqual(response.data["user"]["role"], GlobalRole.RESEARCHER)
-        self.assertTrue(User.objects.filter(email="new@example.com").exists())
+        user = User.objects.get(email="new@example.com")
+        self.assertTrue(user.check_password(DEFAULT_PASSWORD))
+
+        self.assertEqual(len(mail.outbox), 1)
+        message = mail.outbox[0]
+        self.assertIn("new@example.com", message.to)
+        self.assertIn(f"Dear {user.username},", message.body)
+        self.assertIn("We thank you for your registration on", message.body)
+        self.assertIn(f"email: {user.email}", message.body)
+        self.assertIn(f"username: {user.username}", message.body)
+        self.assertIn("ResearchHub User Office", message.body)
+        self.assertIn("Do not reply to this email.", message.body)
+
+    @override_settings(
+        EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend",
+    )
+    def test_register_welcome_uses_full_name_when_provided(self):
+        response = self.client.post(
+            "/api/auth/register/",
+            {
+                "email": "named@example.com",
+                "password": DEFAULT_PASSWORD,
+                "first_name": "Chaker",
+                "last_name": "Yaakoub",
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn("Dear Chaker Yaakoub,", mail.outbox[0].body)
 
     def test_register_duplicate_email_rejected(self):
         make_user("dup@example.com")

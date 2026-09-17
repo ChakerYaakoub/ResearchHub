@@ -1,15 +1,16 @@
 """Invitation create / accept / decline / cancel (Phase 7)."""
 
-import logging
+from urllib.parse import urlencode
 
+from django.conf import settings
 from django.db import transaction
 from django.utils import timezone
 
+from core.mail import send_app_email
 from projects.models import MembershipRole, ProjectMembership, ResearchProject
+from users.models import User
 
 from .models import Invitation, InvitationRole, InvitationStatus
-
-logger = logging.getLogger(__name__)
 
 
 class InvitationError(Exception):
@@ -21,12 +22,41 @@ class InvitationError(Exception):
 
 
 def send_invitation_email(invitation: Invitation) -> None:
-    """Stub until Phase 14 (Mailer). Logs only; never blocks create."""
-    logger.info(
-        "Invitation email stub: project=%s email=%s token=%s",
-        invitation.project_id,
-        invitation.email,
-        invitation.token,
+    """Email invitee with login or register deep-link (never blocks create)."""
+    project = invitation.project
+    email = invitation.email.lower().strip()
+    has_account = User.objects.filter(email__iexact=email).exists()
+    auth = "login" if has_account else "register"
+    query = urlencode({"auth": auth, "token": invitation.token})
+    link = f"{settings.CLIENT_UI_ORIGIN}/?{query}"
+
+    if has_account:
+        action_line = (
+            f"Please log in with this email ({email}) to accept or decline "
+            "the invitation in ResearchHub."
+        )
+    else:
+        action_line = (
+            f"Please register with this email ({email}) to accept or decline "
+            "the invitation in ResearchHub."
+        )
+
+    subject = f"You're invited to {project.title} on ResearchHub"
+    body = (
+        f"You have been invited to the project \"{project.title}\" "
+        f"as {invitation.role}.\n\n"
+        f"{action_line}\n\n"
+        f"Open this link to continue:\n{link}\n\n"
+        "After you sign in, open My invitations to accept or decline.\n"
+        "If you do not want to join, you can ignore this email "
+        "(or decline after signing in).\n"
+    )
+
+    send_app_email(
+        subject=subject,
+        message=body,
+        to=email,
+        purpose=f"invitation email project={project.pk}",
     )
 
 
@@ -78,7 +108,7 @@ def create_project_invitation(
     ).exists():
         raise InvitationError("A pending invitation already exists for this email.")
 
-    invitation = Invitation.objects.create(
+    invitation = Invitation.objects.select_related("project").create(
         project=project,
         invited_by=invited_by,
         email=email,

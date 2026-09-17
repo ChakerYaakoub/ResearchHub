@@ -7,6 +7,7 @@ import { Route, Routes } from 'react-router-dom'
 import { AuthProvider } from './auth'
 import { AuthModalHost, AuthUiProvider } from './components/AuthUi'
 import { DashboardLayout } from './components/DashboardLayout'
+import { InviteDeepLink } from './components/InviteDeepLink'
 import { PublicLayout } from './components/PublicLayout'
 import { RequireAuth } from './components/RequireAuth'
 import { DashboardPage } from './pages/Dashboard'
@@ -22,6 +23,7 @@ import './App.css'
 function AppRoutes() {
   return (
     <>
+      <InviteDeepLink />
       <Routes>
         <Route element={<PublicLayout />}>
           <Route path="/" element={<HomePage />} />

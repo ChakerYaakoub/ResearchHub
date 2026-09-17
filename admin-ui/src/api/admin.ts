@@ -169,7 +169,7 @@ export function listAdmins(token: string, params?: UserListParams) {
 
 export function createAdmin(
   token: string,
-  body: { email: string; password: string; username?: string },
+  body: { email: string; username?: string },
 ) {
   return apiFetch<AdminUser>('/admin/users/', {
     method: 'POST',

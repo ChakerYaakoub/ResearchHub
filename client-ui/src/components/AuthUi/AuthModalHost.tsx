@@ -1,8 +1,13 @@
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../auth'
+import { getInviteToken } from '../../auth/inviteTokenStorage'
 import { AuthModal } from '../auth'
 import { consumeLoginModalRequest, useAuthUi } from './AuthUiContext'
+
+function postAuthPath(): string {
+  return getInviteToken() ? '/invitations' : '/dashboard'
+}
 
 /** Renders AuthModal from context; consumes RequireAuth login flag. */
 export function useAuthModalHost() {
@@ -19,13 +24,13 @@ export function useAuthModalHost() {
   useEffect(() => {
     if (isAuthenticated && open) {
       close()
-      navigate('/dashboard', { replace: true })
+      navigate(postAuthPath(), { replace: true })
     }
   }, [isAuthenticated, open, close, navigate])
 
   function onAuthSuccess() {
     close()
-    navigate('/dashboard', { replace: true })
+    navigate(postAuthPath(), { replace: true })
   }
 
   return {

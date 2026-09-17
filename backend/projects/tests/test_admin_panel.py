@@ -120,35 +120,75 @@ class AdminPanelApiTests(TestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_create_admin_super_only(self):
-        created = self.super_api.post(
-            "/api/admin/users/",
-            {
-                "email": "newadmin@example.com",
-                "password": DEFAULT_PASSWORD,
-                "username": "newadmin",
-            },
-            format="json",
-        )
-        self.assertEqual(created.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(created.data["role"], GlobalRole.ADMIN)
-        self.assertEqual(created.data["email"], "newadmin@example.com")
-        user = User.objects.get(email="newadmin@example.com")
-        self.assertEqual(user.role, GlobalRole.ADMIN)
-        self.assertTrue(user.check_password(DEFAULT_PASSWORD))
+        with override_settings(
+            EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend",
+        ):
+            from django.core import mail
 
-        by_admin = self.admin_api.post(
-            "/api/admin/users/",
-            {"email": "x@example.com", "password": DEFAULT_PASSWORD},
-            format="json",
-        )
-        self.assertEqual(by_admin.status_code, status.HTTP_403_FORBIDDEN)
+            created = self.super_api.post(
+                "/api/admin/users/",
+                {
+                    "email": "newadmin@example.com",
+                    "username": "newadmin",
+                },
+                format="json",
+            )
+            self.assertEqual(created.status_code, status.HTTP_201_CREATED)
+            self.assertEqual(created.data["role"], GlobalRole.ADMIN)
+            self.assertEqual(created.data["email"], "newadmin@example.com")
+            self.assertNotIn("password", created.data)
 
-        denied = admin_client(self.owner).post(
-            "/api/admin/users/",
-            {"email": "y@example.com", "password": DEFAULT_PASSWORD},
-            format="json",
+            self.assertEqual(len(mail.outbox), 1)
+            message = mail.outbox[0]
+            self.assertIn("newadmin@example.com", message.to)
+            self.assertIn("newadmin@example.com", message.body)
+            self.assertIn("Temporary password:", message.body)
+            self.assertIn("change this password on your account page", message.body.lower())
+            self.assertIn("http://localhost:5175", message.body)
+            self.assertIn("Do not reply", message.body)
+
+            password_line = next(
+                line
+                for line in message.body.splitlines()
+                if line.startswith("Temporary password:")
+            )
+            plain_password = password_line.split(":", 1)[1].strip()
+            self.assertEqual(len(plain_password), 8)
+
+            user = User.objects.get(email="newadmin@example.com")
+            self.assertEqual(user.role, GlobalRole.ADMIN)
+            self.assertTrue(user.check_password(plain_password))
+
+            by_admin = self.admin_api.post(
+                "/api/admin/users/",
+                {"email": "x@example.com"},
+                format="json",
+            )
+            self.assertEqual(by_admin.status_code, status.HTTP_403_FORBIDDEN)
+
+            denied = admin_client(self.owner).post(
+                "/api/admin/users/",
+                {"email": "y@example.com"},
+                format="json",
+            )
+            self.assertEqual(denied.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_create_admin_rolls_back_when_email_fails(self):
+        from unittest.mock import patch
+
+        with patch(
+            "core.mail.send_mail",
+            side_effect=OSError("smtp down"),
+        ):
+            response = self.super_api.post(
+                "/api/admin/users/",
+                {"email": "nosend@example.com"},
+                format="json",
+            )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertFalse(
+            User.objects.filter(email="nosend@example.com").exists()
         )
-        self.assertEqual(denied.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_list_and_detail_projects(self):
         listed = self.admin_api.get("/api/admin/projects/")

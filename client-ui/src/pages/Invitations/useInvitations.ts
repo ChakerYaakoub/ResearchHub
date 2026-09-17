@@ -7,6 +7,10 @@ import {
   listMyInvitations,
 } from '../../api/invitations'
 import { useAuth } from '../../auth'
+import {
+  clearInviteToken,
+  getInviteToken,
+} from '../../auth/inviteTokenStorage'
 import { notifyError, notifySuccess } from '../../notify'
 import type { Invitation } from '../../types/api'
 
@@ -18,6 +22,7 @@ export function useInvitations() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [busyToken, setBusyToken] = useState<string | null>(null)
+  const [highlightToken] = useState(() => getInviteToken())
 
   const reload = useCallback(async () => {
     if (!access) return
@@ -37,6 +42,12 @@ export function useInvitations() {
     void reload()
   }, [reload])
 
+  useEffect(() => {
+    return () => {
+      clearInviteToken()
+    }
+  }, [])
+
   const pending = invitations.filter((i) => i.status === 'PENDING')
 
   async function onAccept(invite: Invitation) {
@@ -44,6 +55,7 @@ export function useInvitations() {
     setBusyToken(invite.token)
     try {
       await acceptInvitation(access, invite.token)
+      clearInviteToken()
       notifySuccess(t('toast.accepted'))
       await reload()
     } catch (err) {
@@ -60,6 +72,7 @@ export function useInvitations() {
     setBusyToken(invite.token)
     try {
       await declineInvitation(access, invite.token)
+      clearInviteToken()
       notifySuccess(t('toast.declined'))
       await reload()
     } catch (err) {
@@ -78,6 +91,7 @@ export function useInvitations() {
     loading,
     error,
     busyToken,
+    highlightToken,
     onAccept,
     onDecline,
   }
