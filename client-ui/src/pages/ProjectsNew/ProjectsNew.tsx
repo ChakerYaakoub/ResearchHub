@@ -24,50 +24,54 @@ export function ProjectsNewPage() {
         onSubmit={vm.onSubmit}
       >
         {({ isSubmitting, handleChange, handleBlur, values }) => (
-          <Form noValidate className="col-12 col-lg-8 px-0">
-            <TextInput
-              name="title"
-              label={vm.t('projects.fieldTitle')}
-              autoComplete="off"
-            />
-            <div className="mb-3">
-              <label className="form-label" htmlFor="description">
-                {vm.t('projects.fieldDescription')}
-              </label>
-              <textarea
-                id="description"
-                name="description"
-                className="form-control"
-                rows={4}
-                value={values.description}
-                onChange={handleChange}
-                onBlur={handleBlur}
-              />
+          <div className="col-12 col-lg-8 px-0">
+            <div className="border rounded p-3 bg-white">
+              <Form noValidate>
+                <TextInput
+                  name="title"
+                  label={vm.t('projects.fieldTitle')}
+                  autoComplete="off"
+                />
+                <div className="mb-3">
+                  <label className="form-label" htmlFor="description">
+                    {vm.t('projects.fieldDescription')}
+                  </label>
+                  <textarea
+                    id="description"
+                    name="description"
+                    className="form-control"
+                    rows={4}
+                    value={values.description}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                  />
+                </div>
+                <div className="mb-3">
+                  <label className="form-label" htmlFor="scientific_objective">
+                    {vm.t('projects.fieldObjective')}
+                  </label>
+                  <textarea
+                    id="scientific_objective"
+                    name="scientific_objective"
+                    className="form-control"
+                    rows={3}
+                    value={values.scientific_objective}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting
+                    ? vm.t('projects.creating')
+                    : vm.t('projects.createCta')}
+                </button>
+              </Form>
             </div>
-            <div className="mb-3">
-              <label className="form-label" htmlFor="scientific_objective">
-                {vm.t('projects.fieldObjective')}
-              </label>
-              <textarea
-                id="scientific_objective"
-                name="scientific_objective"
-                className="form-control"
-                rows={3}
-                value={values.scientific_objective}
-                onChange={handleChange}
-                onBlur={handleBlur}
-              />
-            </div>
-            <button
-              type="submit"
-              className="btn btn-primary"
-              disabled={isSubmitting}
-            >
-              {isSubmitting
-                ? vm.t('projects.creating')
-                : vm.t('projects.createCta')}
-            </button>
-          </Form>
+          </div>
         )}
       </Formik>
     </div>
