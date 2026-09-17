@@ -9,7 +9,7 @@ import { notifyError, notifySuccess } from '../../../notify'
 import type { Project, Proposal } from '../../../types/api'
 
 export type SubmitSectionProps = {
-  projectId: number
+  projectId: string
   project: Project
   canEdit: boolean
   onProjectChanged: () => void

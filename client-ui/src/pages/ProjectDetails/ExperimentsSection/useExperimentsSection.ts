@@ -22,7 +22,7 @@ import type {
 } from '../../../types/api'
 
 export type ExperimentsSectionProps = {
-  projectId: number
+  projectId: string
   project: Project
   canEdit: boolean
   canAddPlanned: boolean
@@ -79,12 +79,12 @@ export function useExperimentsSection({
   const [instruments, setInstruments] = useState<Instrument[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [editingId, setEditingId] = useState<number | null>(null)
+  const [editingId, setEditingId] = useState<string | null>(null)
   const [createKind, setCreateKind] = useState<ExperimentKind | null>(null)
   const [showForm, setShowForm] = useState(false)
   const [formInstallationId, setFormInstallationId] = useState('')
 
-  const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null)
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null)
   const [deleting, setDeleting] = useState(false)
 
   const reload = useCallback(async () => {
@@ -143,9 +143,8 @@ export function useExperimentsSection({
   })
 
   const instrumentsForForm = useMemo(() => {
-    const installationId = Number(formInstallationId)
-    if (!installationId) return []
-    return instruments.filter((i) => i.installation === installationId)
+    if (!formInstallationId) return []
+    return instruments.filter((i) => i.installation === formInstallationId)
   }, [instruments, formInstallationId])
 
   function openCreate(kind: ExperimentKind) {
@@ -155,7 +154,7 @@ export function useExperimentsSection({
     setShowForm(true)
   }
 
-  function openEdit(id: number) {
+  function openEdit(id: string) {
     const exp = items.find((e) => e.id === id)
     setEditingId(id)
     setCreateKind(null)
@@ -181,7 +180,7 @@ export function useExperimentsSection({
     if (!access || !canEdit || !formKind) return
     const body = {
       kind: formKind,
-      instrument: Number(values.instrument),
+      instrument: values.instrument,
       scheduled_date: new Date(values.scheduled_date).toISOString(),
       status: values.status,
       notes: values.notes.trim(),
@@ -206,7 +205,7 @@ export function useExperimentsSection({
     }
   }
 
-  function requestDelete(id: number) {
+  function requestDelete(id: string) {
     setPendingDeleteId(id)
   }
 

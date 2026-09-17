@@ -14,7 +14,7 @@ export function useProjectDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
   const { access } = useAuth()
-  const projectId = Number(id)
+  const projectId = id ?? ''
   const [project, setProject] = useState<AdminProjectDetail | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -22,7 +22,7 @@ export function useProjectDetail() {
   const [busy, setBusy] = useState(false)
 
   const reload = useCallback(async () => {
-    if (!access || !Number.isFinite(projectId)) return
+    if (!access || !projectId) return
     setLoading(true)
     setError(null)
     try {

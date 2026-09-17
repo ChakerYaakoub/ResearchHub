@@ -74,7 +74,7 @@ export function useProjectDetails() {
   const [inviteOpen, setInviteOpen] = useState(false)
   const [completing, setCompleting] = useState(false)
   const [deleting, setDeleting] = useState(false)
-  const [cancellingInviteId, setCancellingInviteId] = useState<number | null>(
+  const [cancellingInviteId, setCancellingInviteId] = useState<string | null>(
     null,
   )
   const [confirmKind, setConfirmKind] = useState<ProjectConfirmKind | null>(

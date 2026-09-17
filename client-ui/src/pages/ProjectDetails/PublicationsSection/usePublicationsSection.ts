@@ -14,7 +14,7 @@ import { notifyError, notifySuccess } from '../../../notify'
 import type { Project, Publication, PublicationKind } from '../../../types/api'
 
 export type PublicationsSectionProps = {
-  projectId: number
+  projectId: string
   project: Project
   canEdit: boolean
   canAddExisting: boolean
@@ -54,10 +54,10 @@ export function usePublicationsSection({
   const [items, setItems] = useState<Publication[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [editingId, setEditingId] = useState<number | null>(null)
+  const [editingId, setEditingId] = useState<string | null>(null)
   const [createKind, setCreateKind] = useState<PublicationKind | null>(null)
   const [showForm, setShowForm] = useState(false)
-  const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null)
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null)
   const [deleting, setDeleting] = useState(false)
 
   const reload = useCallback(async () => {
@@ -119,7 +119,7 @@ export function usePublicationsSection({
     setShowForm(true)
   }
 
-  function openEdit(id: number) {
+  function openEdit(id: string) {
     setEditingId(id)
     setCreateKind(null)
     setShowForm(true)
@@ -168,7 +168,7 @@ export function usePublicationsSection({
     }
   }
 
-  function requestDelete(id: number) {
+  function requestDelete(id: string) {
     setPendingDeleteId(id)
   }
 

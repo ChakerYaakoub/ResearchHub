@@ -1,7 +1,7 @@
 import { apiFetch } from './client'
 import type { Publication, PublicationInput } from '../types/api'
 
-export function listPublications(token: string, projectId: number | string) {
+export function listPublications(token: string, projectId: string) {
   return apiFetch<Publication[]>(`/projects/${projectId}/publications/`, {
     token,
   })
@@ -9,7 +9,7 @@ export function listPublications(token: string, projectId: number | string) {
 
 export function createPublication(
   token: string,
-  projectId: number | string,
+  projectId: string,
   body: PublicationInput,
 ) {
   return apiFetch<Publication>(`/projects/${projectId}/publications/`, {
@@ -21,7 +21,7 @@ export function createPublication(
 
 export function updatePublication(
   token: string,
-  publicationId: number | string,
+  publicationId: string,
   body: Partial<PublicationInput>,
 ) {
   return apiFetch<Publication>(`/publications/${publicationId}/`, {
@@ -33,7 +33,7 @@ export function updatePublication(
 
 export function deletePublication(
   token: string,
-  publicationId: number | string,
+  publicationId: string,
 ) {
   return apiFetch<void>(`/publications/${publicationId}/`, {
     method: 'DELETE',

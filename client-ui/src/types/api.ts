@@ -17,12 +17,12 @@ export function isPreparingStatus(status: ProjectStatus): boolean {
 }
 
 export type Project = {
-  id: number
+  id: string
   title: string
   description: string
   scientific_objective: string
   status: ProjectStatus
-  owner: number
+  owner: string
   owner_email: string
   created_at: string
   updated_at: string
@@ -37,9 +37,9 @@ export type ProjectCreateInput = {
 export type MembershipRole = 'OWNER' | 'EDITOR' | 'VIEWER'
 
 export type ProjectMembership = {
-  id: number
-  project: number
-  user: number
+  id: string
+  project: string
+  user: string
   user_email: string
   role: MembershipRole
   created_at: string
@@ -50,11 +50,11 @@ export type InvitationStatus = 'PENDING' | 'ACCEPTED' | 'DECLINED' | 'EXPIRED'
 export type InvitationRole = 'EDITOR' | 'VIEWER'
 
 export type Invitation = {
-  id: number
-  project: number
+  id: string
+  project: string
   project_title: string
   email: string
-  invited_by: number
+  invited_by: string
   invited_by_email: string
   role: InvitationRole
   status: InvitationStatus
@@ -73,8 +73,8 @@ export type InvitationCreateInput = {
 export type ProposalStatus = 'PENDING' | 'APPROVED' | 'REJECTED'
 
 export type Proposal = {
-  id: number
-  project: number
+  id: string
+  project: string
   methodology: string
   expected_results: string
   submitted_at: string | null
@@ -97,13 +97,13 @@ export type ExperimentStatus =
   | 'CANCELLED'
 
 export type Experiment = {
-  id: number
-  project: number
+  id: string
+  project: string
   kind: ExperimentKind
-  instrument: number
+  instrument: string
   instrument_code: string
   instrument_name: string
-  installation_id: number
+  installation_id: string
   installation_name: string
   scheduled_date: string
   status: ExperimentStatus
@@ -112,14 +112,14 @@ export type Experiment = {
 
 export type ExperimentInput = {
   kind?: ExperimentKind
-  instrument: number
+  instrument: string
   scheduled_date: string
   status?: ExperimentStatus
   notes?: string
 }
 
 export type Installation = {
-  id: number
+  id: string
   name: string
   description: string
   location: string
@@ -127,8 +127,8 @@ export type Installation = {
 }
 
 export type Instrument = {
-  id: number
-  installation: number
+  id: string
+  installation: string
   installation_name: string
   code: string
   name: string
@@ -140,8 +140,8 @@ export type Instrument = {
 export type PublicationKind = 'EXISTING' | 'RESULTING'
 
 export type Publication = {
-  id: number
-  project: number
+  id: string
+  project: string
   kind: PublicationKind
   title: string
   authors: string

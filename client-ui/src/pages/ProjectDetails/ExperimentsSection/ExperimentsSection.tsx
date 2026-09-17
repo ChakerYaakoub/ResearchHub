@@ -82,8 +82,8 @@ function KindGroup({
   emptyMessage: string
   items: Experiment[]
   canMutateItem: (exp: Experiment) => boolean
-  onEdit: (id: number) => void
-  onDelete: (id: number) => void
+  onEdit: (id: string) => void
+  onDelete: (id: string) => void
   t: (key: string) => string
 }) {
   return (

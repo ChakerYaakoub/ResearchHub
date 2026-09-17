@@ -21,7 +21,7 @@ export type AdminStats = {
 }
 
 export type AdminUser = {
-  id: number
+  id: string
   email: string
   username: string
   role: 'SUPER_ADMIN' | 'ADMIN' | 'RESEARCHER'
@@ -30,10 +30,10 @@ export type AdminUser = {
 }
 
 export type AdminProject = {
-  id: number
+  id: string
   title: string
   status: string
-  owner: number
+  owner: string
   owner_email: string
   created_at: string
   updated_at: string
@@ -60,8 +60,8 @@ export type AdminProjectMember = {
 }
 
 export type AdminProposal = {
-  id: number
-  project: number
+  id: string
+  project: string
   project_title: string
   project_status?: string
   methodology: string
@@ -73,11 +73,11 @@ export type AdminProposal = {
 }
 
 export type AdminExperiment = {
-  id: number
-  project: number
+  id: string
+  project: string
   project_title: string
   kind?: string
-  instrument: number
+  instrument: string
   instrument_code?: string
   instrument_name?: string
   installation_name?: string
@@ -87,7 +87,7 @@ export type AdminExperiment = {
 }
 
 export type AdminInstallation = {
-  id: number
+  id: string
   name: string
   description: string
   location: string
@@ -97,8 +97,8 @@ export type AdminInstallation = {
 }
 
 export type AdminInstrument = {
-  id: number
-  installation: number
+  id: string
+  installation: string
   installation_name: string
   code: string
   name: string
@@ -110,8 +110,8 @@ export type AdminInstrument = {
 }
 
 export type AdminPublication = {
-  id: number
-  project: number
+  id: string
+  project: string
   project_title: string
   title: string
   authors: string
@@ -123,11 +123,11 @@ export type AdminPublication = {
 }
 
 export type AdminInvitation = {
-  id: number
-  project: number
+  id: string
+  project: string
   project_title: string
   email: string
-  invited_by: number
+  invited_by: string
   invited_by_email: string
   role: string
   status: string
@@ -180,7 +180,7 @@ export function createAdmin(
 
 export function patchUser(
   token: string,
-  id: number,
+  id: string,
   body: { is_active: boolean },
 ) {
   return apiFetch<AdminUser>(`/admin/users/${id}/`, {
@@ -195,11 +195,11 @@ export function listProjects(token: string, params?: ProjectListParams) {
   return apiFetch<AdminProject[]>(`/admin/projects/${q}`, { token })
 }
 
-export function getProject(token: string, id: number) {
+export function getProject(token: string, id: string) {
   return apiFetch<AdminProjectDetail>(`/admin/projects/${id}/`, { token })
 }
 
-export function deleteProject(token: string, id: number) {
+export function deleteProject(token: string, id: string) {
   return apiFetch<void>(`/admin/projects/${id}/`, {
     method: 'DELETE',
     token,
@@ -225,7 +225,7 @@ export function listPendingProposals(token: string) {
 
 export function approveProposal(
   token: string,
-  id: number,
+  id: string,
   review_comment = '',
 ) {
   return apiFetch<AdminProposal>(`/proposals/${id}/approve/`, {
@@ -237,7 +237,7 @@ export function approveProposal(
 
 export function rejectProposal(
   token: string,
-  id: number,
+  id: string,
   review_comment = '',
 ) {
   return apiFetch<AdminProposal>(`/proposals/${id}/reject/`, {
@@ -268,7 +268,7 @@ export function createInstallation(
 
 export function patchInstallation(
   token: string,
-  id: number,
+  id: string,
   body: Partial<AdminInstallation>,
 ) {
   return apiFetch<AdminInstallation>(`/admin/installations/${id}/`, {
@@ -278,7 +278,7 @@ export function patchInstallation(
   })
 }
 
-export function deleteInstallation(token: string, id: number) {
+export function deleteInstallation(token: string, id: string) {
   return apiFetch<void>(`/admin/installations/${id}/`, {
     method: 'DELETE',
     token,
@@ -287,10 +287,10 @@ export function deleteInstallation(token: string, id: number) {
 
 export function listAdminInstruments(
   token: string,
-  params?: InstrumentListParams | number,
+  params?: InstrumentListParams | string,
 ) {
   const normalized =
-    typeof params === 'number' ? { installation: params } : (params ?? {})
+    typeof params === 'string' ? { installation: params } : (params ?? {})
   const q = adminQuery({
     installation: normalized.installation,
     status: normalized.status,
@@ -302,7 +302,7 @@ export function listAdminInstruments(
 export function createInstrument(
   token: string,
   body: {
-    installation: number
+    installation: string
     code: string
     name: string
     technique?: string
@@ -319,9 +319,9 @@ export function createInstrument(
 
 export function patchInstrument(
   token: string,
-  id: number,
+  id: string,
   body: Partial<{
-    installation: number
+    installation: string
     code: string
     name: string
     technique: string
@@ -336,7 +336,7 @@ export function patchInstrument(
   })
 }
 
-export function deleteInstrument(token: string, id: number) {
+export function deleteInstrument(token: string, id: string) {
   return apiFetch<void>(`/admin/instruments/${id}/`, {
     method: 'DELETE',
     token,
@@ -357,7 +357,7 @@ export function listInvitations(token: string, params?: InvitationListParams) {
   return apiFetch<AdminInvitation[]>(`/admin/invitations/${q}`, { token })
 }
 
-export function cancelInvitation(token: string, id: number) {
+export function cancelInvitation(token: string, id: string) {
   return apiFetch<void>(`/admin/invitations/${id}/`, {
     method: 'DELETE',
     token,
