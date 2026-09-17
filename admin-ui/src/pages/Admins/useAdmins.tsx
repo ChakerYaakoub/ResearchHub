@@ -16,12 +16,6 @@ const createSchema = Yup.object({
   email: Yup.string()
     .email(copy.emailInvalid)
     .required(copy.emailRequired),
-  password: Yup.string()
-    .min(8, copy.passwordMin)
-    .required(copy.passwordRequired),
-  passwordConfirm: Yup.string()
-    .oneOf([Yup.ref('password')], copy.passwordMismatch)
-    .required(copy.passwordRequired),
   username: Yup.string().trim(),
 })
 
@@ -55,8 +49,6 @@ export function useAdmins() {
   const formik = useFormik({
     initialValues: {
       email: '',
-      password: '',
-      passwordConfirm: '',
       username: '',
     },
     validationSchema: createSchema,
@@ -66,7 +58,6 @@ export function useAdmins() {
       try {
         await createAdmin(access, {
           email: values.email.trim(),
-          password: values.password,
           username: values.username.trim() || undefined,
         })
         helpers.resetForm()
@@ -118,9 +109,9 @@ export function useAdmins() {
     meId: me?.id ?? null,
     setActive,
     createOpen,
+    creating,
+    formik,
     openCreate,
     closeCreate,
-    formik,
-    creating,
   }
 }

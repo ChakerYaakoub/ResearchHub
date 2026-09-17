@@ -79,7 +79,10 @@ export const copy = {
   createAdminTitle: 'Create admin account',
   createAdminSubmit: 'Create admin',
   creatingAdmin: 'Creating…',
-  createAdminSuccess: 'Admin account created.',
+  createAdminSuccess:
+    'Admin created. Login credentials were emailed to them.',
+  createAdminHint:
+    'A temporary password will be generated and sent to their email. They should change it later.',
   saved: 'Saved.',
   deleted: 'Deleted.',
   userActivated: 'Account activated.',
