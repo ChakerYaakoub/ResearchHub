@@ -12,6 +12,7 @@ import {
   clearAuth,
   loadStoredAuth,
   saveAuth,
+  updateStoredUser,
   type AuthUser,
 } from './authStorage'
 import {
@@ -28,6 +29,7 @@ type AuthContextValue = {
   login: (email: string, password: string) => Promise<void>
   register: (email: string, password: string) => Promise<void>
   logout: () => Promise<void>
+  setUser: (user: AuthUser) => void
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null)
@@ -81,6 +83,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setRefresh(null)
   }, [access, refresh])
 
+  const setUserProfile = useCallback((next: AuthUser) => {
+    updateStoredUser(next)
+    setUser(next)
+  }, [])
+
   const value = useMemo(
     () => ({
       user,
@@ -89,8 +96,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       login,
       register,
       logout,
+      setUser: setUserProfile,
     }),
-    [user, access, login, register, logout],
+    [user, access, login, register, logout, setUserProfile],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

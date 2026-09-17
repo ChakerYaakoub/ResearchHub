@@ -10,6 +10,7 @@ import { DashboardLayout } from './components/DashboardLayout'
 import { InviteDeepLink } from './components/InviteDeepLink'
 import { PublicLayout } from './components/PublicLayout'
 import { RequireAuth } from './components/RequireAuth'
+import { AccountPage } from './pages/Account'
 import { DashboardPage } from './pages/Dashboard'
 import { DocumentationPage } from './pages/Documentation'
 import { HomePage } from './pages/Home'
@@ -38,6 +39,7 @@ function AppRoutes() {
             <Route path="/projects/new" element={<ProjectsNewPage />} />
             <Route path="/projects/:id" element={<ProjectDetailsPage />} />
             <Route path="/invitations" element={<InvitationsPage />} />
+            <Route path="/account" element={<AccountPage />} />
           </Route>
         </Route>
       </Routes>

@@ -8,6 +8,7 @@ export const SIDEBAR_LINKS = [
   { to: '/dashboard', key: 'nav.dashboard' },
   { to: '/projects', key: 'nav.projects' },
   { to: '/invitations', key: 'nav.invitations' },
+  { to: '/account', key: 'nav.account' },
 ] as const
 
 /** Sidebar shell state for the researcher dashboard. */
@@ -46,13 +47,17 @@ export function useDashboardLayout() {
     ? 'nav.projects'
     : activePath.startsWith('/invitations')
       ? 'nav.invitations'
-      : 'nav.dashboard'
+      : activePath.startsWith('/account')
+        ? 'nav.account'
+        : 'nav.dashboard'
 
   const seoKey = activePath.startsWith('/projects')
     ? 'projects'
     : activePath.startsWith('/invitations')
       ? 'invitations'
-      : 'dashboard'
+      : activePath.startsWith('/account')
+        ? 'account'
+        : 'dashboard'
   const documentTitle = t(`seo.${seoKey}.title`)
 
   return {

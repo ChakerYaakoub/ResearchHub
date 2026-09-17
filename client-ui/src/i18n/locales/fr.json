@@ -37,7 +37,8 @@
     "createFailed": "Impossible de créer.",
     "inviteFailed": "Impossible d'envoyer l'invitation.",
     "acceptFailed": "Impossible d'accepter l'invitation.",
-    "declineFailed": "Impossible de refuser l'invitation."
+    "declineFailed": "Impossible de refuser l'invitation.",
+    "saveFailed": "Impossible d'enregistrer les modifications."
   },
   "toast": {
     "saved": "Enregistré.",
@@ -49,7 +50,9 @@
     "accepted": "Invitation acceptée.",
     "declined": "Invitation refusée.",
     "completed": "Projet marqué comme terminé.",
-    "projectDeleted": "Projet retiré de votre espace de travail."
+    "projectDeleted": "Projet retiré de votre espace de travail.",
+    "profileSaved": "Profil mis à jour.",
+    "passwordChanged": "Mot de passe modifié."
   },
   "nav": {
     "brand": "ResearchHub",
@@ -58,6 +61,7 @@
     "dashboard": "Tableau de bord",
     "projects": "Projets",
     "invitations": "Invitations",
+    "account": "Compte",
     "publicSite": "Site public",
     "goToDashboard": "Aller au tableau de bord",
     "footerTagline": "ResearchHub — gestion de projets et d'expériences scientifiques",
@@ -84,6 +88,9 @@
     },
     "invitations": {
       "title": "Invitations — ResearchHub"
+    },
+    "account": {
+      "title": "Compte — ResearchHub"
     }
   },
   "home": {
@@ -523,5 +530,24 @@
     "decline": "Refuser",
     "accepting": "Acceptation…",
     "declining": "Refus…"
+  },
+  "account": {
+    "title": "Compte",
+    "subtitle": "Mettez à jour votre profil et votre mot de passe. L'e-mail ne peut pas être modifié.",
+    "profileSection": "Profil",
+    "passwordSection": "Mot de passe",
+    "emailHint": "L'e-mail sert à la connexion et ne peut pas être modifié.",
+    "username": "Nom d'utilisateur",
+    "usernameRequired": "Le nom d'utilisateur est obligatoire.",
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "saveProfile": "Enregistrer le profil",
+    "saving": "Enregistrement…",
+    "currentPassword": "Mot de passe actuel",
+    "newPassword": "Nouveau mot de passe",
+    "confirmPassword": "Confirmer le nouveau mot de passe",
+    "passwordMismatch": "Les mots de passe ne correspondent pas.",
+    "changePassword": "Changer le mot de passe",
+    "changingPassword": "Modification…"
   }
 }

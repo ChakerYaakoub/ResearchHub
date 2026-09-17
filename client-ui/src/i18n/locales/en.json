@@ -37,7 +37,8 @@
     "createFailed": "Could not create.",
     "inviteFailed": "Could not send invitation.",
     "acceptFailed": "Could not accept invitation.",
-    "declineFailed": "Could not decline invitation."
+    "declineFailed": "Could not decline invitation.",
+    "saveFailed": "Could not save changes."
   },
   "toast": {
     "saved": "Saved.",
@@ -49,7 +50,9 @@
     "accepted": "Invitation accepted.",
     "declined": "Invitation declined.",
     "completed": "Project marked complete.",
-    "projectDeleted": "Project removed from your workspace."
+    "projectDeleted": "Project removed from your workspace.",
+    "profileSaved": "Profile updated.",
+    "passwordChanged": "Password changed."
   },
   "nav": {
     "brand": "ResearchHub",
@@ -58,6 +61,7 @@
     "dashboard": "Dashboard",
     "projects": "Projects",
     "invitations": "Invitations",
+    "account": "Account",
     "publicSite": "Public site",
     "goToDashboard": "Go to dashboard",
     "footerTagline": "ResearchHub — scientific project & experiment management",
@@ -84,6 +88,9 @@
     },
     "invitations": {
       "title": "Invitations — ResearchHub"
+    },
+    "account": {
+      "title": "Account — ResearchHub"
     }
   },
   "home": {
@@ -523,5 +530,24 @@
     "decline": "Decline",
     "accepting": "Accepting…",
     "declining": "Declining…"
+  },
+  "account": {
+    "title": "Account",
+    "subtitle": "Update your profile and password. Email cannot be changed.",
+    "profileSection": "Profile",
+    "passwordSection": "Password",
+    "emailHint": "Email is used to sign in and cannot be changed.",
+    "username": "Username",
+    "usernameRequired": "Username is required.",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "saveProfile": "Save profile",
+    "saving": "Saving…",
+    "currentPassword": "Current password",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm new password",
+    "passwordMismatch": "Passwords do not match.",
+    "changePassword": "Change password",
+    "changingPassword": "Changing…"
   }
 }
