@@ -2,9 +2,89 @@
 
 **Simplified Scientific Proposal & Experiment Management**
 
-ResearchHub is a web application for managing scientific research projects end to end. It is inspired by synchrotron-style proposal workflows (such as SUN set), without cloning a full facility information system.
+## Scientific Project & Experiment Platform
 
-Researchers create projects, write and submit proposals, go through scientific review, schedule experiments, invite collaborators (email + in-app), and link publications to completed work. Platform admins review proposals and manage users, facilities, and catalog data from a separate admin app.
+<p align="center">
+  <img src="https://img.shields.io/badge/Project-ResearchHub-B82721" alt="ResearchHub" />
+  <img src="https://img.shields.io/badge/License-TBD-lightgrey" alt="License" />
+  <img src="https://img.shields.io/badge/Client-React%20Vite%20TypeScript-61DAFB" alt="Client UI" />
+  <img src="https://img.shields.io/badge/Admin-React%20Vite-61DAFB" alt="Admin UI" />
+  <img src="https://img.shields.io/badge/API-Django%20DRF-092E20" alt="Django" />
+  <img src="https://img.shields.io/badge/Auth-JWT-black" alt="JWT" />
+  <img src="https://img.shields.io/badge/Database-PostgreSQL-blue" alt="PostgreSQL" />
+  <img src="https://img.shields.io/badge/Email-Django%20SMTP-3776AB" alt="Email" />
+  <img src="https://img.shields.io/badge/K8s-Docker%20Desktop-326CE5" alt="Kubernetes" />
+  <img src="https://img.shields.io/badge/Infra-Docker%20Compose-2496ED" alt="Docker" />
+</p>
+
+**ResearchHub** is a simplified platform for managing scientific research projects end to end — inspired by synchrotron-style proposal workflows, without cloning a full facility information system.
+
+**client-ui** — researchers can:
+
+- create projects and submit proposals
+- go through scientific review
+- schedule experiments and link publications
+- invite collaborators (email + in-app)
+
+**admin-ui** — platform admins can:
+
+- approve or reject proposals
+- manage users, facilities, and catalog data
+- oversee projects, publications, and invitations
+
+**Live:** _Coming soon_
+
+---
+
+## Demo video
+
+▶ _Coming soon_
+
+---
+
+## Project article
+
+📝 _Coming soon_
+
+Full write-up on my portfolio: architecture, stack, and what the platform does.
+
+---
+
+## Product preview
+
+Screenshots will be added under [`docs/screenshots/`](docs/screenshots/) (desktop + mobile).
+
+### Desktop
+
+<p align="center"><strong>Client — public / dashboard</strong></p>
+<p align="center">
+  <em>docs/screenshots/client-1.png — coming soon</em>
+</p>
+
+<br/>
+
+<p align="center"><strong>Admin — overview</strong></p>
+<p align="center">
+  <em>docs/screenshots/admin-1.png — coming soon</em>
+</p>
+
+<br/>
+
+### Mobile
+
+<br/>
+
+<div align="center">
+
+| Client UI | Admin UI |
+| --------- | -------- |
+| _phone-client.png — coming soon_ | _phone-admin.png — coming soon_ |
+
+</div>
+
+<br/>
+
+---
 
 ## Workflow
 
@@ -22,240 +102,385 @@ Experiment
 Publication
 ```
 
-## Features (shipped)
+---
 
-- User registration and login (JWT; separate origins for researcher and admin apps)
-- Researcher and platform admin roles
-- Scientific projects with a clear status lifecycle
-- Proposals with submit / approve / reject
-- Project collaboration via invitations (email + in-app; owner, editor, viewer)
-- Mailer: Django email + SMTP (no Celery)
-- Experiments and publications linked to projects
-- Public informational pages and researcher dashboard (`client-ui`)
-- Admin overview, users, facilities, and review tools (`admin-ui`)
-- REST API with backend authorization and IDOR protection
-- Docker Compose for local development
-- Automated backend and frontend test suites (run via Make / Docker)
+## Architecture (current)
 
-## Stack
+What runs **today**: local Kubernetes on Docker Desktop, and Docker Compose for everyday coding. No cloud Ingress / nginx in this repo yet.
 
-| Layer | Technology |
-|-------|------------|
-| Frontend | React, TypeScript, Vite, React Router, Bootstrap (`client-ui` + `admin-ui`) |
-| Backend | Python, Django, Django REST Framework |
-| Database | PostgreSQL |
-| Email | Django + SMTP |
-| Local | Docker Compose |
-| Local Kubernetes | Docker Desktop Kubernetes (`k8s/`) |
-| Cloud deploy | Documented later (CI/CD, VM, registry, HTTPS) — not required to run the app |
+### Local Kubernetes (Docker Desktop)
 
-## Architecture
+Cluster demo on your machine. Same apps; ConfigMap/Secret generated from root `.env`.
 
-### Current (local / Docker Compose)
+```mermaid
+flowchart TB
+  Browser["Browser · localhost"]
 
-What you run today with `make start`:
+  subgraph K8s["Docker Desktop Kubernetes · ns researchhub"]
+    CUI["client-ui · LoadBalancer :5173"]
+    AUI["admin-ui · LoadBalancer :5175"]
+    API["backend · LoadBalancer :8000"]
+    PG[("postgres · ClusterIP + PVC")]
+  end
 
-```text
-client-ui (:5173) ──┐
-admin-ui  (:5175) ──┼── REST + JWT ──► Django + DRF ──► PostgreSQL
-                    │                  (+ SMTP mailer)
-                    └── CORS / CSRF
-                        ADMIN_UI_ORIGINS (admin API)
+  Browser --> CUI
+  Browser --> AUI
+  Browser --> API
+  CUI --> API
+  AUI --> API
+  API --> PG
 ```
 
-- **client-ui** — researcher SPA (marketing + dashboard); JWT in `localStorage` (`rh_*`); modal auth.
-- **admin-ui** — platform admin SPA; JWT in `rh_admin_*`; page login; Origin must be in `ADMIN_UI_ORIGINS` for admin routes.
-- **backend** — system of record for AuthN, AuthZ, workflows, and validation. Frontends are never trusted for security.
+<br/>
 
-### Local Kubernetes (Phase 16)
+<div align="center">
 
-Optional alternative to Compose for a Kubernetes demo on your machine:
+| Service     | Role                                      | Port (default)        |
+| ----------- | ----------------------------------------- | --------------------- |
+| `client-ui` | Researcher SPA (marketing + dashboard)    | 5173                  |
+| `admin-ui`  | Platform admin SPA                        | 5175                  |
+| `backend`   | Django REST API + JWT + mailer            | 8000                  |
+| `postgres`  | Primary database                          | 5432 (k8s / Compose)  |
 
-```text
-Docker Desktop (Kubernetes on)
-  → kubectl apply -f k8s/
-       postgres + backend + client-ui + admin-ui
-       LoadBalancer → localhost
+</div>
+
+<br/>
+
+- **No local Ingress** — Docker Desktop LoadBalancer maps services to localhost.
+- Postgres keeps data on a PVC until you wipe the namespace (`make k8s-delete`).
+- Pause without losing DB: `make k8s-stop` · resume: `make k8s-resume`.
+
+Details: [`k8s/README.md`](k8s/README.md) · deploy plan notes: [`docs/PLAN.md`](docs/PLAN.md)
+
+### Docker Compose (daily)
+
+Same stack for day-to-day development (bind mounts, hot reload).
+
+```mermaid
+flowchart TB
+  Researcher["Researcher"]
+  Admin["Platform admin"]
+
+  subgraph Compose["Docker Compose"]
+    CUI["client-ui · React Vite<br/>:5173"]
+    AUI["admin-ui · React Vite<br/>:5175"]
+    API["backend · Django DRF · JWT<br/>:8000"]
+    PG[("PostgreSQL")]
+  end
+
+  Researcher --> CUI
+  Admin --> AUI
+  CUI -->|"REST + JWT rh_*"| API
+  AUI -->|"REST + JWT rh_admin_*"| API
+  AUI -.->|"Origin ∈ ADMIN_UI_ORIGINS"| API
+  API --> PG
+  API -.->|"Django email / SMTP"| Mail["SMTP"]
 ```
 
-Daily coding stays on Compose. See [`k8s/README.md`](k8s/README.md).
+<br/>
 
-### Cloud deploy (later — docs)
+Compose file: [`docker/docker-compose.yml`](docker/docker-compose.yml) · env: root [`.env.example`](.env.example)
 
-A future guide under `deploy/` (or similar) will cover CI/CD, env, VM, registry, and HTTPS. No cloud provisioning is required to develop or demo ResearchHub locally. Folders `nginx/`, `deploy/` remain reserved.
+---
 
-## Progress / roadmap
+## How it works
 
-| Phase | Focus | Status |
-|------:|-------|--------|
-| 0–14 | Foundation → mailer (API, AuthZ, both UIs, tests, email) | done |
-| 15 | Documentation polish | done |
-| 16 | Local Kubernetes (Docker Desktop) | next |
-| 17 | Cloud deploy documentation (CI/CD, VM, HTTPS) | todo |
-| 18 | Optional real cloud deploy | todo |
+### Authentication
 
-```text
-done:  0 → 15
-next:  16 local Docker Desktop Kubernetes
-todo:  17 cloud deploy docs → 18 optional cloud deploy
+```mermaid
+sequenceDiagram
+  actor User
+  participant FE as client-ui / admin-ui
+  participant API as Django DRF
+
+  User->>FE: Login / register
+  FE->>API: POST /api/auth/login/ or register/
+  API->>FE: access + refresh + user
+  FE->>API: Authorization Bearer access
+  API->>API: JWT auth + DRF permissions + IDOR filters
+  API->>FE: JSON response
 ```
 
+<br/>
 
-## Documentation
+<div align="center">
 
-| Area | Entry | Deep docs |
-|------|-------|-----------|
-| Backend | [`backend/README.md`](backend/README.md) | [`backend/docs/`](backend/docs/) |
-| Client UI | [`client-ui/README.md`](client-ui/README.md) | [`client-ui/docs/`](client-ui/docs/) |
-| Admin UI | [`admin-ui/README.md`](admin-ui/README.md) | [`admin-ui/docs/`](admin-ui/docs/) |
+| Layer | Roles |
+| ----- | ----- |
+| **Platform** | `SUPER_ADMIN` · `ADMIN` · `RESEARCHER` |
+| **Project** | `OWNER` · `EDITOR` · `VIEWER` |
 
-Security & validation (backend): [`backend/docs/SECURITY.md`](backend/docs/SECURITY.md).
+</div>
 
-## Project layout
+<br/>
 
-```text
-backend/           # Django domain apps + /api/ + docs/
-client-ui/         # Researcher SPA (Vite) + docs/
-admin-ui/          # Platform admin SPA (Vite) + docs/
-nginx/             # Reserved for reverse proxy (cloud deploy later)
-deploy/            # Reserved for cloud deploy docs / helpers (later)
-k8s/               # Docker Desktop Kubernetes manifests (Phase 16)
-.github/workflows/ # Reserved for CI (later)
-docker-compose.yml # Local Docker Compose (daily)
+- JWT = authentication only (`djangorestframework-simplejwt`).
+- Tokens are **per UI origin** (`rh_*` on client-ui · `rh_admin_*` on admin-ui).
+- `/api/admin/*` and proposal approve/reject require platform **ADMIN** (or SUPER_ADMIN) **and** `Origin` ∈ `ADMIN_UI_ORIGINS`.
+
+### API surface (high level)
+
+<br/>
+
+<div align="center">
+
+| Area | Path | Notes |
+| ---- | ---- | ----- |
+| Auth | `/api/auth/*` | register · login · refresh · logout · me |
+| Projects & nested | `/api/projects/…` | proposals · experiments · publications · invitations |
+| Admin panel | `/api/admin/*` | users · facilities · review tools · Origin check |
+| Review | `/api/proposals/{id}/approve|reject/` | admin-ui Origin + platform ADMIN |
+
+</div>
+
+<br/>
+
+Full reference: [`backend/docs/API.md`](backend/docs/API.md)
+
+---
+
+## Roles
+
+Two separate role systems. Backend enforces both; UI gates are UX only.
+
+### Platform roles
+
+<br/>
+
+<div align="center">
+
+| Role | App | Can do |
+| ---- | --- | ------ |
+| `SUPER_ADMIN` | admin-ui | Everything `ADMIN` can + manage admins (`/admins`: list / create / deactivate platform `ADMIN` accounts) |
+| `ADMIN` | admin-ui | Stats · researchers · projects overview · proposal approve/reject · facilities CRUD · publications (read) · invitations — **not** the Admins page |
+| `RESEARCHER` | client-ui | Register / login · own projects & collaboration — **cannot** use admin-ui |
+
+</div>
+
+<br/>
+
+Admin API calls still require `Origin` ∈ `ADMIN_UI_ORIGINS` (admin-ui origin).
+
+### Project roles (client-ui)
+
+<br/>
+
+<div align="center">
+
+| Role | Read | Edit project / proposal / experiments / publications | Invite / remove collaborators | Soft-delete project |
+| ---- | ---- | ---------------------------------------------------- | ----------------------------- | ------------------- |
+| `VIEWER` | Yes | No | No | No |
+| `EDITOR` | Yes | Yes | No | No |
+| `OWNER` | Yes | Yes | Yes | Yes |
+
+</div>
+
+<br/>
+
+Platform `ADMIN` / `SUPER_ADMIN` bypass project membership for access. Proposal **approve / reject** remains admin-only (+ Origin).
+
+More: [`backend/docs/AUTHORIZATION.md`](backend/docs/AUTHORIZATION.md)
+
+---
+
+## Lifecycles
+
+Statuses below match backend enums (invalid transitions are rejected by the API).
+
+### Project
+
+All statuses: `DRAFT` · `SUBMITTED` · `UNDER_REVIEW` · `APPROVED` · `REJECTED` · `RESUBMITTED` · `IN_PROGRESS` · `COMPLETED` · `SOFT_DELETED`
+
+```mermaid
+flowchart LR
+  DRAFT --> SUBMITTED --> UNDER_REVIEW
+  UNDER_REVIEW --> APPROVED
+  UNDER_REVIEW --> REJECTED
+  REJECTED --> RESUBMITTED --> UNDER_REVIEW
+  APPROVED --> IN_PROGRESS --> COMPLETED
 ```
 
-## Backend
+`SOFT_DELETED` is a soft-delete path (owner or platform admin); hidden from normal researcher lists.
 
-Django + DRF + PostgreSQL + SimpleJWT. Owns users, projects, proposals, experiments, publications, invitations, facilities, and email. Project roles: OWNER / EDITOR / VIEWER. Platform roles: SUPER_ADMIN / ADMIN / RESEARCHER. Admin API routes require platform ADMIN **and** Origin ∈ `ADMIN_UI_ORIGINS`.
+### Proposal
 
-```bash
-make start
-make migrate
-make test-backend
-make shell-backend
+One proposal per project (MVP). Reviewed from admin-ui.
+
+```mermaid
+flowchart LR
+  PENDING --> APPROVED
+  PENDING --> REJECTED
 ```
 
-→ [`backend/README.md`](backend/README.md) · [`backend/docs/`](backend/docs/)
+### Experiment
 
-## Client UI
+- **Kind:** `PLANNED` · `EXECUTED`
+- **Status:** `PLANNED` → `SCHEDULED` → `COMPLETED` / `CANCELLED`
 
-Researcher SPA: public marketing, **modal-only** auth, dashboard for projects / proposals / experiments / publications / invitations. Route guards and Yup validation are UX only.
-
-```bash
-make start
-make test-client-ui
-make shell-client-ui
+```mermaid
+flowchart LR
+  PLANNED --> SCHEDULED
+  SCHEDULED --> COMPLETED
+  SCHEDULED --> CANCELLED
 ```
 
-→ [`client-ui/README.md`](client-ui/README.md) · [`client-ui/docs/`](client-ui/docs/)
+### Invitation
 
-## Admin UI
+Invite role offered: `EDITOR` or `VIEWER`. Token expires in **7 days**. Membership is created **only on accept**.
 
-Platform admin SPA: `/login`, stats, researchers, SUPER_ADMIN-managed admins, projects, proposal approve/reject, facilities CRUD, publications (read), invitations. Origin ∈ `ADMIN_UI_ORIGINS` required for admin API calls.
-
-```bash
-make start
-make test-admin-ui
-make shell-admin-ui
+```mermaid
+flowchart LR
+  PENDING --> ACCEPTED
+  PENDING --> DECLINED
+  PENDING --> EXPIRED
 ```
 
-→ [`admin-ui/README.md`](admin-ui/README.md) · [`admin-ui/docs/`](admin-ui/docs/)
+Publications are linked to projects (catalog kinds); no separate public status machine in the MVP.
 
-## UI brand (client-ui + admin-ui)
+---
 
-Same palette and responsive rules in **both** frontends. Bootstrap-first; page CSS only when needed. **client-ui** copy is i18next **en/fr**. **admin-ui** uses English `copy.ts` (no i18n yet). Do not put third-party facility names in product copy.
+## Security
 
-| Token | Hex | Role |
-|-------|-----|------|
-| Primary / CTAs | `#B82721` | Main buttons |
-| Primary hover | `#9C1A1A` | Hover / pressed |
-| Accent | `#328BA0` | Links, secondary actions |
-| Highlight | `#FBD600` | Sparse badges/highlights |
-| Success | `#73A104` | Positive status |
-| Text | `#292929` | Body |
-| Muted text | `#585858` | Secondary text |
-| Border | `#D5D5D5` | Dividers |
-| Surface | `#FFFFFF` | Panels |
-| Page background | `#EDEDED` | Muted surface |
-
-Responsive is mandatory on every screen (phone → tablet → desktop; no horizontal page scroll).
-
-## API authentication
-
-Private endpoints use **JWT** (`djangorestframework-simplejwt`).
-
-1. `POST /api/auth/register/` or `POST /api/auth/login/` with `{ "email", "password" }`
-2. Response: `{ "access", "refresh", "user" }`
-3. Header: `Authorization: Bearer <access>`
-4. Refresh: `POST /api/auth/refresh/` with `{ "refresh" }`
-5. Logout: `POST /api/auth/logout/` with `{ "refresh" }` (blacklists refresh); `GET /api/auth/me/` returns the current user
-
-JWT = authentication only. Authorization uses DRF permissions + IDOR-safe querysets:
-
-- **VIEWER+** — read project and nested resources
-- **OWNER / EDITOR / ADMIN** — write proposal, experiments, publications
-- **OWNER / ADMIN** — delete project; remove collaborators (not the owner)
-- **ADMIN** — approve/reject + `/api/admin/*` **and** Origin ∈ `ADMIN_UI_ORIGINS` (admin-ui)
-
-Tokens are per UI origin. Researchers use **client-ui**; admins use **admin-ui**.
-
-## Quick start (local)
-
-Docker is the only required host dependency. Do not install Python, Node, or PostgreSQL on the host for the official workflow.
-
-```bash
-cp .env.example .env
-make start
-```
-
-Or without Make: `docker compose up --build -d`.
-
-| Service | URL (ports from `.env`) |
-|---------|-------------------------|
-| Client UI | http://localhost:${CLIENT_UI_PORT} (default 5173) |
-| Admin UI | http://localhost:${ADMIN_UI_PORT} (default 5175) |
-| Backend | http://localhost:${BACKEND_PORT} (default 8000) |
-| Django admin | http://localhost:8000/admin/ (container) |
-
-If you change a UI port, also update `CORS_ALLOWED_ORIGINS`, `CSRF_TRUSTED_ORIGINS`, and `ADMIN_UI_ORIGINS`.
-
-Useful Make targets (`make help` for the full list):
-
-```bash
-make start              # up --build -d
-make stop               # stop containers
-make down               # stop + remove containers
-make logs               # follow logs
-make shell-backend      # shell into backend
-make shell-client-ui    # shell into client-ui
-make shell-admin-ui     # shell into admin-ui
-make migrate            # Django migrate
-make createsuperuser    # Django superuser (sets platform role=SUPER_ADMIN)
-make test-backend       # Django tests
-make test-client-ui     # client-ui Vitest
-make test-admin-ui      # admin-ui Vitest
-make clean              # down -v (destroys DB volume)
-make k8s-start          # build + sync .env + apply (Docker Desktop Kubernetes)
-make k8s-status         # pods and services
-make k8s-delete         # remove researchhub namespace
-```
-
-Environment variables:
-
-- **Docker / full stack:** copy root [`.env.example`](.env.example) → `.env` (Compose uses this)
-- **Per project:** [`backend/.env.example`](backend/.env.example), [`client-ui/.env.example`](client-ui/.env.example), [`admin-ui/.env.example`](admin-ui/.env.example)
-- **Local k8s:** copy [`k8s/secret.example.yaml`](k8s/secret.example.yaml) → `k8s/secret.yaml` (gitignored); see [`k8s/README.md`](k8s/README.md)
-
-Never commit real credentials or production secrets.
-
-## Security highlights
-
-- Authentication and permissions are enforced on the backend
-- Project access is limited to owners, collaborators, and admins
+- Authentication and authorization enforced on the **backend** — frontends are never trusted
+- Project access limited to owners, collaborators, and platform admins (IDOR-safe querysets)
 - Admin API routes require admin-ui Origin (`ADMIN_UI_ORIGINS`) plus platform ADMIN role
-- Invitation tokens are secure, time-limited (7 days), and only grant access after acceptance
-- Local k8s secrets stay out of git (`k8s/secret.yaml`); cloud HTTPS is a later deploy-docs topic
+- Invitation tokens are cryptographically secure, expire in **7 days**, and only grant access after acceptance (email must match)
+- Secrets live in root `.env` and generated `k8s/secret.yaml` (gitignored) — never commit real credentials
 
-## License
+More: [`backend/docs/SECURITY.md`](backend/docs/SECURITY.md)
 
-To be defined.
+---
+
+## Deployment plan (brief)
+
+**Today:** local Kubernetes + Docker Compose work on your machine.
+
+**Later (production)** — order matters; CI/CD last:
+
+1. Choose where Kubernetes runs (e.g. VPS + k3s, or managed k8s)
+2. Push Docker images to a container registry
+3. Create the remote cluster · Postgres in-cluster or managed
+4. Ingress + DNS + HTTPS (Let's Encrypt / cert-manager)
+5. Automate with CI/CD
+
+Full checklist: [`docs/PLAN.md`](docs/PLAN.md)
+
+---
+
+## Project structure
+
+```text
+ResearchHub/
+├── backend/           # Django + DRF + JWT + docs
+├── client-ui/         # Researcher SPA (Vite) + docs
+├── admin-ui/          # Platform admin SPA (Vite) + docs
+├── k8s/               # Local Docker Desktop Kubernetes manifests
+├── docker/
+│   └── docker-compose.yml
+├── docs/
+│   └── PLAN.md        # Local k8s done · production deploy plan
+├── Makefile           # k8s + Compose helpers
+├── .env.example
+└── README.md
+```
+
+Package details: [`backend/README.md`](backend/README.md) · [`client-ui/README.md`](client-ui/README.md) · [`admin-ui/README.md`](admin-ui/README.md) · [`k8s/README.md`](k8s/README.md)
+
+---
+
+## Quick start
+
+**Prerequisites:** [Docker Desktop](https://docs.docker.com/desktop/) (Kubernetes enabled + Compose v2) · Make · `kubectl`
+
+**1. Env**
+
+```powershell
+cp .env.example .env
+```
+
+### Local Kubernetes
+
+**2. Start**
+
+```powershell
+make k8s-start
+```
+
+**3. Open**
+
+<br/>
+
+<div align="center">
+
+| URL | Service |
+| --- | ------- |
+| http://localhost:5173 | Client UI |
+| http://localhost:5175 | Admin UI |
+| http://localhost:8000/api | Backend API |
+
+</div>
+
+<br/>
+
+**4. Super admin**
+
+```powershell
+make k8s-createsuperuser
+```
+
+Then sign in on **admin-ui** (http://localhost:5175).
+
+**5. Stop / resume / wipe**
+
+```powershell
+make k8s-status
+make k8s-stop          # pause pods — keeps DB
+make k8s-resume
+make k8s-delete        # DESTROYS namespace + DB volume
+```
+
+### Docker Compose (daily)
+
+Use Compose for everyday coding (hot reload). Stop k8s first if the same ports are in use (`make k8s-stop` or `make k8s-delete`).
+
+```powershell
+make start
+make createsuperuser
+make stop
+make logs
+make status
+```
+
+Volumes keep data after `make stop`. Wipe DB with `make clean` (`down -v`).
+
+---
+
+## Objective
+
+Demonstrate a secure full-stack scientific project platform: dual React apps, Django REST with real AuthZ/IDOR protection, a working local Kubernetes deployment path, and Docker Compose for day-to-day development.
+
+---
+
+## Planned (not implemented)
+
+- Cloud cluster · Ingress · HTTPS
+- Container registry + CI/CD pipeline
+- Optional real cloud deploy
+
+See [`docs/PLAN.md`](docs/PLAN.md).
+
+---
+
+## License & copyright
+
+Copyright (c) 2026 Chaker Yaakoub.
+
+License to be defined (this project is **not** private / proprietary).
+
+### Author
+
+**Chaker Yaakoub**
+
+- Portfolio: <a href="https://yaakoub-chaker-bteit.web.app/" target="_blank" rel="noopener noreferrer">yaakoub-chaker-bteit.web.app</a>
+- LinkedIn: <a href="https://www.linkedin.com/in/chaker-yaakoub/" target="_blank" rel="noopener noreferrer">chaker-yaakoub</a>
+- GitHub: <a href="https://github.com/ChakerYaakoub/" target="_blank" rel="noopener noreferrer">ChakerYaakoub</a>

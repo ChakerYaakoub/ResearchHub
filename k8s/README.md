@@ -6,11 +6,11 @@ Run ResearchHub on **Docker Desktop Kubernetes**. Daily development stays on Doc
 
 Root **`.env`** is the source of truth for both Compose and k8s.
 
-| Command | What happens |
-|---------|----------------|
-| `make start` | Compose loads `.env` |
+| Command             | What happens                                                |
+| ------------------- | ----------------------------------------------------------- |
+| `make start`        | Compose loads `.env`                                        |
 | `make k8s-sync-env` | Builds `k8s/configmap.yaml` + `k8s/secret.yaml` from `.env` |
-| `make k8s-apply` | Runs sync, then `kubectl apply` |
+| `make k8s-apply`    | Runs sync, then `kubectl apply`                             |
 
 `configmap.yaml` and `secret.yaml` are **gitignored** (generated). Committed templates: `configmap.example.yaml`, `secret.example.yaml`.
 
@@ -52,17 +52,17 @@ make k8s-status
 
 ## URLs
 
-| Service | URL |
-|---------|-----|
-| Client UI | http://localhost:5173 |
-| Admin UI | http://localhost:5175 |
-| API | http://localhost:8000 |
+| Service    | URL                       |
+| ---------- | ------------------------- |
+| Client UI  | http://localhost:5173     |
+| Admin UI   | http://localhost:5175     |
+| API        | http://localhost:8000     |
 | API prefix | http://localhost:8000/api |
 
 Create an admin user (after backend is Ready):
 
 ```powershell
-kubectl exec -it -n researchhub deploy/backend -- python manage.py createsuperuser
+make k8s-createsuperuser
 ```
 
 ## Useful commands
@@ -70,9 +70,11 @@ kubectl exec -it -n researchhub deploy/backend -- python manage.py createsuperus
 ```powershell
 make k8s-sync-env
 make k8s-status
+make k8s-stop          # pause pods — keeps DB data
+make k8s-resume        # bring pods back
 kubectl logs -n researchhub deploy/backend -f
 kubectl rollout restart deployment/backend -n researchhub
-make k8s-delete
+make k8s-delete        # DESTROYS namespace + DB volume
 ```
 
 After changing `.env`, re-apply so pods pick up new ConfigMap/Secret:
@@ -99,14 +101,14 @@ kubectl rollout restart deployment/backend deployment/client-ui deployment/admin
 
 ## Troubleshooting
 
-| Symptom | Fix |
-|---------|-----|
-| `Missing .env` on sync | `copy .env.example .env` and edit |
-| `ImagePullBackOff` | `make k8s-build`; tags `researchhub-*:local` |
-| Port already allocated | `make down` (Compose) |
-| Backend DB errors | Wait for postgres Ready; check logs |
-| CORS / admin Origin | Fix origins in `.env`, then `make k8s-apply` + rollout restart |
-| Wrong kubectl context | `kubectl config use-context docker-desktop` |
+| Symptom                | Fix                                                            |
+| ---------------------- | -------------------------------------------------------------- |
+| `Missing .env` on sync | `copy .env.example .env` and edit                              |
+| `ImagePullBackOff`     | `make k8s-build`; tags `researchhub-*:local`                   |
+| Port already allocated | `make down` (Compose)                                          |
+| Backend DB errors      | Wait for postgres Ready; check logs                            |
+| CORS / admin Origin    | Fix origins in `.env`, then `make k8s-apply` + rollout restart |
+| Wrong kubectl context  | `kubectl config use-context docker-desktop`                    |
 
 ## Layout
 

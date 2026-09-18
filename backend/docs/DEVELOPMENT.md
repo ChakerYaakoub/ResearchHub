@@ -9,30 +9,30 @@ From the **repository root**:
 ```bash
 cp .env.example .env
 make start
-# or: docker compose up --build -d
+# or: docker compose -f docker/docker-compose.yml --project-directory . up --build -d
 ```
 
-| Service | Default URL |
-|---------|-------------|
-| Backend API | http://localhost:8000 (`BACKEND_PORT`) |
-| Django admin | http://localhost:8000/admin/ |
-| Client UI | http://localhost:5173 |
-| Admin UI | http://localhost:5175 |
-| PostgreSQL | Compose service `postgres` (internal) |
+| Service      | Default URL                            |
+| ------------ | -------------------------------------- |
+| Backend API  | http://localhost:8000 (`BACKEND_PORT`) |
+| Django admin | http://localhost:8000/admin/           |
+| Client UI    | http://localhost:5173                  |
+| Admin UI     | http://localhost:5175                  |
+| PostgreSQL   | Compose service `postgres` (internal)  |
 
 ## Make targets
 
-| Target | Action |
-|--------|--------|
-| `make start` | `docker compose up --build -d` |
-| `make stop` | Stop containers |
-| `make down` | Stop + remove containers |
-| `make logs` | Follow logs |
-| `make shell-backend` | Shell into backend container |
-| `make migrate` | `python manage.py migrate` |
-| `make createsuperuser` | Creates SUPER_ADMIN |
-| `make test-backend` | Django test suite |
-| `make clean` | `down -v` — **destroys DB volume** |
+| Target                 | Action                                                                            |
+| ---------------------- | --------------------------------------------------------------------------------- |
+| `make start`           | `docker compose -f docker/docker-compose.yml --project-directory . up --build -d` |
+| `make stop`            | Stop containers                                                                   |
+| `make down`            | Stop + remove containers                                                          |
+| `make logs`            | Follow logs                                                                       |
+| `make shell-backend`   | Shell into backend container                                                      |
+| `make migrate`         | `python manage.py migrate`                                                        |
+| `make createsuperuser` | Creates SUPER_ADMIN                                                               |
+| `make test-backend`    | Django test suite                                                                 |
+| `make clean`           | `down -v` — **destroys DB volume**                                                |
 
 ## Migrations
 
@@ -60,15 +60,15 @@ docker compose exec backend python manage.py migrate
 
 Compose loads the **repo-root** `.env`. Backend also documents keys in [`../.env.example`](../.env.example).
 
-| Category | Keys |
-|----------|------|
-| Django | `SECRET_KEY`, `DEBUG`, `ALLOWED_HOSTS` |
-| Database | `DATABASE_NAME`, `DATABASE_USER`, `DATABASE_PASSWORD`, `DATABASE_HOST`, `DATABASE_PORT` |
-| CORS/CSRF | `CORS_ALLOWED_ORIGINS`, `CSRF_TRUSTED_ORIGINS` |
-| Admin Origin | `ADMIN_UI_ORIGINS` |
-| Email | `EMAIL_*`, `DEFAULT_FROM_EMAIL`, `CLIENT_UI_ORIGIN` |
-| Rate limits | `AUTH_RATE_LIMIT`, `PASSWORD_RESET_RATE_LIMIT` |
-| Ports (root `.env`) | `BACKEND_PORT`, `CLIENT_UI_PORT`, `ADMIN_UI_PORT` |
+| Category            | Keys                                                                                    |
+| ------------------- | --------------------------------------------------------------------------------------- |
+| Django              | `SECRET_KEY`, `DEBUG`, `ALLOWED_HOSTS`                                                  |
+| Database            | `DATABASE_NAME`, `DATABASE_USER`, `DATABASE_PASSWORD`, `DATABASE_HOST`, `DATABASE_PORT` |
+| CORS/CSRF           | `CORS_ALLOWED_ORIGINS`, `CSRF_TRUSTED_ORIGINS`                                          |
+| Admin Origin        | `ADMIN_UI_ORIGINS`                                                                      |
+| Email               | `EMAIL_*`, `DEFAULT_FROM_EMAIL`, `CLIENT_UI_ORIGIN`                                     |
+| Rate limits         | `AUTH_RATE_LIMIT`, `PASSWORD_RESET_RATE_LIMIT`                                          |
+| Ports (root `.env`) | `BACKEND_PORT`, `CLIENT_UI_PORT`, `ADMIN_UI_PORT`                                       |
 
 If you change a UI port, update CORS, CSRF, and `ADMIN_UI_ORIGINS` to match.
 
