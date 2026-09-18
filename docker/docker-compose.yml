@@ -1,6 +1,7 @@
 # Local development stack (Docker-first).
-# Production Nginx is Phase 17 — keep this file for local only.
-# Ports come from .env (BACKEND_PORT, CLIENT_UI_PORT, ADMIN_UI_PORT).
+# Run from repo root: make start
+# Or: docker compose -f docker/docker-compose.yml --project-directory . up --build -d
+# Paths are relative to repo root (--project-directory .). Ports from root .env.
 
 services:
   # PostgreSQL — DATABASE_* from .env; healthcheck gates backend start.

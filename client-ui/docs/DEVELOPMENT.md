@@ -5,7 +5,7 @@ Docker is the only required host dependency for the official workflow. From the 
 ```bash
 cp .env.example .env
 make start
-# or: docker compose up --build -d
+# or: docker compose -f docker/docker-compose.yml --project-directory . up --build -d
 ```
 
 | Service | Default URL |
@@ -18,7 +18,7 @@ make start
 
 | Target | Action |
 |--------|--------|
-| `make start` | `docker compose up --build -d` |
+| `make start` | `docker compose -f docker/docker-compose.yml --project-directory . up --build -d` |
 | `make stop` | Stop containers |
 | `make logs` | Follow logs |
 | `make shell-client-ui` | Shell into client-ui container |

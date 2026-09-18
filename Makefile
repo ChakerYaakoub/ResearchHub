@@ -1,11 +1,16 @@
 # ResearchHub — Docker Compose helpers
 # Requires: Docker + Docker Compose. Optional: GNU Make (or use docker compose directly).
+# Kubernetes targets need Docker Desktop Kubernetes + kubectl.
 
-COMPOSE ?= docker compose
+# Compose file in docker/; --project-directory . = repo root (.env + path contexts).
+COMPOSE ?= docker compose -f docker/docker-compose.yml --project-directory .
+POWERSHELL ?= powershell
 
 .PHONY: help start up stop down build rebuild restart logs ps status \
 	shell-backend shell-client-ui shell-admin-ui \
-	migrate createsuperuser test-backend test-client-ui test-admin-ui test-frontend clean
+	migrate createsuperuser test-backend test-client-ui test-admin-ui test-frontend clean \
+	k8s-sync-env k8s-build k8s-apply k8s-start k8s-stop k8s-resume \
+	k8s-delete k8s-status k8s-createsuperuser
 
 help:
 	@echo ResearchHub make targets:
@@ -27,6 +32,15 @@ help:
 	@echo   make test-admin-ui    Run admin-ui Vitest suite
 	@echo   make test-frontend    Run both UI Vitest suites
 	@echo   make clean            Down + remove volumes (DESTROYS DB DATA)
+	@echo   make k8s-sync-env     Build k8s ConfigMap/Secret from root .env
+	@echo   make k8s-build        Build local images for Docker Desktop Kubernetes
+	@echo   make k8s-apply        Sync .env then apply k8s manifests
+	@echo   make k8s-start        One shot: build images + sync .env + apply
+	@echo   make k8s-stop         Scale pods to 0 (keeps DB volume)
+	@echo   make k8s-resume       Scale pods back to 1
+	@echo   make k8s-delete       Delete researchhub namespace (DESTROYS DB DATA)
+	@echo   make k8s-status       Show k8s pods and services
+	@echo   make k8s-createsuperuser  Create SUPER_ADMIN in k8s backend pod
 
 start up:
 	$(COMPOSE) up --build -d
@@ -81,3 +95,46 @@ test-frontend: test-client-ui test-admin-ui
 
 clean:
 	$(COMPOSE) down -v
+
+# --- Docker Desktop Kubernetes (see k8s/README.md) ---
+# ConfigMap + Secret are generated from root .env (same as Compose).
+
+k8s-sync-env:
+	$(POWERSHELL) -NoProfile -ExecutionPolicy Bypass -File k8s/sync-env.ps1
+
+k8s-build:
+	docker build -t researchhub-backend:local ./backend
+	docker build -t researchhub-client-ui:local ./client-ui
+	docker build -t researchhub-admin-ui:local ./admin-ui
+
+k8s-apply: k8s-sync-env
+	kubectl apply -f k8s/namespace.yaml
+	kubectl apply -f k8s/configmap.yaml
+	kubectl apply -f k8s/secret.yaml
+	kubectl apply -f k8s/postgres.yaml
+	kubectl apply -f k8s/backend.yaml
+	kubectl apply -f k8s/client-ui.yaml
+	kubectl apply -f k8s/admin-ui.yaml
+
+k8s-start: k8s-build k8s-apply
+	kubectl get pods,svc -n researchhub
+
+# Pause workloads; namespace + postgres PVC stay (data kept).
+k8s-stop:
+	kubectl scale deployment/postgres deployment/backend deployment/client-ui deployment/admin-ui \
+		-n researchhub --replicas=0
+
+k8s-resume:
+	kubectl scale deployment/postgres deployment/backend deployment/client-ui deployment/admin-ui \
+		-n researchhub --replicas=1
+	kubectl get pods,svc -n researchhub
+
+# Wipes namespace including postgres PVC — DB data is lost.
+k8s-delete:
+	kubectl delete namespace researchhub --ignore-not-found
+
+k8s-status:
+	kubectl get pods,svc -n researchhub
+
+k8s-createsuperuser:
+	kubectl exec -it -n researchhub deploy/backend -- python manage.py createsuperuser
