@@ -36,7 +36,9 @@
 
 ## Demo video
 
-▶ _Coming soon_
+▶ [ResearchHub Demo — Scientific Proposal & Experiment Platform](https://youtu.be/xQ7zukVP5Z8)
+
+Full walkthrough on YouTube: client-ui, admin-ui, and the end-to-end research workflow.
 
 ---
 
