@@ -31,6 +31,7 @@ make start
 | `make shell-backend`   | Shell into backend container                                                      |
 | `make migrate`         | `python manage.py migrate`                                                        |
 | `make createsuperuser` | Creates SUPER_ADMIN                                                               |
+| `make seed-demo`       | Demo users, facilities, project, invitation (`manage.py seed_demo`)               |
 | `make test-backend`    | Django test suite                                                                 |
 | `make clean`           | `down -v` — **destroys DB volume**                                                |
 
@@ -76,11 +77,15 @@ If you change a UI port, update CORS, CSRF, and `ADMIN_UI_ORIGINS` to match.
 
 ## Demo data
 
-Optional facilities seed:
+Optional local seed (users, facilities, project + proposal/experiment/publication, pending invitation):
 
 ```bash
-docker compose exec backend python manage.py seed_demo
+make seed-demo
+# or (Kubernetes)
+make k8s-seed-demo
 ```
+
+Password for all demo accounts: `TestPass123!`
 
 ## Related
 

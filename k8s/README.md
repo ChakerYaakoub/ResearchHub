@@ -18,6 +18,7 @@ No Ingress / nginx here. UIs and API are exposed with **LoadBalancer** services 
 | `make k8s-resume` | Scale deployments back to **1** |
 | `make k8s-delete` | Delete namespace `researchhub` (**DESTROYS DB PVC**) |
 | `make k8s-createsuperuser` | `createsuperuser` inside `deploy/backend` |
+| `make k8s-seed-demo` | Demo users/projects/invitations inside `deploy/backend` |
 
 ## Prerequisites
 
@@ -38,6 +39,7 @@ make down          # only if Compose holds the same ports
 make k8s-start
 make k8s-status
 make k8s-createsuperuser
+make k8s-seed-demo
 ```
 
 | URL | Service |
@@ -125,6 +127,7 @@ kubectl logs -n researchhub deploy/backend -f
 kubectl logs -n researchhub deploy/client-ui -f
 kubectl exec -it -n researchhub deploy/backend -- python manage.py migrate
 make k8s-createsuperuser
+make k8s-seed-demo
 ```
 
 After `.env` changes:

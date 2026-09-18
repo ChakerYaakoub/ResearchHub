@@ -32,8 +32,6 @@
 - manage users, facilities, and catalog data
 - oversee projects, publications, and invitations
 
-**Live:** _Coming soon_
-
 ---
 
 ## Demo video
@@ -44,7 +42,7 @@
 
 ## Project article
 
-📝 _Coming soon_
+📝 [ResearchHub — Scientific Proposal & Experiment Platform](https://yaakoub-chaker-bteit.web.app/news/researchhub-scientific-proposal-experiment-platform-5uoQ9RRVBQU42TWy4Hf8)
 
 Full write-up on my portfolio: architecture, stack, and what the platform does.
 
@@ -52,20 +50,62 @@ Full write-up on my portfolio: architecture, stack, and what the platform does.
 
 ## Product preview
 
-Screenshots will be added under [`docs/screenshots/`](docs/screenshots/) (desktop + mobile).
+### Desktop — Client UI
 
-### Desktop
-
-<p align="center"><strong>Client — public / dashboard</strong></p>
+<p align="center"><strong>Landing</strong></p>
 <p align="center">
-  <em>docs/screenshots/client-1.png — coming soon</em>
+  <img src="docs/images/client-landing.png" alt="ResearchHub client landing page" width="90%" />
 </p>
 
 <br/>
 
-<p align="center"><strong>Admin — overview</strong></p>
+<p align="center"><strong>Projects list</strong></p>
 <p align="center">
-  <em>docs/screenshots/admin-1.png — coming soon</em>
+  <img src="docs/images/client-projects.png" alt="ResearchHub client projects list" width="90%" />
+</p>
+
+<br/>
+
+<p align="center"><strong>Project details</strong></p>
+<p align="center">
+  <img src="docs/images/client-project-details.png" alt="ResearchHub client project details" width="90%" />
+</p>
+
+<br/>
+
+<p align="center"><strong>Add experiment</strong></p>
+<p align="center">
+  <img src="docs/images/client-add-experiment.png" alt="ResearchHub client add experiment modal" width="90%" />
+</p>
+
+<br/>
+
+<p align="center"><strong>Form example</strong></p>
+<p align="center">
+  <img src="docs/images/client-form-ex.png" alt="ResearchHub client form example popup" width="90%" />
+</p>
+
+<br/>
+
+### Desktop — Admin UI
+
+<p align="center"><strong>Dashboard</strong></p>
+<p align="center">
+  <img src="docs/images/admin-dashboard.png" alt="ResearchHub admin dashboard overview" width="90%" />
+</p>
+
+<br/>
+
+<p align="center"><strong>Proposals review</strong></p>
+<p align="center">
+  <img src="docs/images/admin-proposals.png" alt="ResearchHub admin proposals review" width="90%" />
+</p>
+
+<br/>
+
+<p align="center"><strong>Delete project confirmation</strong></p>
+<p align="center">
+  <img src="docs/images/admin-project-delete.png" alt="ResearchHub admin delete project confirmation" width="90%" />
 </p>
 
 <br/>
@@ -78,7 +118,8 @@ Screenshots will be added under [`docs/screenshots/`](docs/screenshots/) (deskto
 
 | Client UI | Admin UI |
 | --------- | -------- |
-| _phone-client.png — coming soon_ | _phone-admin.png — coming soon_ |
+| <img src="docs/images/client-landing-mobile.png" alt="ResearchHub client landing on mobile" width="280" /> | <img src="docs/images/admin-mobile-nav.png" alt="ResearchHub admin responsive dashboard" width="280" /> |
+| Landing | Responsive dashboard |
 
 </div>
 
@@ -90,15 +131,15 @@ Screenshots will be added under [`docs/screenshots/`](docs/screenshots/) (deskto
 
 What runs **today**: local Kubernetes on Docker Desktop, and Docker Compose for everyday coding. Same apps and auth model either way — only how you run them differs. No cloud Ingress / nginx in this repo yet.
 
-### Local Kubernetes (Docker Desktop)
-
-Cluster demo on your machine. Same apps; ConfigMap/Secret generated from root `.env`.
-
 <p align="center">
-  <img src="docs/images/architecture-k8s.png" alt="ResearchHub local Kubernetes architecture" width="90%" />
+  <img src="docs/images/architecture.png" alt="ResearchHub architecture" width="90%" />
 </p>
 
 <br/>
+
+### Local Kubernetes (Docker Desktop)
+
+Cluster demo on your machine. Same apps; ConfigMap/Secret generated from root `.env`.
 
 ```mermaid
 flowchart TB
@@ -145,12 +186,6 @@ Details: [`k8s/README.md`](k8s/README.md)
 ### Docker Compose (daily)
 
 Same stack and auth for day-to-day development (bind mounts, hot reload).
-
-<p align="center">
-  <img src="docs/images/architecture-docker.png" alt="ResearchHub Docker Compose architecture" width="90%" />
-</p>
-
-<br/>
 
 ```mermaid
 flowchart TB
@@ -457,13 +492,36 @@ make k8s-start
 
 <br/>
 
-**4. Super admin**
+**4. Demo data (recommended)**
 
 ```powershell
-make k8s-createsuperuser
+make k8s-seed-demo
 ```
 
-Then sign in on **admin-ui** (http://localhost:5175).
+Loads users, facilities, **9 sample projects** (every project status), proposals covering **PENDING / APPROVED / REJECTED**, experiments, publications, and pending invitations. Idempotent — safe to re-run.
+
+Reset demo data first if you changed the seed:
+
+```powershell
+make k8s-clear-demo
+make k8s-seed-demo
+```
+
+Optional interactive superuser instead (or in addition): `make k8s-createsuperuser`.
+
+**Demo accounts** (password for all: `TestPass123!`)
+
+| Email | Role | Sign in |
+| ----- | ---- | ------- |
+| `admin@researchhub.local` | SUPER_ADMIN | admin-ui |
+| `reviewer@researchhub.local` | ADMIN | admin-ui |
+| `researcher@researchhub.local` | RESEARCHER (owns draft + active projects) | client-ui |
+| `editor@researchhub.local` | RESEARCHER | client-ui |
+| `viewer@researchhub.local` | RESEARCHER | client-ui |
+| `collaborator@researchhub.local` | RESEARCHER (owns review project) | client-ui |
+| `invitee@researchhub.local` | RESEARCHER (pending invite) | client-ui |
+
+Then open **admin-ui** (http://localhost:5175) or **client-ui** (http://localhost:5173).
 
 **5. Stop / resume / wipe**
 
@@ -480,11 +538,15 @@ Use Compose for everyday coding (hot reload). Stop k8s first if the same ports a
 
 ```powershell
 make start
-make createsuperuser
+make seed-demo
 make stop
 make logs
 make status
 ```
+
+Same demo accounts as above (`make seed-demo`). Optional: `make createsuperuser` for an interactive SUPER_ADMIN.
+
+Reset demo data: `make clear-demo` then `make seed-demo`.
 
 Volumes keep data after `make stop`. Wipe DB with `make clean` (`down -v`).
 

@@ -10,9 +10,9 @@ POWERSHELL ?= powershell
 
 .PHONY: help start up stop down build rebuild restart logs ps status \
 	shell-backend shell-client-ui shell-admin-ui \
-	migrate createsuperuser test-backend test-client-ui test-admin-ui test-frontend clean \
+	migrate createsuperuser seed-demo clear-demo test-backend test-client-ui test-admin-ui test-frontend clean \
 	k8s-sync-env k8s-build k8s-apply k8s-start k8s-stop k8s-resume \
-	k8s-delete k8s-status k8s-createsuperuser
+	k8s-delete k8s-status k8s-createsuperuser k8s-seed-demo k8s-clear-demo
 
 # ---------------------------------------------------------------------------
 # help — list every target (default when you run `make` with no args if set as .DEFAULT)
@@ -32,6 +32,8 @@ help:
 	@echo   make shell-admin-ui   Shell into admin-ui container
 	@echo   make migrate          Run Django migrations
 	@echo   make createsuperuser  Create Django superuser
+	@echo   make seed-demo        Load demo users/projects/invitations (Compose)
+	@echo   make clear-demo       Delete demo seed data (Compose)
 	@echo   make test-backend     Run Django tests
 	@echo   make test-client-ui   Run client-ui Vitest suite
 	@echo   make test-admin-ui    Run admin-ui Vitest suite
@@ -46,6 +48,8 @@ help:
 	@echo   make k8s-delete       Delete researchhub namespace (DESTROYS DB DATA)
 	@echo   make k8s-status       Show k8s pods and services
 	@echo   make k8s-createsuperuser  Create SUPER_ADMIN in k8s backend pod
+	@echo   make k8s-seed-demo    Load demo users/projects/invitations (k8s)
+	@echo   make k8s-clear-demo   Delete demo seed data (k8s)
 
 # ===========================================================================
 # Docker Compose (daily development) — see docker/README.md
@@ -101,6 +105,14 @@ migrate:
 # createsuperuser — interactive Django SUPER_ADMIN (Compose backend)
 createsuperuser:
 	$(COMPOSE) exec backend python manage.py createsuperuser
+
+# seed-demo — demo users, facilities, project graph, pending invitation (Compose)
+seed-demo:
+	$(COMPOSE) exec backend python manage.py seed_demo
+
+# clear-demo — remove demo seed data only (Compose); then re-run seed-demo
+clear-demo:
+	$(COMPOSE) exec backend python manage.py clear_demo
 
 # test-backend — run Django test suite in the backend container
 test-backend:
@@ -172,3 +184,11 @@ k8s-status:
 # k8s-createsuperuser — interactive SUPER_ADMIN inside the k8s backend pod
 k8s-createsuperuser:
 	kubectl exec -it -n researchhub deploy/backend -- python manage.py createsuperuser
+
+# k8s-seed-demo — demo users, facilities, project graph, pending invitation (k8s)
+k8s-seed-demo:
+	kubectl exec -it -n researchhub deploy/backend -- python manage.py seed_demo
+
+# k8s-clear-demo — remove demo seed data only (k8s); then re-run k8s-seed-demo
+k8s-clear-demo:
+	kubectl exec -it -n researchhub deploy/backend -- python manage.py clear_demo

@@ -28,6 +28,7 @@ Create a platform super admin:
 
 ```powershell
 make createsuperuser
+make seed-demo
 ```
 
 ## Services
@@ -69,6 +70,7 @@ make status
 make logs
 make migrate
 make createsuperuser
+make seed-demo
 make test-backend
 make shell-backend
 make shell-client-ui
