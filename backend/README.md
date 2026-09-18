@@ -131,20 +131,19 @@ Local development uses Docker Compose. Production targets Google Cloud with Ngin
 
 Overview: [`docs/DEPLOYMENT.md`](./docs/DEPLOYMENT.md).
 
-## Documentation index
+## Documentation
 
 | Document | Contents |
 |----------|----------|
-| [`docs/README.md`](./docs/README.md) | Hub index |
-| [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md) | Apps & request lifecycle |
-| [`docs/AUTHENTICATION.md`](./docs/AUTHENTICATION.md) | JWT & public auth |
-| [`docs/AUTHORIZATION.md`](./docs/AUTHORIZATION.md) | RBAC, Origin, IDOR |
-| [`docs/SECURITY.md`](./docs/SECURITY.md) | Security & validation |
-| [`docs/VALIDATION.md`](./docs/VALIDATION.md) | Input validation |
-| [`docs/WORKFLOWS.md`](./docs/WORKFLOWS.md) | Business workflows |
-| [`docs/MODELS.md`](./docs/MODELS.md) | Domain models |
-| [`docs/API.md`](./docs/API.md) | Endpoint map |
-| [`docs/TESTING.md`](./docs/TESTING.md) | Test strategy |
-| [`docs/DEVELOPMENT.md`](./docs/DEVELOPMENT.md) | Docker & env |
-| [`docs/DEPLOYMENT.md`](./docs/DEPLOYMENT.md) | Production & CI |
-| [`docs/TROUBLESHOOTING.md`](./docs/TROUBLESHOOTING.md) | Common failures |
+| [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md) | Apps, layout, request lifecycle |
+| [`docs/AUTHENTICATION.md`](./docs/AUTHENTICATION.md) | JWT, register/login, rate limits, honeypot |
+| [`docs/AUTHORIZATION.md`](./docs/AUTHORIZATION.md) | RBAC, project roles, admin Origin, IDOR |
+| [`docs/SECURITY.md`](./docs/SECURITY.md) | Security & validation rules |
+| [`docs/VALIDATION.md`](./docs/VALIDATION.md) | Input validation layers and helpers |
+| [`docs/WORKFLOWS.md`](./docs/WORKFLOWS.md) | Proposal, project status, invitations, experiment/publication gates |
+| [`docs/MODELS.md`](./docs/MODELS.md) | Domain models and relationships |
+| [`docs/API.md`](./docs/API.md) | Endpoint map by app |
+| [`docs/TESTING.md`](./docs/TESTING.md) | Test layout, helpers, coverage map |
+| [`docs/DEVELOPMENT.md`](./docs/DEVELOPMENT.md) | Docker, migrations, env vars |
+| [`docs/DEPLOYMENT.md`](./docs/DEPLOYMENT.md) | Production overview and CI status |
+| [`docs/TROUBLESHOOTING.md`](./docs/TROUBLESHOOTING.md) | Common local failures |

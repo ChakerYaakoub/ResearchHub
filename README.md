@@ -32,8 +32,6 @@
 - manage users, facilities, and catalog data
 - oversee projects, publications, and invitations
 
-**Live:** _Coming soon_
-
 ---
 
 ## Demo video
@@ -44,7 +42,7 @@
 
 ## Project article
 
-📝 _Coming soon_
+📝 [ResearchHub — Scientific Proposal & Experiment Platform](https://yaakoub-chaker-bteit.web.app/news/researchhub-scientific-proposal-experiment-platform-5uoQ9RRVBQU42TWy4Hf8)
 
 Full write-up on my portfolio: architecture, stack, and what the platform does.
 
@@ -52,20 +50,62 @@ Full write-up on my portfolio: architecture, stack, and what the platform does.
 
 ## Product preview
 
-Screenshots will be added under [`docs/screenshots/`](docs/screenshots/) (desktop + mobile).
+### Desktop — Client UI
 
-### Desktop
-
-<p align="center"><strong>Client — public / dashboard</strong></p>
+<p align="center"><strong>Landing</strong></p>
 <p align="center">
-  <em>docs/screenshots/client-1.png — coming soon</em>
+  <img src="docs/images/client-landing.png" alt="ResearchHub client landing page" width="90%" />
 </p>
 
 <br/>
 
-<p align="center"><strong>Admin — overview</strong></p>
+<p align="center"><strong>Projects list</strong></p>
 <p align="center">
-  <em>docs/screenshots/admin-1.png — coming soon</em>
+  <img src="docs/images/client-projects.png" alt="ResearchHub client projects list" width="90%" />
+</p>
+
+<br/>
+
+<p align="center"><strong>Project details</strong></p>
+<p align="center">
+  <img src="docs/images/client-project-details.png" alt="ResearchHub client project details" width="90%" />
+</p>
+
+<br/>
+
+<p align="center"><strong>Add experiment</strong></p>
+<p align="center">
+  <img src="docs/images/client-add-experiment.png" alt="ResearchHub client add experiment modal" width="90%" />
+</p>
+
+<br/>
+
+<p align="center"><strong>Form example</strong></p>
+<p align="center">
+  <img src="docs/images/client-form-ex.png" alt="ResearchHub client form example popup" width="90%" />
+</p>
+
+<br/>
+
+### Desktop — Admin UI
+
+<p align="center"><strong>Dashboard</strong></p>
+<p align="center">
+  <img src="docs/images/admin-dashboard.png" alt="ResearchHub admin dashboard overview" width="90%" />
+</p>
+
+<br/>
+
+<p align="center"><strong>Proposals review</strong></p>
+<p align="center">
+  <img src="docs/images/admin-proposals.png" alt="ResearchHub admin proposals review" width="90%" />
+</p>
+
+<br/>
+
+<p align="center"><strong>Delete project confirmation</strong></p>
+<p align="center">
+  <img src="docs/images/admin-project-delete.png" alt="ResearchHub admin delete project confirmation" width="90%" />
 </p>
 
 <br/>
@@ -78,7 +118,8 @@ Screenshots will be added under [`docs/screenshots/`](docs/screenshots/) (deskto
 
 | Client UI | Admin UI |
 | --------- | -------- |
-| _phone-client.png — coming soon_ | _phone-admin.png — coming soon_ |
+| <img src="docs/images/client-landing-mobile.png" alt="ResearchHub client landing on mobile" width="280" /> | <img src="docs/images/admin-mobile-nav.png" alt="ResearchHub admin responsive dashboard" width="280" /> |
+| Landing | Responsive dashboard |
 
 </div>
 
@@ -86,27 +127,15 @@ Screenshots will be added under [`docs/screenshots/`](docs/screenshots/) (deskto
 
 ---
 
-## Workflow
-
-```text
-Create Project
-      ↓
-Submit Proposal
-      ↓
-Scientific Review
-      ↓
-Approved / Rejected
-      ↓
-Experiment
-      ↓
-Publication
-```
-
----
-
 ## Architecture (current)
 
-What runs **today**: local Kubernetes on Docker Desktop, and Docker Compose for everyday coding. No cloud Ingress / nginx in this repo yet.
+What runs **today**: local Kubernetes on Docker Desktop, and Docker Compose for everyday coding. Same apps and auth model either way — only how you run them differs. No cloud Ingress / nginx in this repo yet.
+
+<p align="center">
+  <img src="docs/images/architecture.png" alt="ResearchHub architecture" width="90%" />
+</p>
+
+<br/>
 
 ### Local Kubernetes (Docker Desktop)
 
@@ -114,21 +143,23 @@ Cluster demo on your machine. Same apps; ConfigMap/Secret generated from root `.
 
 ```mermaid
 flowchart TB
-  Browser["Browser · localhost"]
+  Researcher["Researcher"]
+  Admin["Platform admin"]
 
   subgraph K8s["Docker Desktop Kubernetes · ns researchhub"]
     CUI["client-ui · LoadBalancer :5173"]
     AUI["admin-ui · LoadBalancer :5175"]
-    API["backend · LoadBalancer :8000"]
+    API["backend · LoadBalancer :8000<br/>Django DRF · JWT"]
     PG[("postgres · ClusterIP + PVC")]
   end
 
-  Browser --> CUI
-  Browser --> AUI
-  Browser --> API
-  CUI --> API
-  AUI --> API
+  Researcher --> CUI
+  Admin --> AUI
+  CUI -->|"REST + JWT rh_*"| API
+  AUI -->|"REST + JWT rh_admin_*"| API
+  AUI -.->|"Origin ∈ ADMIN_UI_ORIGINS"| API
   API --> PG
+  API -.->|"Django email / SMTP"| Mail["SMTP"]
 ```
 
 <br/>
@@ -150,11 +181,11 @@ flowchart TB
 - Postgres keeps data on a PVC until you wipe the namespace (`make k8s-delete`).
 - Pause without losing DB: `make k8s-stop` · resume: `make k8s-resume`.
 
-Details: [`k8s/README.md`](k8s/README.md) · deploy plan notes: [`docs/PLAN.md`](docs/PLAN.md)
+Details: [`k8s/README.md`](k8s/README.md)
 
 ### Docker Compose (daily)
 
-Same stack for day-to-day development (bind mounts, hot reload).
+Same stack and auth for day-to-day development (bind mounts, hot reload).
 
 ```mermaid
 flowchart TB
@@ -179,7 +210,7 @@ flowchart TB
 
 <br/>
 
-Compose file: [`docker/docker-compose.yml`](docker/docker-compose.yml) · env: root [`.env.example`](.env.example)
+Compose: [`docker/README.md`](docker/README.md) · [`docker/docker-compose.yml`](docker/docker-compose.yml) · env: root [`.env.example`](.env.example)
 
 ---
 
@@ -283,6 +314,29 @@ More: [`backend/docs/AUTHORIZATION.md`](backend/docs/AUTHORIZATION.md)
 
 ---
 
+## Workflow
+
+End-to-end research path. Researchers act in **client-ui**; review happens in **admin-ui**. Status details: [Lifecycles](#lifecycles).
+
+```mermaid
+flowchart LR
+  P[Create project] --> S[Submit proposal]
+  S --> R[Scientific review]
+  R -->|Approve| E[Experiments]
+  R -->|Reject| X[Resubmit]
+  X --> R
+  E --> Pub[Publications]
+```
+
+| Actor | UI | Steps |
+| ----- | -- | ----- |
+| Researcher (`OWNER` / `EDITOR`) | client-ui | Create · submit · resubmit · experiments · publications |
+| Platform `ADMIN` / `SUPER_ADMIN` | admin-ui | Approve / reject |
+
+Collaborators join via invitation (`EDITOR` / `VIEWER`); membership is created **only on accept**. See [Invitation](#invitation).
+
+---
+
 ## Lifecycles
 
 Statuses below match backend enums (invalid transitions are rejected by the API).
@@ -341,29 +395,43 @@ Publications are linked to projects (catalog kinds); no separate public status m
 
 ## Security
 
-- Authentication and authorization enforced on the **backend** — frontends are never trusted
-- Project access limited to owners, collaborators, and platform admins (IDOR-safe querysets)
-- Admin API routes require admin-ui Origin (`ADMIN_UI_ORIGINS`) plus platform ADMIN role
-- Invitation tokens are cryptographically secure, expire in **7 days**, and only grant access after acceptance (email must match)
-- Secrets live in root `.env` and generated `k8s/secret.yaml` (gitignored) — never commit real credentials
+Never trust `client-ui` or `admin-ui`. AuthN / AuthZ / validation are enforced on the **backend** only.
 
-More: [`backend/docs/SECURITY.md`](backend/docs/SECURITY.md)
+### Auth & abuse controls
 
----
+| Control | Where | What for |
+| ------- | ----- | -------- |
+| JWT (`simplejwt`) | All private API calls | Access **60 min** · refresh **7 days** · rotate + blacklist on logout |
+| Per-UI tokens | client-ui `rh_*` · admin-ui `rh_admin_*` | Separate sessions per app — do not share JWTs across UIs |
+| Rate limit · `AUTH_RATE_LIMIT` (`5/m` per IP) | `POST /api/auth/register/` · `POST /api/auth/login/` | Slow bot signup and credential stuffing → **429** |
+| Rate limit · `PASSWORD_RESET_RATE_LIMIT` (`2/m` per IP) | `POST /api/auth/password-reset/` · `…/confirm/` | Slow reset-email spam and token guessing → **429** |
+| Honeypot (`company`) | Public auth forms (register / login / password-reset) | If filled, request is **silently ignored** (bot trap) |
+| Password reset anti-enumeration | `POST /api/auth/password-reset/` | Same success-shaped response for known and unknown emails |
 
-## Deployment plan (brief)
+Rate-limit code: `backend/users/api/views.py` · `backend/core/ratelimit.py`. Refresh / logout / me are **not** rate-limited this way.
 
-**Today:** local Kubernetes + Docker Compose work on your machine.
+### Authorization
 
-**Later (production)** — order matters; CI/CD last:
+- **Platform roles** (`SUPER_ADMIN` / `ADMIN` / `RESEARCHER`) + **project roles** (`OWNER` / `EDITOR` / `VIEWER`)
+- Project access via permissions **and** IDOR-safe selectors (outsiders get **404**, not a leaky 403)
+- Never trust client-supplied `role` / `owner` / `project` / `installation` ids
+- **Admin gate:** `/api/admin/*` and proposal approve/reject require platform ADMIN **and** `Origin` ∈ `ADMIN_UI_ORIGINS` (admin-ui only — see [`admin-ui/docs/ORIGIN.md`](admin-ui/docs/ORIGIN.md))
 
-1. Choose where Kubernetes runs (e.g. VPS + k3s, or managed k8s)
-2. Push Docker images to a container registry
-3. Create the remote cluster · Postgres in-cluster or managed
-4. Ingress + DNS + HTTPS (Let's Encrypt / cert-manager)
-5. Automate with CI/CD
+### Input validation
 
-Full checklist: [`docs/PLAN.md`](docs/PLAN.md)
+Server-side layers (DRF types → constraints → `core.validation`):
+
+- HTML **tags** rejected in user text (plain scientific `<` still allowed)
+- Username / codes charset rules · email normalize · max lengths · enum choices
+- Relationships resolved from authorized parents (no client re-parenting)
+
+### Invitations & secrets
+
+- Invitation tokens: `secrets.token_urlsafe`, expire in **7 days**, email must match on accept; membership only after accept
+- Tokens / SMTP / DB credentials never in normal list/detail API responses
+- Secrets only via root `.env` and generated `k8s/secret.yaml` (gitignored)
+
+More: [`backend/docs/SECURITY.md`](backend/docs/SECURITY.md) · [`backend/docs/AUTHENTICATION.md`](backend/docs/AUTHENTICATION.md) · [`backend/docs/AUTHORIZATION.md`](backend/docs/AUTHORIZATION.md)
 
 ---
 
@@ -376,15 +444,17 @@ ResearchHub/
 ├── admin-ui/          # Platform admin SPA (Vite) + docs
 ├── k8s/               # Local Docker Desktop Kubernetes manifests
 ├── docker/
-│   └── docker-compose.yml
+│   ├── docker-compose.yml
+│   └── README.md
 ├── docs/
-│   └── PLAN.md        # Local k8s done · production deploy plan
+│   ├── images/        # Architecture diagrams
+│   └── PLAN.md        # Production deploy plan (planned)
 ├── Makefile           # k8s + Compose helpers
 ├── .env.example
 └── README.md
 ```
 
-Package details: [`backend/README.md`](backend/README.md) · [`client-ui/README.md`](client-ui/README.md) · [`admin-ui/README.md`](admin-ui/README.md) · [`k8s/README.md`](k8s/README.md)
+Package details: [`backend/README.md`](backend/README.md) · [`client-ui/README.md`](client-ui/README.md) · [`admin-ui/README.md`](admin-ui/README.md) · [`k8s/README.md`](k8s/README.md) · [`docker/README.md`](docker/README.md)
 
 ---
 
@@ -422,13 +492,36 @@ make k8s-start
 
 <br/>
 
-**4. Super admin**
+**4. Demo data (recommended)**
 
 ```powershell
-make k8s-createsuperuser
+make k8s-seed-demo
 ```
 
-Then sign in on **admin-ui** (http://localhost:5175).
+Loads users, facilities, **9 sample projects** (every project status), proposals covering **PENDING / APPROVED / REJECTED**, experiments, publications, and pending invitations. Idempotent — safe to re-run.
+
+Reset demo data first if you changed the seed:
+
+```powershell
+make k8s-clear-demo
+make k8s-seed-demo
+```
+
+Optional interactive superuser instead (or in addition): `make k8s-createsuperuser`.
+
+**Demo accounts** (password for all: `TestPass123!`)
+
+| Email | Role | Sign in |
+| ----- | ---- | ------- |
+| `admin@researchhub.local` | SUPER_ADMIN | admin-ui |
+| `reviewer@researchhub.local` | ADMIN | admin-ui |
+| `researcher@researchhub.local` | RESEARCHER (owns draft + active projects) | client-ui |
+| `editor@researchhub.local` | RESEARCHER | client-ui |
+| `viewer@researchhub.local` | RESEARCHER | client-ui |
+| `collaborator@researchhub.local` | RESEARCHER (owns review project) | client-ui |
+| `invitee@researchhub.local` | RESEARCHER (pending invite) | client-ui |
+
+Then open **admin-ui** (http://localhost:5175) or **client-ui** (http://localhost:5173).
 
 **5. Stop / resume / wipe**
 
@@ -445,11 +538,15 @@ Use Compose for everyday coding (hot reload). Stop k8s first if the same ports a
 
 ```powershell
 make start
-make createsuperuser
+make seed-demo
 make stop
 make logs
 make status
 ```
+
+Same demo accounts as above (`make seed-demo`). Optional: `make createsuperuser` for an interactive SUPER_ADMIN.
+
+Reset demo data: `make clear-demo` then `make seed-demo`.
 
 Volumes keep data after `make stop`. Wipe DB with `make clean` (`down -v`).
 
@@ -463,19 +560,20 @@ Demonstrate a secure full-stack scientific project platform: dual React apps, Dj
 
 ## Planned (not implemented)
 
-- Cloud cluster · Ingress · HTTPS
+Production **deployment** is planned (not done yet) — local k8s + Compose only for now:
+
+- Cloud / remote Kubernetes cluster
+- Ingress · DNS · HTTPS (Let's Encrypt / cert-manager)
 - Container registry + CI/CD pipeline
 - Optional real cloud deploy
 
-See [`docs/PLAN.md`](docs/PLAN.md).
+Checklist / notes: [`docs/PLAN.md`](docs/PLAN.md).
 
 ---
 
 ## License & copyright
 
 Copyright (c) 2026 Chaker Yaakoub.
-
-License to be defined (this project is **not** private / proprietary).
 
 ### Author
 

@@ -42,8 +42,14 @@ backend/
 | `make_project` | Project + OWNER membership |
 | `make_instrument` | ACTIVE installation + AVAILABLE instrument |
 | `add_member` | Add/update project membership |
+| `make_proposal` | OneToOne proposal for a project |
+| `make_experiment` | Scheduled experiment on a project |
+| `make_publication` | Publication linked to a project |
+| `make_invitation` | Pending (or status override) project invitation |
 
 Default password constant: `DEFAULT_PASSWORD`.
+
+Demo DB seeding (Compose / k8s) uses [`seed_helpers.py`](../seed_helpers.py) via `make seed-demo` / `make k8s-seed-demo` — not this module.
 
 ## Coverage map
 

@@ -124,6 +124,7 @@ export function useAccount() {
 
   return {
     copy,
+    role: user?.role ?? '',
     profileForm,
     passwordForm,
     resetConfirmOpen,

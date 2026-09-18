@@ -1,8 +1,13 @@
 import { Form, FormikProvider } from 'formik'
 import { ConfirmDialog } from '../../components/ConfirmDialog'
 import { PasswordField } from '../../components/PasswordField'
+import { StatusBadge } from '../../components/StatusBadge'
 import { TextInput } from '../../components/form/TextInput'
 import { useAccount } from './useAccount'
+
+function roleLabel(role: string): string {
+  return role.replaceAll('_', ' ')
+}
 
 export function AccountPage() {
   const vm = useAccount()
@@ -18,7 +23,12 @@ export function AccountPage() {
       <div className="row g-4">
         <div className="col-12 col-lg-6">
           <div className="border rounded p-3 bg-white h-100">
-            <h2 className="h5 mb-3">{vm.copy.profileSection}</h2>
+            <div className="d-flex align-items-center justify-content-between gap-2 mb-3">
+              <h2 className="h5 mb-0">{vm.copy.profileSection}</h2>
+              {vm.role ? (
+                <StatusBadge status={vm.role} label={roleLabel(vm.role)} />
+              ) : null}
+            </div>
             <FormikProvider value={pf}>
               <Form noValidate>
                 <TextInput

@@ -5,10 +5,15 @@ headers stay consistent across the suite. See ``backend/docs/TESTING.md``.
 """
 
 from django.conf import settings
+from django.utils import timezone
 from rest_framework.test import APIClient
 from rest_framework_simplejwt.tokens import RefreshToken
 
+from experiments.models import Experiment, ExperimentKind, ExperimentStatus
+from invitations.models import Invitation, InvitationRole, InvitationStatus
 from projects.models import MembershipRole, ProjectMembership, ResearchProject
+from proposals.models import Proposal, ProposalStatus
+from publications.models import Publication, PublicationKind
 from users.models import GlobalRole, User
 
 DEFAULT_PASSWORD = "TestPass123!"
@@ -122,3 +127,88 @@ def add_member(
         defaults={"role": role},
     )
     return membership
+
+
+def make_proposal(
+    project: ResearchProject,
+    *,
+    methodology: str = "Test methodology",
+    expected_results: str = "Test expected results",
+    status: str = ProposalStatus.PENDING,
+    **extra,
+) -> Proposal:
+    """Create or return the OneToOne proposal for ``project``."""
+    proposal, _ = Proposal.objects.get_or_create(
+        project=project,
+        defaults={
+            "methodology": methodology,
+            "expected_results": expected_results,
+            "status": status,
+            **extra,
+        },
+    )
+    return proposal
+
+
+def make_experiment(
+    project: ResearchProject,
+    instrument,
+    *,
+    kind: str = ExperimentKind.PLANNED,
+    status: str = ExperimentStatus.PLANNED,
+    notes: str = "",
+    scheduled_date=None,
+    **extra,
+) -> Experiment:
+    """Create a scheduled experiment on ``project``."""
+    if scheduled_date is None:
+        scheduled_date = timezone.now() + timezone.timedelta(days=7)
+    return Experiment.objects.create(
+        project=project,
+        instrument=instrument,
+        kind=kind,
+        status=status,
+        notes=notes,
+        scheduled_date=scheduled_date,
+        **extra,
+    )
+
+
+def make_publication(
+    project: ResearchProject,
+    *,
+    title: str = "Test publication",
+    authors: str = "A. Author",
+    kind: str = PublicationKind.EXISTING,
+    journal: str = "",
+    **extra,
+) -> Publication:
+    """Create a publication linked to ``project``."""
+    return Publication.objects.create(
+        project=project,
+        title=title,
+        authors=authors,
+        kind=kind,
+        journal=journal,
+        **extra,
+    )
+
+
+def make_invitation(
+    project: ResearchProject,
+    invited_by: User,
+    email: str,
+    *,
+    role: str = InvitationRole.EDITOR,
+    status: str = InvitationStatus.PENDING,
+    **extra,
+) -> Invitation:
+    """Create a project invitation (does not grant membership until accept)."""
+    return Invitation.objects.create(
+        project=project,
+        invited_by=invited_by,
+        email=email.lower().strip(),
+        role=role,
+        status=status,
+        **extra,
+    )

@@ -124,7 +124,20 @@ See [`docs/DEPLOYMENT.md`](./docs/DEPLOYMENT.md).
 
 ## Documentation
 
-| Doc | Purpose |
-|-----|---------|
-| [`docs/`](./docs/) | Full hub (architecture, auth, Origin, API, workflows, …) |
-| [`docs/TROUBLESHOOTING.md`](./docs/TROUBLESHOOTING.md) | Common local failures |
+| Document | Contents |
+|----------|----------|
+| [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md) | Smart/dumb layout, folder structure, pages |
+| [`docs/ROUTING.md`](./docs/ROUTING.md) | `/login` and protected routes |
+| [`docs/AUTHENTICATION.md`](./docs/AUTHENTICATION.md) | Page login, JWT storage, refresh |
+| [`docs/AUTHORIZATION.md`](./docs/AUTHORIZATION.md) | ADMIN / SUPER_ADMIN UX gates |
+| [`docs/ORIGIN.md`](./docs/ORIGIN.md) | `ADMIN_UI_ORIGINS` contract |
+| [`docs/API.md`](./docs/API.md) | `apiFetch` and endpoint map |
+| [`docs/STATE.md`](./docs/STATE.md) | Auth context, local state, toasts |
+| [`docs/FORMS.md`](./docs/FORMS.md) | Formik/Yup; UX vs backend validation |
+| [`docs/COMPONENTS.md`](./docs/COMPONENTS.md) | Shared UI, filters, guards |
+| [`docs/COPY.md`](./docs/COPY.md) | English `copy.ts` (no i18n yet) |
+| [`docs/WORKFLOWS.md`](./docs/WORKFLOWS.md) | Privileged and destructive actions |
+| [`docs/TESTING.md`](./docs/TESTING.md) | Vitest suite |
+| [`docs/DEVELOPMENT.md`](./docs/DEVELOPMENT.md) | Docker, Make, env |
+| [`docs/DEPLOYMENT.md`](./docs/DEPLOYMENT.md) | Build and production notes |
+| [`docs/TROUBLESHOOTING.md`](./docs/TROUBLESHOOTING.md) | Common failures |

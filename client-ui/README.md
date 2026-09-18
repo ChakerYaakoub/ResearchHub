@@ -120,7 +120,18 @@ See [`docs/DEPLOYMENT.md`](./docs/DEPLOYMENT.md) for local vs production notes a
 
 ## Documentation
 
-| Doc | Purpose |
-|-----|---------|
-| [`docs/`](./docs/) | Full hub (architecture, auth, API, forms, testing, …) |
-| [`docs/TROUBLESHOOTING.md`](./docs/TROUBLESHOOTING.md) | Common local failures |
+| Document | Contents |
+|----------|----------|
+| [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md) | Smart/dumb layout, folder structure, pages |
+| [`docs/ROUTING.md`](./docs/ROUTING.md) | Public vs protected routes, deep links |
+| [`docs/AUTHENTICATION.md`](./docs/AUTHENTICATION.md) | Modal auth, JWT storage, refresh |
+| [`docs/AUTHORIZATION.md`](./docs/AUTHORIZATION.md) | Membership UI gates (UX only) |
+| [`docs/API.md`](./docs/API.md) | `apiFetch` and endpoint map |
+| [`docs/STATE.md`](./docs/STATE.md) | Contexts, local state, toasts |
+| [`docs/FORMS.md`](./docs/FORMS.md) | Formik/Yup, honeypot |
+| [`docs/COMPONENTS.md`](./docs/COMPONENTS.md) | Shared UI and layouts |
+| [`docs/I18N.md`](./docs/I18N.md) | English / French copy |
+| [`docs/TESTING.md`](./docs/TESTING.md) | Vitest suite |
+| [`docs/DEVELOPMENT.md`](./docs/DEVELOPMENT.md) | Docker, Make, env |
+| [`docs/DEPLOYMENT.md`](./docs/DEPLOYMENT.md) | Build and production notes |
+| [`docs/TROUBLESHOOTING.md`](./docs/TROUBLESHOOTING.md) | Common failures |
