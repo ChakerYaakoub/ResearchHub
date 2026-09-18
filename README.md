@@ -272,6 +272,89 @@ Full reference: [`backend/docs/API.md`](backend/docs/API.md)
 
 ---
 
+## Database
+
+PostgreSQL schema (Django models). Hub entity is **`ResearchProject`** — proposals, experiments, publications, memberships, and invitations hang off it. Facilities (`Installation` → `Instrument`) are a shared catalog; experiments link a project to an instrument.
+
+```mermaid
+erDiagram
+    User ||--o{ ResearchProject : owns
+    User ||--o{ ProjectMembership : "member of"
+    User ||--o{ Invitation : invited_by
+    ResearchProject ||--o{ ProjectMembership : memberships
+    ResearchProject ||--o| Proposal : proposal
+    ResearchProject ||--o{ Experiment : experiments
+    ResearchProject ||--o{ Publication : publications
+    ResearchProject ||--o{ Invitation : invitations
+    Installation ||--o{ Instrument : instruments
+    Instrument ||--o{ Experiment : "used by"
+
+    User {
+        uuid id PK
+        string email UK
+        string role
+    }
+    ResearchProject {
+        uuid id PK
+        string title
+        string status
+    }
+    ProjectMembership {
+        uuid id PK
+        string role
+    }
+    Proposal {
+        uuid id PK
+        string status
+    }
+    Experiment {
+        uuid id PK
+        string kind
+        string status
+    }
+    Publication {
+        uuid id PK
+        string kind
+    }
+    Invitation {
+        uuid id PK
+        string email
+        string status
+    }
+    Installation {
+        uuid id PK
+        string status
+    }
+    Instrument {
+        uuid id PK
+        string code
+        string status
+    }
+```
+
+<br/>
+
+<div align="center">
+
+| Entity | Notes |
+| ------ | ----- |
+| `User` | Platform role · owns projects · memberships · sent invites |
+| `ResearchProject` | Soft-delete via status `SOFT_DELETED` (row kept) |
+| `Proposal` | **OneToOne** with project (MVP) |
+| `ProjectMembership` | Unique `(project, user)` · `OWNER` / `EDITOR` / `VIEWER` |
+| `Experiment` | FK to `Instrument` · kind `PLANNED` / `EXECUTED` |
+| `Publication` | Linked to project · kind `EXISTING` / `RESULTING` |
+| `Invitation` | Membership created **only on accept** · token expires 7 days |
+| `Installation` → `Instrument` | Admin catalog · unique `(installation, code)` |
+
+</div>
+
+<br/>
+
+Status machines for project / proposal / experiment / invitation: [Lifecycles](#lifecycles). AuthZ on these rows: [Roles](#roles).
+
+---
+
 ## Roles
 
 Two separate role systems. Backend enforces both; UI gates are UX only.
